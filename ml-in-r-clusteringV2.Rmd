@@ -1,0 +1,167 @@
+---
+title: "ml-in-r-clustering"
+author: "Robert A. Stevens"
+date: "April 20, 2016"
+output: html_document
+---
+
+```{r, comment=NA}
+library(e1071)
+library(mclust)
+library(fpc)
+```
+
+http://horicky.blogspot.com/2012/04/machine-learning-in-r-clustering.html
+
+Sunday, April 8, 2012
+
+# Machine Learning in R: Clustering
+
+Clustering is a very common technique in unsupervised machine learning to discover groups of data that are "close-by" to each other. It is broadly used in customer segmentation and outlier detection.
+
+It is based on some notion of "distance" (the inverse of similarity) between data points and use that to identify data points that are close-by to each other. In the following, we discuss some very basic algorithms to come up with clusters, and use R as examples.
+
+## K-Means
+
+This is the most basic algorithm
+
+1. Pick an initial set of K centroids (this can be random or any other means)
+
+2. For each data point, assign it to the member of the closest centroid according to the given distance function
+
+3. Adjust the centroid position as the mean of all its assigned member data points. Go back to (2) until the membership isn't change and centroid position is stable.
+
+4. Output the centroids.
+
+Notice that in K-Means, we not only require the distance function to be defined but also requiring the mean function to be specified as well. Of course, we also need K (the number of centroids) to be specified.
+
+K-Means is highly scalable with O(n\*k\*r) where r is the number of rounds, which is a constant depends on the initial pick of centroids. Also notice that the result of each round is undeterministic. The usual practices is to run multiple rounds of K-Means and pick the result of the best round. The best round is one who minimize the average distance of each point to its assigned centroid.
+
+Here is an example of doing K-Means in R with the following visual output:
+
+```{r, comment=NA}
+# assuming HA already loaded in Global Environment using another script
+names(HA)
+# MS ~ es + gpssp + ws + as + hs + gtf + fss + se + mf + rs + ep + rdp
+HAsub <- HA[ , c("MS", "es", "gpssp", "ws", "as", "hs", "gtf", "fss", 
+                 "se", "mf", "rs", "ep", "rdp", "lon", "lat")]
+str(HAsub)
+HAsub <- subset(HAsub, !is.na(mf))
+HAsub <- subset(HAsub, !is.na(hs))
+HAsub <- subset(HAsub, !is.na(rs))
+HAsub <- subset(HAsub, !is.na(rdp))
+summary(HAsub)
+km <- kmeans(HAsub[ , 2:13], 8)
+plot(HAsub$gpssp, HAsub$mf, col = km$cluster)
+str(km)
+points(km$centers[ , c(1, 2)], col = 1:8, pch = 8, cex = 2)
+table(km$cluster, HAsub$MS)
+HAsub$cluster <- as.factor(km$cluster)
+p1 <- ggmap(map) + 
+  geom_point(data = HAsub, aes(x = lon, y = lat, color = cluster), size = I(1)) +
+  labs(title = paste(plotTitle, "Cluster"), x = "Longitude", y = "Latitude") +
+  guides(colour = guide_legend(override.aes = list(size = 10))) +
+  scale_x_continuous(limits = c(minX, maxX)) +
+  scale_y_continuous(limits = c(minY, maxY))
+print(p1)
+
+p1 <- ggmap(map) + 
+  geom_point(data = HAsub, aes(x = lon, y = lat, color = cluster), size = I(1)) +
+  labs(title = paste(plotTitle, "Cluster"), x = "Longitude", y = "Latitude") +
+  guides(colour = guide_legend(override.aes = list(size = 10))) +
+  scale_x_continuous(limits = c(minX, maxX)) +
+  scale_y_continuous(limits = c(minY, maxY)) +
+  facet_wrap(~ cluster)
+print(p1)
+```
+
+## Hierarchical Clustering
+
+In this approach, it compares all pairs of data points and merge the one with the closest distance.
+
+1. Compute distance between every pairs of point/cluster. Compute distance between pointA to pointB is just the distance function. Compute distance between pointA to clusterB may involve many choices (such as the min/max/avg distance between the pointA and points in the clusterB). Compute distance between clusterA to clusterB may first compute distance of all points pairs (one from clusterA and the other from clusterB) and then pick either min/max/avg of these pairs.
+
+2. Combine the two closest point/cluster into a cluster. Go back to (1) until only one big cluster remains.
+
+In hierarchical clustering, the complexity is O(n^2), the output will be a Tree of merge steps. It doesn't require us to specify K or a mean function. Since its high complexity, hierarchical clustering is typically used when the number of points are not too high.
+
+Here is an example of doing hierarchical clustering in R with the following visual output:
+
+```{r, comment=NA}
+str(iris)
+40/150
+str(HAsub)
+44283*(40/150)
+sampleHAsub <- HAsub[sample(1:44283, 11809), ] # length of df, and 27%
+distance <- dist(sampleHAsub[ , 2:13], method = "euclidean")
+cluster <- hclust(distance, method = "average")
+plot(cluster, hang = -1, label = sampleHAsub$MS)
+```
+
+## Fuzzy C-Means
+
+Unlike K-Means where each data point belongs to only one cluster, in fuzzy cmeans, each data point has a fraction of membership to each cluster. The goal is to figure out the membership fraction that minimize the expected distance to each centroid.
+
+The algorithm is very similar to K-Means, except that a matrix (row is each data point, column is each centroid, and each cell is the degree of membership) is used.
+
+1. Initialize the membership matrix U
+
+2. Repeat step (3), (4) until converge
+
+3. Compute location of each centroid based on the weighted fraction of its member data point's location. 
+
+4. Update each cell as follows 
+
+Notice that the parameter m is the degree of fuzziness. The output is the matrix with each data point assigned a degree of membership to each centroids.
+
+Here is an example of doing Fuzzy c-means in R with the following visual output (very similar to K-Means):
+
+```{r, comment=NA}
+result <- cmeans(iris[ , -5], 3, 100, m = 2, method = "cmeans")
+plot(iris[ , 1], iris[ , 2], col = result$cluster)
+points(result$centers[ , c(1, 2)], col = 1:3, pch = 8, cex = 2)
+result$membership[1:3, ]
+table(iris$Species, result$cluster)
+```
+
+## Multi-Gaussian with Expectation-Maximization
+
+Generally in machine learning, we will to learn a set of parameters that maximize the likelihood of observing our training data. However, what if there are some hidden variable in our data that we haven't observed. Expectation Maximization is a very common technique to use the parameter to estimate the probability distribution of those hidden variable, compute the expected likelihood and then figure out the parameters that will maximize this expected likelihood. It can be explained as follows ...
+
+Now, we assume the underlying data distribution is based on K centroids, each a multi-variate Gaussian distribution. To map Expectation / Maximization into this, we have the following.
+
+The order of complexity is similar to K-Means with a larger constant. It also requires K to be specified. Unlike K-Means whose cluster is always in circular shape. Multi-Gaussian can discover cluster with elliptical shape with different orientation and hence it is more general than K-Means.
+
+Here is an example of doing multi-Gaussian with EM in R with the following visual output:
+
+```{r, comment=NA}
+mc <- Mclust(iris[ , 1:4], 3)
+#plot(mc, data = iris[ , 1:4], what = c('classification'), dimens = c(3, 4))
+plot(mc, what = c('classification'), dimens = c(3, 4)) # see comments in post
+table(iris$Species, mc$classification)
+```
+
+## Density-based Cluster
+
+In density based cluster, a cluster is extend along the density distribution. Two parameters is important: "eps" defines the radius of neighborhood of each point, and "minpts" is the number of neighbors within my "eps" radius. The basic algorithm called DBscan proceeds as follows
+
+1. First scan: For each point, compute the distance with all other points. Increment a neighbor count if it is smaller than "eps".
+
+2. Second scan: For each point, mark it as a core point if its neighbor count is greater than "minpts"
+
+3. Third scan: For each core point, if it is not already assigned a cluster, create a new cluster and assign that to this core point as well as all of its neighbors within "eps" radius.
+
+Unlike other cluster, density based cluster can have some outliers (data points that doesn't belong to any clusters). On the other hand, it can detect cluster of arbitrary shapes (doesn't have to be circular at all)
+
+Here is an example of doing DBscan in R with the following visual output (notice the black points are outliers, triangles are core points and circles are boundary points):
+
+```{r, comment=NA}
+# eps is radius of neighborhood, MinPts is no of neighbors within eps
+cluster <- dbscan(sampleiris[ , -5], eps = 0.6, MinPts = 4)
+plot(cluster, sampleiris)
+plot(cluster, sampleiris[ , c(1, 4)])
+# Notice points in cluster 0 are unassigned outliers
+table(cluster$cluster, sampleiris$Species)
+```
+
+Although this has covered a couple ways of finding cluster, it is not an exhaustive list. Also here I tried to illustrate the basic idea and use R as an example. For really large data set, we may need to run the clustering algorithm in parallel. Here is my earlier blog about how to do K-Means using Map/Reduce as well as Canopy clustering as well.
