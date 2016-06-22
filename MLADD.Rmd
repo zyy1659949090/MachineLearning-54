@@ -132,3 +132,78 @@ A few examples of recent tutorials:
 [20] https://github.com/WiMLDS/deepdream-workshop
 
 [21] https://photos.google.com/share/AF1QipPX0SCl7OzWilt9LnuQliattX4OUCj_8EP65_cTVnBmS1jnYgsGQAieQUc1VQWdgQ?key=aVBxWjhwSzg2RjJWLWRuVFBBZEN1d205bUdEMnhB
+
+# xgboost: Extreme Gradient Boosting
+
+https://cran.r-project.org/web/packages/xgboost/
+
+## Reference manual:	xgboost.pdf 
+
+https://cran.r-project.org/web/packages/xgboost/xgboost.pdf
+
+### Vignettes:	
+
+- Discover your data
+
+https://cran.r-project.org/web/packages/xgboost/vignettes/discoverYourData.html
+
+- Xgboost presentation
+
+https://cran.r-project.org/web/packages/xgboost/vignettes/xgboostPresentation.html
+
+- xgboost: eXtreme Gradient Boosting 
+
+https://cran.r-project.org/web/packages/xgboost/vignettes/xgboost.pdf
+
+# gbm: Generalized Boosted Regression Models
+
+https://cran.r-project.org/web/packages/gbm/index.html
+
+## Reference manual:	gbm.pdf
+
+https://cran.r-project.org/web/packages/gbm/gbm.pdf
+
+# ranger: A Fast Implementation of Random Forests
+
+https://cran.r-project.org/web/packages/ranger/index.html
+
+## Reference manual:	ranger.pdf
+
+https://cran.r-project.org/web/packages/ranger/ranger.pdf
+
+# extraTrees: Extremely Randomized Trees (ExtraTrees) Method for Classification and Regression
+
+https://cran.r-project.org/web/packages/extraTrees/index.html
+
+## Reference manual:	extraTrees.pdf
+
+https://cran.r-project.org/web/packages/extraTrees/extraTrees.pdf
+
+## Vignettes:	extraTrees
+
+https://cran.r-project.org/web/packages/extraTrees/vignettes/extraTrees.pdf
+
+# caret: Classification and Regression Training
+
+https://cran.r-project.org/web/packages/caret/index.html
+
+## Reference manual:	caret.pdf
+
+https://cran.r-project.org/web/packages/caret/caret.pdf
+
+## Vignettes:	A Short Introduction to the caret Package
+
+https://cran.r-project.org/web/packages/caret/vignettes/caret.pdf
+
+# mlr: Machine Learning in R
+
+https://cran.r-project.org/web/packages/mlr/index.html
+
+## Reference manual:	mlr.pdf
+
+https://cran.r-project.org/web/packages/mlr/mlr.pdf
+
+## Vignettes:	mlr
+
+https://cran.r-project.org/web/packages/mlr/vignettes/mlr.html
+
