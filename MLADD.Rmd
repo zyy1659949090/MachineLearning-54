@@ -77,6 +77,10 @@ A brief follow-up discussion about the multi-algorithm machine learning interfac
 
 Some familiarity with the main concepts of machine learning (regression, classification) and common machine learning algorithms would be helpful, but not required.
 
+## Additional Links
+
+The repository for this tutorial is available at https://github.com/ledell/useR-machine-learning-tutorial.
+
 ## Instructor Biography
 
 Erin is a Statistician and Machine Learning Scientist at H2O.ai [12], where she works on open source machine learning software. She is the author of a handful of machine learning related R packages [13] and a contributor to the rOpenHealth [14] project. Erin received her Ph.D. in Biostatistics with a Designated Emphasis in Computational Science and Engineering from UC Berkeley. Her dissertation focused on scalable ensemble learning and was awareded the 2015 Erich L Lehmann Citation [15] by the UC Berkeley Department of Statistics. As a result of working on multi-algorithm ensemble learning and software development in R, she has become familiar with many machine learning algorithms and their implementations.
