@@ -464,10 +464,7 @@ yˆ = exp(t(x)*β + β0)
 
 The model is fitted by maximizing the corresponding penalized likelihood:
 
-N􏰂􏰃 
-
-max((1/N)*sum(y[i]*(t(x[i])*β + β0) − exp(t(x[i])*β + β0), i = 1:N)
-−λ(α*||β||1 + (1/2)*(1 − α)(||β||2)^2), β, β0)
+max((1/N)*sum(y[i]*(t(x[i])*β + β0) − exp(t(x[i])*β + β0), i = 1:N) −λ(α*||β||1 + (1/2)*(1 − α)(||β||2)^2), β, β0)
 
 The corresponding deviance is equal to:
 
@@ -516,100 +513,111 @@ used with the log link g(μi) = log(μi), or the inverse link g(μi) = 1/μi, wh
 
 The model is fitted by solving the following likelihood maximization:
 
-1􏰈N yi ⊤ 􏰂 1 2􏰃 max − ⊤ +log(xi β+β0)−λ α∥β∥1 + (1−α)∥β∥2
-β,β0 Ni=1 xiβ+β0
+max((1/N)*sum(y[i]/(t(x[i])*β + β0) + log(t(x[i])*β + β0), i = 1:N) − λ( α||β||1 + (1/2)*(1−α)(||β||2)^2), β, β0)
+
 The corresponding deviance is equal to:
-􏰈N 􏰂yi􏰃 (yi−yˆi) D=2 −log yˆ + yˆ
-2
-i=1 i i
-To change the link function from the default inverse function to the log link
-function, modify the link argument. Example in R
-1 2 3
-4 5
-6
+
+D = 2*sum(−log(y[i]/y^[i]) + (y[i] + yˆ[i]/yˆ[i]), i = 1:N)
+
+To change the link function from the default inverse function to the log link function, modify the link argument. 
+
+Example in R
+
 library(h2o)
 h2o.init()
-path = system.file("extdata", "prostate.csv", package
-   = "h2o")
+path = system.file("extdata", "prostate.csv", package = "h2o")
 h2o_df = h2o.importFile(path)
-gamma.inverse <- h2o.glm(y = "DPROS", x = c("AGE","
-   RACE","CAPSULE","DCAPS","PSA","VOL"), training_
-   frame = h2o_df, family = "gamma", link = "inverse"
-   )
-gamma.log <- h2o.glm(y="DPROS", x = c("AGE","RACE","
-   CAPSULE","DCAPS","PSA","VOL"), training_frame =
-h2o_df, family = "gamma", link = "log")
+gamma.inverse <- h2o.glm(
+  y = "DPROS", 
+  x = c("AGE", "RACE", "CAPSULE", "DCAPS", "PSA", "VOL"), 
+  training_frame = h2o_df, 
+  family = "gamma", 
+  link = "inverse")
+gamma.log <- h2o.glm(
+  y = "DPROS", 
+  x = c("AGE", "RACE", "CAPSULE", "DCAPS", "PSA", "VOL"), training_frame = h2o_df, 
+  family = "gamma", 
+  link = "log")
 
-22 | Generalized Linear Models
 Example in Python
-1 import h2o
-2 from h2o.estimators.glm import
-      H2OGeneralizedLinearEstimator
-3 h2o.init()
-4 h2o_df = h2o.import_file("http://h2o-public-test-data. s3.amazonaws.com/smalldata/prostate/prostate.csv")
-5 gamma_inverse = H2OGeneralizedLinearEstimator(family = "gamma", link = "inverse")
-6 gamma_inverse.train(y = "DPROS", x = ["AGE","RACE"," CAPSULE","DCAPS","PSA","VOL"], training_frame = h2o_df)
-7
-8 gamma_log = H2OGeneralizedLinearEstimator(family = "
-      gamma", link = "log")
-9 gamma_log.train(y="DPROS", x = ["AGE","RACE","CAPSULE"
-      ,"DCAPS","PSA","VOL"], training_frame = h2o_df)
+
+import h2o
+from h2o.estimators.glm import H2OGeneralizedLinearEstimator
+h2o.init()
+h2o_df = h2o.import_file("http://h2o-public-test-data. s3.amazonaws.com/smalldata/prostate/prostate.csv")
+gamma_inverse = H2OGeneralizedLinearEstimator(
+  family = "gamma", 
+  link = "inverse")
+gamma_inverse.train(
+  y = "DPROS", 
+  x = ["AGE", "RACE", "CAPSULE", "DCAPS", "PSA", "VOL"], training_frame = h2o_df)
+
+gamma_log = H2OGeneralizedLinearEstimator(
+  family = "gamma", 
+  link = "log")
+gamma_log.train(
+  y = "DPROS", 
+  x = ["AGE", "RACE", "CAPSULE", "DCAPS", "PSA", "VOL"], training_frame = h2o_df)
 
 4.6.6 Tweedie Models
 
-Tweedie distributions are a family of distributions which include gamma, normal, Poisson and their combination. It is especially useful for modeling positive continuous variables with exact zeros. The variance of the Tweedie distribution is proportional to the p-th power of the mean var(yi) = φμpi .
-The Tweedie distribution is parametrized by variance power p. It is defined for all p values except in the (0, 1) interval, and has the following distributions as special cases.
-􏰙 p = 0: Normal
-􏰙 p = 1: Poisson
-􏰙 p ∈ (1, 2): Compound Poisson, non-negative with mass at zero 􏰙 p=2: Gamma
-􏰙 p = 3: Inverse-Gaussian
-􏰙 p > 2: Stable, with support on the positive reals
+Tweedie distributions are a family of distributions which include gamma, normal, Poisson and their combination. It is especially useful for modeling positive continuous variables with exact zeros. The variance of the Tweedie distribution is proportional to the p-th power of the mean var(yi) = φ*μ[i]^p.
 
-The normal and Poisson examples have already been covered in the previous sections. For p > 1, the model likelihood to maximize has the form:
-max
-β,β0
-i=1
-log(a(yi, φ))+ i − κ(μi, p) −λ α∥β∥1 + φ 1−p
-(1 − α)∥β∥2 ,
-2
-􏰈N 􏰚1􏰚yiμ1−p􏰛􏰛􏰂12􏰃
-Generalized Linear Models | 23
+The Tweedie distribution is parametrized by variance power p. It is defined for all p values except in the (0, 1) interval, and has the following distributions as special cases.
+
+- p = 0: Normal
+
+- p = 1: Poisson
+
+- p ∈ (1, 2): Compound Poisson, non-negative with mass at zero 
+
+- p=2: Gamma
+
+- p = 3: Inverse-Gaussian
+
+- p > 2: Stable, with support on the positive reals
+
 Example in R
-1 2 3 4 5 6 7 8 9
-10 11 12
-1 2
-3 4
-5 6
+
 library(h2o)
 h2o.init()
 library(HDtweedie)
 data(auto) # 2812 policy samples with 56 predictors
+
 dim(auto$x)
 hist(auto$y)
+
 # Copy the R data.frame to an H2OFrame using as.h2o()
 h2o_df = as.h2o(auto)
-vars= paste("x.",colnames(auto$x),sep="")
-tweedie.fit = h2o.glm(y = "y", x = vars, training_
-frame = h2o_df, family = "tweedie")
+vars = paste("x.", colnames(auto$x), sep = "")
+tweedie.fit = h2o.glm(
+  y = "y", 
+  x = vars, 
+  training_frame = h2o_df, 
+  family = "tweedie")
+
 Example in Python
+
 import h2o
-from h2o.estimators.glm import
-   H2OGeneralizedLinearEstimator
+from h2o.estimators.glm import H2OGeneralizedLinearEstimator
 h2o.init()
-h2o_df = h2o.import_file("http://h2o-public-test-data.
-   s3.amazonaws.com/smalldata/glm_test/auto.csv")
-tweedie_fit = H2OGeneralizedLinearEstimator(family = "
-   tweedie")
-tweedie_fit.train(y = "y", x = h2o_df.col_names[1:],
-   training_frame = h2o_df)
-where κ(μ,p) = μ2−p/(2−p) for p ̸= 2 and κ(μ,p) = log(μ) for p = 2 and where the function a(yi,φ) is evaluated using series expansion, since it does not have an analytical solution. The link function in the GLM representation of the Tweedie distribution defaults to g(μ) = μq = η = Xβ with q = 1 − p. The
-24 | Building GLM Models in H2O
-link power q can be set to other values, including q = 0 which is interpreted as log(μ) = η.
-The corresponding deviance when p ̸= 1 and p ̸= 2 is equal to:
-.
-N ( y 2 − p − yˆ 2 − p ) D = − 2 􏰈 y i ( y 1 − p − yˆ 1 − p ) − i i
-i=1
-i i (2−p)
+h2o_df = h2o.import_file("http://h2o-public-test-data.s3.amazonaws.com/smalldata/glm_test/auto.csv")
+tweedie_fit = H2OGeneralizedLinearEstimator(family = "tweedie")
+tweedie_fit.train(
+  y = "y", 
+  x = h2o_df.col_names[1:],
+  training_frame = h2o_df)
+
+The normal and Poisson examples have already been covered in the previous sections. For p > 1, the model likelihood to maximize has the form:
+
+max(sum(log(a(y[i], φ))+ ((1/φ)*(y[i]μ[i]^(1 − p)/(1 − p)) − κ(μ[i], p, i = 1:N) − λ(α||β||1 + (1/2)*(1 − α)(||β||2)^2), β, β0)
+
+where κ(μ, p) = μ^(2 − p)/(2 − p) for p != 2 and κ(μ, p) = log(μ) for p = 2 and where the function a(y[i], φ) is evaluated using series expansion, since it does not have an analytical solution. The link function in the GLM representation of the Tweedie distribution defaults to g(μ) = μ^q = η = Xβ with q = 1 − p. The link power q can be set to other values, including q = 0 which is interpreted as log(μ) = η.
+
+The corresponding deviance when p != 1 and p != 2 is equal to:
+
+D = −2*sum(y[i]*(y[i]^(1 − p) − yˆ[i]^(1 − p)) − i i
+(y[i]^(2 − p) − yˆ[i]^(2 − p))/(2 − p), i = 1:N)
 
 5 Building GLM Models in H2O
 
@@ -618,48 +626,50 @@ H2O’s GLM implementation presents a high-performance distributed algorithm tha
 5.1 Classification and Regression
 
 GLM can produce two categories of models: classification (binary classifica- tion only) and regression. Logistic regression is the GLM to perform binary classification.
+
 The data type of the response column determines the model category. If the response is a categorical variable (also called a factor or an enum), then a classification model is created. If the response column data type is numeric (either integer or real), then a regression model is created.
+
 The following examples show how to coerce the data type of a column to a factor.
+
 Example in R
-1 2 3
-4 5 6
+
 library(h2o)
 h2o.init()
-path = system.file("extdata", "prostate.csv", package
-   = "h2o")
+path = system.file("extdata", "prostate.csv", package = "h2o")
 h2o_df = h2o.importFile(path)
 h2o_df$CAPSULE = as.factor(h2o_df$CAPSULE)
 summary(h2o_df)
 
-Building GLM Models in H2O | 25
 Example in Python
-1 2 3
-4 5
+
 import h2o
 h2o.init()
-h2o_df = h2o.import_file("http://h2o-public-test-data.
-   s3.amazonaws.com/smalldata/prostate/prostate.csv")
+h2o_df = h2o.import_file("http://h2o-public-test-data.s3.amazonaws.com/smalldata/prostate/prostate.csv")
 h2o_df["CAPSULE"] = h2o_df["CAPSULE"].asfactor()
 h2o_df.summary()
 
 5.2 Training and Validation Frames
 
 Frame refers to an H2OFrame, the fundamental method of data storage in H2O’s distributed memory.
-training frame refers to a frame containing a training dataset. All pre- dictors and the response (as well as offset and weights, if specified) must be included in this frame.
-validation frame refers to an optional frame containing a validation dataset. If specified, this frame must have exactly the same columns as the training dataset. Metrics are calculated on the validation dataset for convenience.
+
+training_frame refers to a frame containing a training dataset. All predictors and the response (as well as offset and weights, if specified) must be included in this frame.
+
+validation_frame refers to an optional frame containing a validation dataset. If specified, this frame must have exactly the same columns as the training dataset. Metrics are calculated on the validation dataset for convenience.
 
 5.3 Predictor and Response Variables
 
 Every model must specify its predictors and response. Predictors and responses are specified by the x and y parameters.
+
 x contains the list of column names or column indices referring to vectors from the training frame; periods are not supported characters.
+
 y is a column name or index referring to a vector from the training frame.
 
 5.3.1 Categorical Variables
 
 If the response column is categorical, then a classification model is created. GLM only supports binary classification, so the response column may only have two levels. Categorical predictor columns may have more than two levels.
+
 We recommend letting GLM handle categorical columns, as it can take advantage of the categorical column for better performance and memory utilization.
 
-26 | Building GLM Models in H2O
 We strongly recommend avoiding one-hot encoding categorical columns with many levels into many binary columns, as this is very inefficient. This is especially true for Python users who are used to expanding their categorical variables manually for other frameworks.
 
 5.4 Family and Link
@@ -669,62 +679,73 @@ Family and Link are optional parameters. The default family is Gaussian and the 
 5.5 Regularization Parameters
 
 To get the best possible model, we need to find the optimal values of the regularization parameters α and λ. To find the optimal values, H2O provides grid search over α and a special form of grid search called “lambda search” over λ. For a detailed explanation, refer to Regularization.
+
 The recommended way to find optimal regularization settings on H2O is to do a grid search over a few α values with an automatic lambda search for each α. Both are described below in greater detail.
 
 5.5.1 Alpha and Lambda
 
 The alpha parameter controls the distribution between the l1 (Lasso) and l2 (Ridge regression) penalties. A value of 1.0 for alpha represents Lasso, and an alpha value of 0.0 produces ridge regression.
+
 The lambda parameter controls the amount of regularization applied. If lambda is 0.0, no regularization is applied and the alpha parameter is ignored. The default value for lambda is calculated by H2O using a heuristic based on the training data. If you let H2O calculate the value for lambda, you can see the chosen value in the model output.
 
 5.5.2 Lambda Search
 
 Lambda search enables efficient and automatic search for the optimal value of the lambda parameter. When lambda search is enabled, GLM will first fit a model with maximum regularization and then keep decreasing it until overfitting occurs. The resulting model is based on the best lambda value.
-Building GLM Models in H2O | 27
+
 When looking for sparse solution (alpha > 0), lambda search can also be used to efficiently handle very wide datasets because it can filter out inactive predictors (known as noise) and only build models for a small subset of predictors. A common use of lambda search is to run it on a dataset with many predictors but limit the number of active predictors to a relatively small value.
-Lambda search can be enabled by setting lambda search and can be config- ured using the following arguments:
+
+Lambda search can be enabled by setting lambda search and can be configured using the following arguments:
 
 - alpha: Regularization distribution between l1 and l2.
 
 - validation frame andor n folds: Used to select the best lambda based on the cross-validation performance or the validation or training data. If available, cross-validation performance takes precedence. If no validation data is available, the best lambda is selected based on training data performance and is therefore guaranteed to always be the minimal lambda computed, since GLM can not overfit on a training dataset.
+
 Note: If running lambda search with a validation dataset and cross- validation disabled, the chosen lambda value corresponds to the lambda with the lowest validation error. The validation dataset is used to select the model and the model performance should be evaluated on another independent test dataset.
-􏰙 lambda min ratio and nlambdas: The sequence of λs is automati- cally generated as an exponentially decreasing sequence. It ranges from λmax, the smallest λ so that the solution is a model with all 0s, to λmin = lambda min ratio * λmax.
-H2O computes λ-models sequentially and in decreasing order, warm- starting the model for λk with the solution for λk−1. By warm-starting (using the previous solution as the initial prediction) the models, we get better performance: typically models for subsequent λs are close to each other, so only a few iterations per λ are needed (typically two or three). This also achieves greater numerical stability, since models with a higher penalty are easier to compute. This method starts with an easy problem and then continues to make small adjustments.
-Note: nlambda and lambda min ratio also specify the relative distance of any two lambdas in the sequence. This is important when applying recursive strong rules, which are only effective if the neighboring lambdas are “close” to each other. The default values are nlambda = 100 and λmin = λmax1e−4, which gives us the ratio of 0.912. For best results when using strong rules, keep the ratio close to the default.
 
-28|
-Building GLM Models in H2O
-􏰙
+- lambda min ratio and nlambdas: The sequence of λs is automati- cally generated as an exponentially decreasing sequence. It ranges from λmax, the smallest λ so that the solution is a model with all 0s, to λmin = lambda min ratio * λmax.
 
+H2O computes λ-models sequentially and in decreasing order, warm-starting the model for λ[k] with the solution for λ[k − 1]. By warm-starting (using the previous solution as the initial prediction) the models, we get better performance: typically models for subsequent λs are close to each other, so only a few iterations per λ are needed (typically two or three). This also achieves greater numerical stability, since models with a higher penalty are easier to compute. This method starts with an easy problem and then continues to make small adjustments.
 
+Note: nlambda and lambda_min_ratio also specify the relative distance of any two lambdas in the sequence. This is important when applying recursive strong rules, which are only effective if the neighboring lambdas are “close” to each other. The default values are nlambda = 100 and λmin = λmax*1e^(−4), which gives us the ratio of 0.912. For best results when using strong rules, keep the ratio close to the default.
 
-max active predictors: This limits the number of active predictors (the actual number of non-zero predictors in the model is going to be slightly lower). It is useful when obtaining a sparse solution to avoid costly computation of models with too many predictors.
+- max active predictors: This limits the number of active predictors (the actual number of non-zero predictors in the model is going to be slightly lower). It is useful when obtaining a sparse solution to avoid costly computation of models with too many predictors.
 
 5.6 Solver Selection
 
 This section provides general guidelines for best performance from the H2O GLM implementation options. The optimal solver depends on the data properties and prior information regarding the variables (if available).
+
 The data are considered sparse if the ratio of zeros to non-zeros in the input matrix is greater than ∼ 10. The solution is sparse when only a subset of the original set of variables is intended to be kept in the model. In a dense solution, all predictors have non-zero coefficients in the final model.
 
 5.6.1 Solver Details
 
 H2O’s GLM offers two different solvers:
-􏰙 the Iteratively Reweighted Least Squares Method (IRLSM)
-􏰙 the Limited-memory Broyden-Fletcher-Goldfarb-Shanno algorithm (L- BFGS)
-IRLSM uses a Gram Matrix approach, which is very efficient for tall and narrow datasets and when running lambda search with a sparse solution. For wider and dense datasets (thousands of predictors and up), the L-BFGS solver scales better. If there are fewer than ∼ 500 predictors in the data, use the default, which is IRLSM.
+
+- the Iteratively Reweighted Least Squares Method (IRLSM)
+
+- the Limited-memory Broyden-Fletcher-Goldfarb-Shanno algorithm (L- BFGS)
+
+IRLSM uses a Gram Matrix approach, which is very efficient for tall and narrow datasets and when running lambda search with a sparse solution. For wider and dense datasets (thousands of predictors and up), the L-BFGS solver scales better. If there are fewer than ∼500 predictors in the data, use the default, which is IRLSM.
+
 For larger numbers of predictors, it is recommended to run IRLSM with lambda search and compare it to L-BFGS with just the l2 penalty. For advanced users, we recommend the following general guidelines:
 
 - For a dense solution and a dense dataset, use IRLSM if there are fewer than ∼500 predictors in the data; otherwise, use L-BFGS. Set alpha to 0 to include l2 regularization in the elastic net penalty term to avoid inducing sparsity in the model.
 
-- For a dense solution with a sparse dataset, use IRLSM if there are fewer than ∼ 2000 predictors in the data; otherwise, use L-BFGS. Set alpha to 0.
+- For a dense solution with a sparse dataset, use IRLSM if there are fewer than ∼2000 predictors in the data; otherwise, use L-BFGS. Set alpha to 0.
 
-- For a sparse solution with a dense dataset, use IRLSM with lambda- search if fewer than ∼ 500 active predictors in the solution are expected; otherwise, use L-BFGS. Set alpha to be greater than zero to add an l1 penalty to the elastic net regularization, which induces sparsity in the estimated coefficients.
+- For a sparse solution with a dense dataset, use IRLSM with lambda-search if fewer than ∼500 active predictors in the solution are expected; otherwise, use L-BFGS. Set alpha to be greater than zero to add an l1 penalty to the elastic net regularization, which induces sparsity in the estimated coefficients.
 
-- For a sparse solution with a sparse dataset, use IRLSM with lambda-search if you expect less than ∼ 5000 active predictors in the solution; otherwise, use L-BFGS. Set alpha to be greater than zero.
+- For a sparse solution with a sparse dataset, use IRLSM with lambda-search if you expect less than ∼5000 active predictors in the solution; otherwise, use L-BFGS. Set alpha to be greater than zero.
 
 - If unsure whether the solution should be sparse or dense, try both and a grid of alpha values. The optimal model can be picked based on its performance on the validation data (or alternatively the performance in cross-validation when not enough data is available to have a separate validation dataset).
+
 The above recommendations are general guidelines; if the performance of the method seems slow, experiment with the available options.
+
 IRLSM can be run with two algorithms to solve its innermost loop: ADMM and cyclical coordinate descent. The latter is used in glmnet.
+
 The method is able to handle large datasets well and deals efficiently with sparse features. It should improve the performance when the data contains categorical variables with a large number of levels, as it is implemented to deal with such variables in a parallelized way.
-Coordinate descent can be implemented with naive or covariance updates as explained in the glmnet paper. The covariance updates version is faster when N > p and p ∼ 500.
+
+Coordinate descent can be implemented with naive or covariance updates as explained in the glmnet paper. The covariance updates version is faster when N > p and p ∼500.
+
 In summary, the solver options for fitting a GLM in H2O are:
 
 - L-BFGS: when the number of predictors is large
@@ -733,46 +754,49 @@ In summary, the solver options for fitting a GLM in H2O are:
 
 5.6.2 Stopping Criteria
 
-When using the l1 penalty with lambda search, specify a value for the
-max active predictors parameter to stop the search before it completes.
-Models built at the beginning of the lambda search have higher lambda values, consider fewer predictors, and take less time to calculate the model.
-Building GLM Models in H2O | 29
+When using the l1 penalty with lambda search, specify a value for the max_active_predictors parameter to stop the search before it completes.
 
-30 | Building GLM Models in H2O
+Models built at the beginning of the lambda search have higher lambda values, consider fewer predictors, and take less time to calculate the model.
+
 Models built at the end of the lambda search have lower lambda values, incorporate more predictors, and take a longer time to calculate the model. Set the nlambdas parameter for a lambda search to specify the number of models attempted across the search.
+
 Example in R
-1 2 3
-4 5 6
-7
-8
-1 import h2o
-2 from h2o.estimators.glm import
-      H2OGeneralizedLinearEstimator
-3 h2o.init()
-4 h2o_df = h2o.import_file("http://s3.amazonaws.com/h2o- public-test-data/smalldata/airlines/ allyears2k_headers.zip")
-5
-6 #stops the model when we reach 10 active predictors
-7 #Objective epsilon and gradient epsilon stopping
-      criteria will be added in a future release.
-8 model = H2OGeneralizedLinearEstimator(family = " binomial", lambda_search = True, max_active_predictors = 10)
-9 model.train(y = "IsDepDelayed", x = ["Year", "Origin" ], training_frame = h2o_df)
+
 library(h2o)
 h2o.init()
-h2o_df = h2o.importFile("http://s3.amazonaws.com/h2o-
-   public-test-data/smalldata/airlines/allyears2k_
-   headers.zip")
-#stops the model when we reach 10 active predictors
-#Objective epsilon and gradient epsilon stopping
-   criteria will be added in a future release.
-model = h2o.glm(y = "IsDepDelayed", x = c("Year", "
-   Origin"), training_frame = h2o_df, family = "
-   binomial", lambda_search = TRUE, max_active_
-   predictors = 10)
-print(model)
-Example in Python
-10 print(model)
+h2o_df = h2o.importFile("http://s3.amazonaws.com/h2o-public-test-data/smalldata/airlines/allyears2k_headers.zip")
 
-Building GLM Models in H2O | 31
+# stops the model when we reach 10 active predictors
+# Objective epsilon and gradient epsilon stopping
+# criteria will be added in a future release.
+model = h2o.glm(
+  y = "IsDepDelayed", 
+  x = c("Year", "Origin"), 
+  training_frame = h2o_df, 
+  family = "binomial", 
+  lambda_search = TRUE, 
+  max_active_predictors = 10)
+print(model)
+
+Example in Python
+
+import h2o
+from h2o.estimators.glm import H2OGeneralizedLinearEstimator
+h2o.init()
+h2o_df = h2o.import_file("http://s3.amazonaws.com/h2o- public-test-data/smalldata/airlines/ allyears2k_headers.zip")
+
+# stops the model when we reach 10 active predictors
+# Objective epsilon and gradient epsilon stopping
+# criteria will be added in a future release.
+model = H2OGeneralizedLinearEstimator(
+  family = "binomial", 
+  lambda_search = True, 
+  max_active_predictors = 10)
+model.train(
+  y = "IsDepDelayed", 
+  x = ["Year", "Origin"], 
+  training_frame = h2o_df)
+print(model)
 
 5.7 Advanced Features
 
@@ -781,16 +805,17 @@ H2O’s GLM has several advanced features to help build better models.
 5.7.1 Standardizing Data
 
 The standardize parameter, which is enabled by default, standardizes numeric columns to have zero mean and unit variance. This parameter must be enabled (using standardize=TRUE) to produce standardized coefficient magnitudes in the model output.
+
 We recommend enabling standardization when using regularization (i.e. lambda is chosen by H2O or greater than 0). Only advanced users should disable standardization.
 
 5.7.2 Auto-remove collinear columns
 
-Collinear columns can cause problems during model fitting. The preferred way to deal with collinearity is to add some regularization (either L1, L2 or Elastic Net). This is the default H2O behavior. However, if you want a non-regularized solution, you can choose to automatically remove collinear columns by setting the remove collinear columns option.
+Collinear columns can cause problems during model fitting. The preferred way to deal with collinearity is to add some regularization (either L1, L2 or Elastic Net). This is the default H2O behavior. However, if you want a non-regularized solution, you can choose to automatically remove collinear columns by setting the remove_collinear_columns option.
+
 This option can only be used with the IRLSM solver and no regularization. If selected, H2O will automatically remove columns if it detects collinearity. Which columns are removed depends on the order of the columns in the vector of coefficients (Intercept first, then categorical variables ordered by cadrinality from largest to smallest, and then numbers).
 
 Example in R
 
-1 2 3 4 5 6 7 8
 library(h2o)
 h2o.init()
 a = runif(100)
@@ -798,22 +823,24 @@ b = 2*a
 c = -3*a + 10
 df = data.frame(a,b,c)
 h2o_df = as.h2o(df)
-h2o.fit = h2o.glm(y = "c", x = c("a", "b"), training_
-frame = h2o_df, lambda=0,remove_collinear_columns=
-TRUE)
-32 | Building GLM Models in H2O
-9   h2o.fit
+h2o.fit = h2o.glm(
+  y = "c", 
+  x = c("a", "b"), 
+  training_frame = h2o_df, 
+  lambda = 0,
+  remove_collinear_columns = TRUE)
+h2o.fit
 
 5.7.3 P-Values
 
 Z-score, standard error and p-values are classical statistical measures of model quality. p-values are essentially hypothesis tests on the values of each coefficient. A high p-value means that a coefficient is unreliable (insiginificant) while a low p-value suggest that the coefficient is statistically significant.
-You can request p-values by setting the
-compute p values option. It can only be used with the IRLSM solver and no regularization. It is recommended that you also set the remove collinear columns option. Otherwise, H2O will return an error if it detects collinearity in the
-dataset and p-values are requested.
+
+You can request p-values by setting the compute_p_values option. It can only be used with the IRLSM solver and no regularization. It is recommended that you also set the remove_collinear_columns option. Otherwise, H2O will return an error if it detects collinearity in the dataset and p-values are requested.
+
 Note: GLM auto-standardizes the data by default (recommended). This changes the p-value of the constant term (intercept).
+
 Example in R
-1 2 3 4 5 6 7 8
-9
+
 library(h2o)
 h2o.init()
 a = runif(100)
@@ -829,184 +856,174 @@ h2o.fit
 5.7.4 K-fold Cross-Validation
 
 All validation values can be computed using either the training dataset (the default option) or using K-fold cross-validation (kfolds > 1). When K- fold cross-validation is enabled, H2O randomly splits data into K equally-sized sections, trains each of the K models on K−1 sections, and computes validation on the section that was not used for training.
+
 You can also specify the rows assigned to each fold using the fold assignment or fold column parameters.
 
 Example in R
 
-1 2 3
-4 5 6
-7 8
-9
-1 2
-3 4
-5 6
-7
-8 9
-Building GLM Models in H2O | 33
 library(h2o)
 h2o.init()
-path = system.file("extdata", "prostate.csv", package
-   = "h2o")
+path = system.file("extdata", "prostate.csv", package = "h2o")
 h2o_df = h2o.importFile(path)
 h2o_df$CAPSULE = as.factor(h2o_df$CAPSULE)
-binomial.fit = h2o.glm(y = "CAPSULE", x = c("AGE", "
-   RACE", "PSA", "GLEASON"), training_frame = h2o_df,
-    family = "binomial", nfolds = 5)
+binomial.fit = h2o.glm(
+  y = "CAPSULE", 
+  x = c("AGE", "RACE", "PSA", "GLEASON"), 
+  training_frame = h2o_df,
+  family = "binomial", 
+  nfolds = 5)
 print(binomial.fit)
-print(paste("training auc:        ", binomial.
-   fit@model$training_metrics@metrics$AUC))
-print(paste("cross-validation auc:", binomial.
-   fit@model$cross_validation_metrics@metrics$AUC))
+print(paste("training auc:        ", 
+  binomial.fit@model$training_metrics@metrics$AUC))
+print(paste("cross-validation auc:", 
+  binomial.fit@model$cross_validation_metrics@metrics$AUC))
 
 Example in Python
 
 import h2o
-from h2o.estimators.glm import
-   H2OGeneralizedLinearEstimator
+from h2o.estimators.glm import H2OGeneralizedLinearEstimator
 h2o.init()
-h2o_df = h2o.import_file("http://h2o-public-test-data.
-   s3.amazonaws.com/smalldata/prostate/prostate.csv")
+h2o_df = h2o.import_file("http://h2o-public-test-data.s3.amazonaws.com/smalldata/prostate/prostate.csv")
 h2o_df[’CAPSULE’] = h2o_df[’CAPSULE’].asfactor()
-binomial_fit = H2OGeneralizedLinearEstimator(family =
-   "binomial", nfolds=5, fold_assignment="Random")
-binomial_fit.train(y = "CAPSULE", x = ["AGE", "RACE",
-   "PSA", "GLEASON"], training_frame = h2o_df)
-print "training auc:", binomial_fit.auc(train=True)
-print "cross-validation auc:", binomial_fit.auc(xval=
-True)
-
-34 | Building GLM Models in H2O
+binomial_fit = H2OGeneralizedLinearEstimator(
+  family = "binomial", 
+  nfolds = 5, 
+  fold_assignment = "Random")
+binomial_fit.train(
+  y = "CAPSULE", 
+  x = ["AGE", "RACE", "PSA", "GLEASON"], 
+  training_frame = h2o_df)
+print "training auc:", binomial_fit.auc(train = True)
+print "cross-validation auc:", binomial_fit.auc(xval = True)
 
 5.7.5 Grid Search Over Alpha
 
 Alpha search is not always necessary; changing its value to 0.5 (or 0 or 1 if we only want Ridge or Lasso, respectively) works in most cases. If α search is required, specifying only a few values is typically sufficient. Alpha search is invoked by supplying a list of values for α instead of a single value. H2O then produces one model per α value.
+
 The grid search computation can be done in parallel (depending on the cluster resources) and it is generally more efficient than computing different models separately from R.
-Usecautionwhenincludingα=0orα=1inthegridsearch. α=0will produce a dense solution and it can be very slow (or even impossible) to compute in large N situations. α = 1 has no l2 penalty, so it is therefore less numerically stable and can be very slow as well due to slower convergence. In general, we recommend using alpha = 1 − ε instead.
+
+Use caution when including α = 0 or α = 1 in the grid search. α = 0 will produce a dense solution and it can be very slow (or even impossible) to compute in large N situations. α = 1 has no l2 penalty, so it is therefore less numerically stable and can be very slow as well due to slower convergence. In general, we recommend using alpha = 1 − ε instead.
 
 Example in R
 
-1 library(h2o)
-2 h2o.init()
-3 path = system.file("extdata", "prostate.csv", package
-= "h2o")
-4 h2o_df = h2o.importFile(path)
-5 h2o_df$CAPSULE = as.factor(h2o_df$CAPSULE)
-6 alpha_opts = list(list(0), list(.25), list(.5), list
-      (.75), list(1))
-7 hyper_parameters = list(alpha = alpha_opts)
-8 grid <- h2o.grid("glm", hyper_params = hyper_
-parameters,
-9 y = "CAPSULE", x = c("AGE", "RACE", "
-                       PSA", "GLEASON"), training_frame
-                       = h2o_df, family = "binomial")
-10 grid_models <- lapply(grid@model_ids, function(model_
-      id) { model = h2o.getModel(model_id) })
-11 for (i in 1:length(grid_models)) {
-12 print(sprintf("regularization: %-50s auc: %f",
-13 }
-grid_models[[i]]@model$model_summary$
-regularization, h2o.auc(grid_models[[i]])))
+library(h2o)
+h2o.init()
+path = system.file("extdata", "prostate.csv", package = "h2o")
+h2o_df = h2o.importFile(path)
+h2o_df$CAPSULE = as.factor(h2o_df$CAPSULE)
+alpha_opts = list(list(0), list(.25), list(.5), list(.75), list(1))
+hyper_parameters = list(alpha = alpha_opts)
+grid <- h2o.grid("glm", hyper_params = hyper_parameters,
+  y = "CAPSULE", 
+  x = c("AGE", "RACE", "PSA", "GLEASON"), 
+  training_frame = h2o_df, 
+  family = "binomial")
+grid_models <- lapply(grid@model_ids, 
+  function(model_id) {model = h2o.getModel(model_id)})
+for(i in 1:length(grid_models)) {
+  print(sprintf("regularization: %-50s auc: %f",
+        grid_models[[i]]@model$model_summary$regularization, 
+        h2o.auc(grid_models[[i]])))
+}
 
 Example in Python
 
-1 import h2o
-2 from h2o.estimators.glm import
-      H2OGeneralizedLinearEstimator
-3 from h2o.grid.grid_search import H2OGridSearch
-4 h2o.init()
-5 h2o_df = h2o.import_file("http://h2o-public-test-data.
-      s3.amazonaws.com/smalldata/prostate/prostate.csv")
-6 h2o_df[’CAPSULE’] = h2o_df[’CAPSULE’].asfactor()
-7 alpha_opts = [0.0, 0.25, 0.5, 1.0]
-8 hyper_parameters = {"alpha":alpha_opts}
-9
-10
-11 grid = H2OGridSearch(H2OGeneralizedLinearEstimator(
-      family="binomial"), hyper_params=hyper_parameters)
-12 grid.train(y = "CAPSULE", x = ["AGE", "RACE", "PSA", "
-      GLEASON"], training_frame = h2o_df)
-13 for m in grid:
-14 print "Model ID: " + m.model_id + " auc: " , m.auc ()
-15 print m.summary()
-16 print "\n\n"
+import h2o
+from h2o.estimators.glm import H2OGeneralizedLinearEstimator
+from h2o.grid.grid_search import H2OGridSearch
+h2o.init()
+h2o_df = h2o.import_file("http://h2o-public-test-data.s3.amazonaws.com/smalldata/prostate/prostate.csv")
+h2o_df[’CAPSULE’] = h2o_df[’CAPSULE’].asfactor()
+alpha_opts = [0.0, 0.25, 0.5, 1.0]
+hyper_parameters = {"alpha":alpha_opts}
+
+grid = H2OGridSearch(
+  H2OGeneralizedLinearEstimator(family = "binomial"), hyper_params = hyper_parameters)
+grid.train(
+  y = "CAPSULE", 
+  x = ["AGE", "RACE", "PSA", "GLEASON"], 
+  training_frame = h2o_df)
+for m in grid:
+  print "Model ID: " + m.model_id + " auc: " , m.auc()
+  print m.summary()
+  print "\n\n"
 
 5.7.6 Grid Search Over Lambda
 
 While automatic lambda search is the preferred method, a grid search over lambda values is also supported by passing in a vector of lambdas and disabling the lambda-search option. The behavior will be identical to lambda search, except H2O will use the specified list of lambdas instead (still capped at λmax).
+
 Example in R
-1 2 3
-4 5
-Building GLM Models in H2O | 35
+
 library(h2o)
 h2o.init()
-path = system.file("extdata", "prostate.csv", package
-   = "h2o")
+path = system.file("extdata", "prostate.csv", package = "h2o")
 h2o_df = h2o.importFile(path)
 h2o_df$CAPSULE = as.factor(h2o_df$CAPSULE)
-36 | Building GLM Models in H2O
-6 lambda_opts = list(list(1), list(.5), list(.1), list (.01), list(.001), list(.0001), list(.00001), list (0))
-7 hyper_parameters = list(lambda = lambda_opts)
-8 grid <- h2o.grid("glm", hyper_params = hyper_
-parameters,
-9 y = "CAPSULE", x = c("AGE", "RACE", "
-                       PSA", "GLEASON"), training_frame
-                       = h2o_df, family = "binomial")
-10 grid_models <- lapply(grid@model_ids, function(model_
-      id) { model = h2o.getModel(model_id) })
-11 for (i in 1:length(grid_models)) {
-12 print(sprintf("regularization: %-50s auc: %f",
-          grid_models[[i]]@model$model_summary$
-          regularization, h2o.auc(grid_models[[i]])))
-13 }
+lambda_opts = list(list(1), list(.5), list(.1), list (.01), list(.001), list(.0001), list(.00001), list (0))
+hyper_parameters = list(lambda = lambda_opts)
+grid <- h2o.grid("glm", hyper_params = hyper_parameters,
+  y = "CAPSULE", 
+  x = c("AGE", "RACE", "PSA", "GLEASON"), 
+  training_frame = h2o_df, 
+  family = "binomial")
+grid_models <- lapply(grid@model_ids, 
+  function(model_id) {model = h2o.getModel(model_id)})
+for(i in 1:length(grid_models)) {
+  print(sprintf("regularization: %-50s auc: %f",
+        grid_models[[i]]@model$model_summary$regularization, 
+        h2o.auc(grid_models[[i]])))
+}
 
 Example in Python
 
-1 import h2o
-2 from h2o.estimators.glm import
-      H2OGeneralizedLinearEstimator
-3 from h2o.grid.grid_search import H2OGridSearch
-4 h2o.init()
-5 h2o_df = h2o.import_file("http://h2o-public-test-data.
-      s3.amazonaws.com/smalldata/prostate/prostate.csv")
-6 h2o_df[’CAPSULE’] = h2o_df[’CAPSULE’].asfactor()
-7 lambda_opts = [1, 0.5, 0.1, 0.01, 0.001, 0.0001,
-0.00001, 0]
-8 hyper_parameters = {"lambda":lambda_opts}
-9
-10
-11 grid = H2OGridSearch(H2OGeneralizedLinearEstimator(
-      family="binomial"), hyper_params=hyper_parameters)
-12 grid.train(y = "CAPSULE", x = ["AGE", "RACE", "PSA", "
-      GLEASON"], training_frame = h2o_df)
-13 for m in grid:
-14 print "Model ID:", m.model_id, " auc:", m.auc()
-15 print m.summary()
-16 print "\n\n"
+import h2o
+from h2o.estimators.glm import H2OGeneralizedLinearEstimator
+from h2o.grid.grid_search import H2OGridSearch
+h2o.init()
+h2o_df = h2o.import_file("http://h2o-public-test-data.s3.amazonaws.com/smalldata/prostate/prostate.csv")
+h2o_df[’CAPSULE’] = h2o_df[’CAPSULE’].asfactor()
+lambda_opts = [1, 0.5, 0.1, 0.01, 0.001, 0.0001, 0.00001, 0]
+hyper_parameters = {"lambda":lambda_opts}
+
+grid = H2OGridSearch(
+  H2OGeneralizedLinearEstimator(family = "binomial"),
+  hyper_params = hyper_parameters)
+grid.train(
+  y = "CAPSULE", 
+  x = ["AGE", "RACE", "PSA", "GLEASON"], 
+  training_frame = h2o_df)
+for m in grid:
+  print "Model ID:", m.model_id, " auc:", m.auc()
+  print m.summary()
+  print "\n\n"
 
 5.7.7 Offsets
 
 offset column is an optional column name or index referring to a column in the training frame. This column specifies a prior known component to be included in the linear predictor during training. Offsets are per-row “bias values” that are used during model training.
+
 For Gaussian distributions, they can be seen as simple corrections to the response (y) column. Instead of learning to predict the response (y-row), the model learns to predict the (row) offset of the response column.
+
 For other distributions, the offset corrections are applied in the linearized space before applying the inverse link function to get the actual response values.
 
 5.7.8 Row Weights
 
-weights column is an optional column name or index referring to a column in the training frame. This column specifies on a per-row basis the weight of that row. If no weight column is specified, a default value of 1 is used for each row. Weights are per-row observation weights. This is typically the number of times a row is repeated, but non-integer values are supported as well. During training, rows with higher weights matter more, due to the larger loss function pre-factor.
+weights_column is an optional column name or index referring to a column in the training frame. This column specifies on a per-row basis the weight of that row. If no weight column is specified, a default value of 1 is used for each row. Weights are per-row observation weights. This is typically the number of times a row is repeated, but non-integer values are supported as well. During training, rows with higher weights matter more, due to the larger loss function pre-factor.
 
 5.7.9 Coefficient Constraints
 
 Coefficient constraints allow you to set special conditions over the model coefficients. Currently supported constraints are upper and lower bounds and the proximal operator interface, as described in Proximal Algorithms by Boyd et. al.
-The constraints are specified as a frame with following vecs (matched by name; all vecs can be sparse):
-􏰙 names: (mandatory) coefficient names
-􏰙 lower bounds: (optional) coefficient lower bounds , must be less than
-or equal to upper bounds
-􏰙 upper bounds: (optional) coefficient upper bounds , must be greater
-than or equal to lower bounds
-􏰙 beta given: (optional) specifies the given solution in proximal operator interface
-Building GLM Models in H2O | 37
 
-38 | GLM Model Output
-􏰙 rho (mandatory if beta given is specified, otherwise ignored): specifies per-column l2 penalties on the distance from the given solution
+The constraints are specified as a frame with following vecs (matched by name; all vecs can be sparse):
+
+- names: (mandatory) coefficient names
+
+- lower_bounds: (optional) coefficient lower bounds , must be less than or equal to upper bounds
+
+- upper_bounds: (optional) coefficient upper bounds , must be greater than or equal to lower bounds
+
+- beta_given: (optional) specifies the given solution in proximal operator interface
+
+- rho (mandatory if beta given is specified, otherwise ignored): specifies per-column l2 penalties on the distance from the given solution
 
 5.7.10 Proximal Operators
 
