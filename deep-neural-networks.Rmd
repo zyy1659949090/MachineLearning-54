@@ -1,8 +1,14 @@
+---
+title: "deep-neural-networks"
+author: "Robert A. Stevens"
+date: "August 15, 2016"
+output: html_document
+---
+
 # Deep Neural Networks
 
-* * *
-![Alt text](./images/jmsl-7.png "Neural Network")
-* * *
+![Figure 1](./jmsl-7.png)
+
 Image Source: https://machprinciple.wordpress.com/2013/11/09/neural-network-controlled-spacecraft-control-logic-exists/
 
 ## Introduction
@@ -27,15 +33,17 @@ An interesting fact about neural networks is that the first artificial neural ne
 
 A [multilayer perceptron](https://en.wikipedia.org/wiki/Multilayer_perceptron) (MLP) is a [feed-forward](https://en.wikipedia.org/wiki/Feedforward_neural_network) artificial neural network model that maps sets of input data onto a set of appropriate outputs. This is also called a fully-connected fFeed-forward ANN.  An MLP consists of multiple layers of nodes in a directed graph, with each layer fully connected to the next one. Except for the input nodes, each node is a neuron (or processing element) with a nonlinear activation function. MLP utilizes a supervised learning technique called backpropagation for training the network. MLP is a modification of the standard linear perceptron and can distinguish data that are not linearly separable.
 
-![Alt text](./images/mlp_network.png "Multilayer Perceptron (MLP)") Image Souce: neuralnetworksanddeeplearning.com
+![Figure 2](./mlp_network.png) 
+
+Image Souce: neuralnetworksanddeeplearning.com
 
 ### Recurrent
 
 A [recurrent neural network](https://en.wikipedia.org/wiki/Recurrent_neural_network) (RNN) is a class of artificial neural network where connections between units form a directed cycle. This creates an internal state of the network which allows it to exhibit dynamic temporal behavior. Unlike feed-forward neural networks, RNNs can use their internal memory to process arbitrary sequences of inputs. This makes them applicable to tasks such as unsegmented connected handwriting recognition or speech recognition.
 
-There are a number of Tw  itter bots that are created using LSTMs.  Some fun examples are [@DeepDrumpf](https://twitter.com/DeepDrumpf) and [@DeepLearnBern](https://twitter.com/DeepLearnBern) by [Brad Hayes](https://twitter.com/hayesbh) from MIT.
+There are a number of Twitter bots that are created using LSTMs.  Some fun examples are [@DeepDrumpf](https://twitter.com/DeepDrumpf) and [@DeepLearnBern](https://twitter.com/DeepLearnBern) by [Brad Hayes](https://twitter.com/hayesbh) from MIT.
 
-![Alt text](./images/rnn.jpg "Recurrent Neural Network (RNN)")
+![Figure 3](./images/rnn.jpg")
 
 ### Convolutional
 
@@ -43,15 +51,13 @@ A [convolutional neural network](https://en.wikipedia.org/wiki/Convolutional_neu
 
 Some creative application of CNNs are [DeepDream](https://github.com/ledell/grayarea-deepdream) images and [Neural Style Transfer](https://github.com/fzliu/style-transfer).
 
-![Alt text](./images/cnn.png "Convolutional Neural Network (CNN)")
+![Figure 4](./cnn.png)
 
 ## Visualizing Neural Nets
 
-![Alt text](./images/tensorflow_playground.png "Tensorflow Playground")
+![Figure 5](./tensorflow_playground.png)
 
 [http://playground.tensorflow.org](http://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=xor&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2&seed=0.21753&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=true&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false) is a website where you can tweak and visualize neural networks.
-
-***
 
 # Deep Learning Software in R
 
@@ -87,99 +93,102 @@ MXNet Example code below modified from: http://www.r-bloggers.com/deep-learning-
 
 The example below contains the canonical 60k/10k MNIST train/test files as opposed to the Kaggle version in the blog post.
 
-```{r   n=4}
+```{r}
 # Install pre-build CPU-based mxnet package (no GPU support)
 #install.packages("drat")
 #drat:::addRepo("dmlc")
 #install.packages("mxnet")
 ```
 
-
-
-```{r   n=6}
+```{r}
 library(mxnet)
 ```
 
-```{r   n=7}
+```{r}
 # Data load & preprocessing
 
 train <- read.csv("data/mnist_train.csv", header = TRUE)
-test <- read.csv("data/mnist_test.csv", header = TRUE)
+test  <- read.csv("data/mnist_test.csv" , header = TRUE)
 train <- data.matrix(train)
-test <- data.matrix(test)
+test  <- data.matrix(test)
 
 train <- data.matrix(train)
-test <- data.matrix(test)
+test  <- data.matrix(test)
 
-train_x <- train[,-785]
-train_y <- train[,785]
-test_x <- test[,-785]
-test_y <- test[,785]
+train_x <- train[ , -785]
+train_y <- train[ ,  785]
+test_x  <- test [ , -785]
+test_y  <- test [ ,  785]
 
 # lineraly transform it into [0,1]
 # transpose input matrix to npixel x nexamples (format expected by mxnet)
 train_x <- t(train_x/255)
 test_x <- t(test_x/255)
 
-#see that the number of each digit is fairly even
+# see that the number of each digit is fairly even
 table(train_y)
 ```
 
-```{r   n=8}
+```{r}
 # Configure the structure of the network
 
-#in mxnet use its own data type symbol to configure the network
+# in mxnet use its own data type symbol to configure the network
 data <- mx.symbol.Variable("data")
 
-#set the first hidden layer where data is the input, name and number of hidden neurons
+# set the first hidden layer where data is the input, name and number of
+# hidden neurons
 fc1 <- mx.symbol.FullyConnected(data, name = "fc1", num_hidden = 128)
 
-#set the activation which takes the output from the first hidden layer fc1
+# set the activation which takes the output from the first hidden layer fc1
 act1 <- mx.symbol.Activation(fc1, name = "relu1", act_type = "relu")
 
-#second hidden layer takes the result from act1 as the input, name and number of hidden neurons
+# second hidden layer takes the result from act1 as the input, name and
+# number of hidden neurons
 fc2 <- mx.symbol.FullyConnected(act1, name = "fc2", num_hidden = 64)
 
-#second activation which takes the output from the second hidden layer fc2
+# second activation which takes the output from the second hidden layer fc2
 act2 <- mx.symbol.Activation(fc2, name = "relu2", act_type = "relu")
 
-#this is the output layer where number of nuerons is set to 10 because there's only 10 digits
+# this is the output layer where number of nuerons is set to 10 because
+# there's only 10 digits
 fc3 <- mx.symbol.FullyConnected(act2, name = "fc3", num_hidden = 10)
 
-#finally set the activation to softmax to get a probabilistic prediction
+# finally set the activation to softmax to get a probabilistic prediction
 softmax <- mx.symbol.SoftmaxOutput(fc3, name = "sm")
 ```
 
-```{r   n=9}
-#set which device to use before we start the computation
-#assign cpu to mxnet
+```{r}
+# set which device to use before we start the computation
+# assign cpu to mxnet
 devices <- mx.cpu()
 
 #set seed to control the random process in mxnet
 mx.set.seed(0)
 
 #train the nueral network
-model <- mx.model.FeedForward.create(softmax, 
-                                     X = train_x, 
-                                     y = train_y,
-                                     ctx = devices, 
-                                     num.round = 10, 
-                                     array.batch.size = 100,
-                                     learning.rate = 0.07, 
-                                     momentum = 0.9,
-                                     eval.metric = mx.metric.accuracy,
-                                     initializer = mx.init.uniform(0.07),
-                                     epoch.end.callback = mx.callback.log.train.metric(100))
+model <- mx.model.FeedForward.create(
+  softmax, 
+  X = train_x, 
+  y = train_y,
+  ctx = devices, 
+  num.round = 10, 
+  array.batch.size = 100,
+  learning.rate = 0.07, 
+  momentum = 0.9,
+  eval.metric = mx.metric.accuracy,
+  initializer = mx.init.uniform(0.07),
+  epoch.end.callback = mx.callback.log.train.metric(100))
 ```
 
-```{r   n=10}
-#make a prediction
+```{r}
+# make a prediction
 preds <- predict(model, test_x)
 dim(preds)
 # [1]    10 10000
 
-#matrix with 10000 rows and 10 columns containing the classification probabilities from the output layer
-#use max.col to extract the maximum label for each row
+# matrix with 10000 rows and 10 columns containing the classification
+# probabilities from the output layer
+# use max.col to extract the maximum label for each row
 pred_label <- max.col(t(preds)) - 1
 table(pred_label)
 
@@ -224,29 +233,41 @@ Features:
 
 - GUI for training & model eval/viz (H2O Flow).
 
-```{r   n=11}
+```{r}
 library(h2o)
 h2o.init(nthreads = -1)  # This means nthreads = num available cores
 ```
 
-
-
-```{r   n=22}
+```{r}
 # Data load & preprocessing
 
 train <- h2o.importFile("data/mnist_train.csv")
-test <- h2o.importFile("data/mnist_test.csv")
+test  <- h2o.importFile("data/mnist_test.csv")
 
 # Specify the response and predictor columns
 y <- "C785"
 x <- setdiff(names(train), y)
 
 # We encode the response column as categorical for multinomial classification
-train[,y] <- as.factor(train[,y])
-test[,y] <- as.factor(test[,y])
+train[ , y] <- as.factor(train[ , y])
+test [ , y] <- as.factor(test [ , y])
 ```
 
-```{r   n=21}
+```{r}
+# Train an H2O Deep Learning model
+
+model <- h2o.deeplearning(
+  x = x, 
+  y = y, 
+  training_frame = train,
+  sparse = TRUE,  # speed-up on sparse data (like MNIST)
+  distribution = "multinomial",
+  activation = "Rectifier", 
+  hidden = c(128,64),
+  epochs = 10)
+```
+
+```{r}
 # Get model performance on a test set
 perf <- h2o.performance(model, test)
 
@@ -258,4 +279,4 @@ print(acc)
 
 # References
 
-[1] [http://cs.stanford.edu/people/eroberts/courses/soco/projects/neural-networks/History/history1.html](http://cs.stanford.edu/people/eroberts/courses/soco/projects/neural-networks/History/history1.html)
+[1] http://cs.stanford.edu/people/eroberts/courses/soco/projects/neural-networks/History/history1.html
