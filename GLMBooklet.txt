@@ -45,7 +45,7 @@ Contents
 5.3.1 Categorical Variables 
 5.4 Family and Link 
 5.5 Regularization Parameters
-5.5.1 Alph aand Lambda 
+5.5.1 Alpha and Lambda 
 5.5.2 Lambda Search 
 5.6 Solver Selection 
 5.6.1 Solver Details 
@@ -97,7 +97,9 @@ This document introduces the reader to generalized linear modeling with H2O. Exa
 
 - basic GLM concepts
 
-- building GLM models in H2O 􏰙 interpreting model output
+- building GLM models in H2O
+
+- interpreting model output
 
 - making predictions
 
@@ -107,9 +109,9 @@ H2O is fast, scalable, open-source machine learning and deep learning for smarte
 
 Using in-memory compression, H2O handles billions of data rows in-memory, even with a small cluster. To make it easier for non-engineers to create complete analytic workflows, H2O’s platform includes interfaces for R, Python, Scala, Java, JSON, and CoffeeScript/JavaScript, as well as a built-in web interface, Flow. H2O is designed to run in standalone mode, on Hadoop, or within a Spark Cluster, and typically deploys within minutes.
 
-H2O includes many common machine learning algorithms, such as generalized linear modeling (linear regression, logistic regression, etc.), Na ̈ıve Bayes, principal components analysis, k-means clustering, and others. H2O also implements best-in-class algorithms at scale, such as distributed random forest, gradient boosting, and deep learning. Customers can build thousands of models and compare the results to get the best predictions.
+H2O includes many common machine learning algorithms, such as generalized linear modeling (linear regression, logistic regression, etc.), Naive Bayes, principal components analysis, k-means clustering, and others. H2O also implements best-in-class algorithms at scale, such as distributed random forest, gradient boosting, and deep learning. Customers can build thousands of models and compare the results to get the best predictions.
 
-H2O is nurturing a grassroots movement of physicists, mathematicians, and computer scientists to herald the new wave of discovery with data science by collaborating closely with academic researchers and industrial data scientists. Stanford university giants Stephen Boyd, Trevor Hastie, Rob Tibshirani advise the H2O team on building scalable machine learning algorithms. With hundreds of meetups over the past three years, H2O has become a word-of-mouth phenomenon, growing amongst the data community by a hundred-fold, and is now used by 30,000+ users and is deployed using R, Python, Hadoop, and Spark in 2000+ corporations.
+H2O is nurturing a grassroots movement of physicists, mathematicians, and computer scientists to herald the new wave of discovery with data science by collaborating closely with academic researchers and industrial data scientists. Stanford university giants Stephen Boyd, Trevor Hastie, Rob Tibshirani advise the H2O team on building scalable machine learning algorithms. With hundreds of meet-ups over the past three years, H2O has become a word-of-mouth phenomenon, growing amongst the data community by a hundred-fold, and is now used by 30,000+ users and is deployed using R, Python, Hadoop, and Spark in 2000+ corporations.
 
 Try it out
 
@@ -121,9 +123,9 @@ Try it out
 
 Join the community
 
-- To learn about our meetups, training sessions, hackathons, and product updates, visit http://h2o.ai.
+- To learn about our meet-ups, training sessions, hackathons, and product updates, visit http://h2o.ai.
 
-- Visit the open source community forum at https://groups.google. com/d/forum/h2ostream.
+- Visit the open source community forum at https://groups.google.com/d/forum/h2ostream.
 
 - Join the chat at https://gitter.im/h2oai/h2o-3. 
 
@@ -212,11 +214,11 @@ h2o.init(ip = "123.45.67.89", port = 54321)
 
 Python and R code for the examples in this document can be found here:
 
-https://github.com/h2oai/h2o-3/tree/master/h2o-docs/src/ booklets/v2_2015/source/GLM_Vignette_code_examples
+https://github.com/h2oai/h2o-3/tree/master/h2o-docs/src/booklets/v2_2015/source/GLM_Vignette_code_examples
 
 The document source itself can be found here:
 
-https://github.com/h2oai/h2o-3/blob/master/h2o-docs/src/ booklets/v2_2015/source/GLM_Vignette.tex
+https://github.com/h2oai/h2o-3/blob/master/h2o-docs/src/booklets/v2_2015/source/GLM_Vignette.tex
 
 3.5 Citation
 
@@ -260,7 +262,7 @@ This generalization makes GLM suitable for a wider range of problems. An example
 
 4.2 GLM in H2O
 
-H2O’s GLM algorithm fits generalized linear models to the data by maximizing the log-likelihood. The elastic net penalty can be used for parameter regulariza- tion. The model fitting computation is distributed, extremely fast, and scales extremely well for models with a limited number of predictors with non-zero coefficients (∼low thousands).
+H2O’s GLM algorithm fits generalized linear models to the data by maximizing the log-likelihood. The elastic net penalty can be used for parameter regularization. The model fitting computation is distributed, extremely fast, and scales extremely well for models with a limited number of predictors with non-zero coefficients (∼low thousands).
 
 H2O’s GLM fits the model by solving the following likelihood optimization with parameter regularization:
 
@@ -280,11 +282,11 @@ H2O’s GLM solves the following optimization over N observations:
 
 max(sum(log(f(yi; β, β0), i = 1:N) − λ(α||β||1 + (1/2)(1 − α)(||β||2)^2), β, β0)
 
-Similar to the methods discussed in Regularization Paths for Generalized Linear Models via Coordinate Descent by Friedman et. al, H2O can compute the full regularization path, starting from the null-model (evaluated at the smallest penalty λmax for which all coefficients are set to zero) down to a minimally- penalized model.
+Similar to the methods discussed in Regularization Paths for Generalized Linear Models via Coordinate Descent by Friedman et. al, H2O can compute the full regularization path, starting from the null-model (evaluated at the smallest penalty λmax for which all coefficients are set to zero) down to a minimally-penalized model.
 
 To improve the efficiency of this search, H2O employs the strong rules as described in Strong Rules for Discarding Predictors in Lasso-type Problems by Bien et. al to filter out inactive columns (whose coefficients will remain equal to zero given the imposed penalty). Computing the full regularization path is useful for convergence because it uses warm starts for consecutive λ values, and gives an insight regarding the order in which the coefficients start entering the model.
 
-Moreover, cross-validation can be used after fitting models for the full regu- larization path. H2O returns the optimal amount of regularization λ for the given problem and data by computing the errors on the validation dataset of the fitted models created using the training data.
+Moreover, cross-validation can be used after fitting models for the full regularization path. H2O returns the optimal amount of regularization λ for the given problem and data by computing the errors on the validation dataset of the fitted models created using the training data.
 
 4.3 Model Fitting
 
@@ -383,7 +385,7 @@ gaussian_fit.train(
 
 4.6.2 Logistic Regression (Binomial Family)
 
-Logistic regression is used for binary classification problems where the response is a categorical variable with two levels. It models the probability of an observation belonging to an output category given the data (for instance Pr(y = 1|x)). The canonical link for the binomial family is the logit function (also known as log odds). Its inverse is the logistic function, which takes any real number and projects it onto the [0, 1] range as desired to model the probability of belonging to a class. The corresponding s-curve (or sigmoid function) is shown below,
+Logistic regression is used for binary classification problems where the response is a categorical variable with two levels. It models the probability of an observation belonging to an output category given the data (for instance Pr(y = 1 | x)). The canonical link for the binomial family is the logit function (also known as log odds). Its inverse is the logistic function, which takes any real number and projects it onto the [0, 1] range as desired to model the probability of belonging to a class. The corresponding s-curve (or sigmoid function) is shown below,
 
 and the fitted model has the form:
 
@@ -429,7 +431,7 @@ The penalized negative log-likelihood is defined as:
 −log(sum(exp(t(x[i]*βk + βk0, k = 1:K)]
 +λ*[((1 − α)/2)*(||β||F)^2 + α*sum(||βj||1, j = 1:P)]
 
-where βc is vector of coefficients for class c and yi,k is kth element of the binary vector produced by expanding the response variable using one-hot encoding (i.e. y[i, k] == 1 iff the response at the ith observation is k. It is 0 otherwise.
+where βc is vector of coefficients for class c and y[i, k] is kth element of the binary vector produced by expanding the response variable using one-hot encoding (i.e. y[i, k] == 1 iff the response at the ith observation is k. It is 0 otherwise.
 
 Here is a simple example using the iris dataset:
 
@@ -497,8 +499,8 @@ Example in Python
 # MASS/insurance due to the license of the MASS R package.
 import h2o
 from h2o.estimators.glm import H2OGeneralizedLinearEstimator
-h2o.init()
 
+h2o.init()
 h2o_df = h2o.import_file("http://h2o-public-test-data.s3.amazonaws.com/smalldata/glm_test/Motor_insurance_sweden.txt", sep = ’\t’)
 poisson_fit = H2OGeneralizedLinearEstimator(family = "poisson")
 poisson_fit.train(y = "Claims", 
@@ -543,6 +545,7 @@ Example in Python
 
 import h2o
 from h2o.estimators.glm import H2OGeneralizedLinearEstimator
+
 h2o.init()
 h2o_df = h2o.import_file("http://h2o-public-test-data. s3.amazonaws.com/smalldata/prostate/prostate.csv")
 gamma_inverse = H2OGeneralizedLinearEstimator(
@@ -561,7 +564,7 @@ gamma_log.train(
 
 4.6.6 Tweedie Models
 
-Tweedie distributions are a family of distributions which include gamma, normal, Poisson and their combination. It is especially useful for modeling positive continuous variables with exact zeros. The variance of the Tweedie distribution is proportional to the p-th power of the mean var(yi) = φ*μ[i]^p.
+Tweedie distributions are a family of distributions which include gamma, normal, Poisson and their combination. It is especially useful for modeling positive continuous variables with exact zeros. The variance of the Tweedie distribution is proportional to the p-th power of the mean var(y[i]) = φ*μ[i]^p.
 
 The Tweedie distribution is parametrized by variance power p. It is defined for all p values except in the (0, 1) interval, and has the following distributions as special cases.
 
@@ -571,7 +574,7 @@ The Tweedie distribution is parametrized by variance power p. It is defined for 
 
 - p ∈ (1, 2): Compound Poisson, non-negative with mass at zero 
 
-- p=2: Gamma
+- p = 2: Gamma
 
 - p = 3: Inverse-Gaussian
 
@@ -600,6 +603,7 @@ Example in Python
 
 import h2o
 from h2o.estimators.glm import H2OGeneralizedLinearEstimator
+
 h2o.init()
 h2o_df = h2o.import_file("http://h2o-public-test-data.s3.amazonaws.com/smalldata/glm_test/auto.csv")
 tweedie_fit = H2OGeneralizedLinearEstimator(family = "tweedie")
@@ -625,7 +629,7 @@ H2O’s GLM implementation presents a high-performance distributed algorithm tha
 
 5.1 Classification and Regression
 
-GLM can produce two categories of models: classification (binary classifica- tion only) and regression. Logistic regression is the GLM to perform binary classification.
+GLM can produce two categories of models: classification (binary classification only) and regression. Logistic regression is the GLM to perform binary classification.
 
 The data type of the response column determines the model category. If the response is a categorical variable (also called a factor or an enum), then a classification model is created. If the response column data type is numeric (either integer or real), then a regression model is created.
 
@@ -698,11 +702,11 @@ Lambda search can be enabled by setting lambda search and can be configured usin
 
 - alpha: Regularization distribution between l1 and l2.
 
-- validation frame andor n folds: Used to select the best lambda based on the cross-validation performance or the validation or training data. If available, cross-validation performance takes precedence. If no validation data is available, the best lambda is selected based on training data performance and is therefore guaranteed to always be the minimal lambda computed, since GLM can not overfit on a training dataset.
+- validation_frame and/or n_folds: Used to select the best lambda based on the cross-validation performance or the validation or training data. If available, cross-validation performance takes precedence. If no validation data is available, the best lambda is selected based on training data performance and is therefore guaranteed to always be the minimal lambda computed, since GLM can not overfit on a training dataset.
 
 Note: If running lambda search with a validation dataset and cross- validation disabled, the chosen lambda value corresponds to the lambda with the lowest validation error. The validation dataset is used to select the model and the model performance should be evaluated on another independent test dataset.
 
-- lambda min ratio and nlambdas: The sequence of λs is automati- cally generated as an exponentially decreasing sequence. It ranges from λmax, the smallest λ so that the solution is a model with all 0s, to λmin = lambda min ratio * λmax.
+- lambda_min_ratio and nlambdas: The sequence of λs is automatically generated as an exponentially decreasing sequence. It ranges from λmax, the smallest λ so that the solution is a model with all 0s, to λmin = lambda_min_ratio*λmax.
 
 H2O computes λ-models sequentially and in decreasing order, warm-starting the model for λ[k] with the solution for λ[k − 1]. By warm-starting (using the previous solution as the initial prediction) the models, we get better performance: typically models for subsequent λs are close to each other, so only a few iterations per λ are needed (typically two or three). This also achieves greater numerical stability, since models with a higher penalty are easier to compute. This method starts with an easy problem and then continues to make small adjustments.
 
@@ -763,6 +767,7 @@ Models built at the end of the lambda search have lower lambda values, incorpora
 Example in R
 
 library(h2o)
+
 h2o.init()
 h2o_df = h2o.importFile("http://s3.amazonaws.com/h2o-public-test-data/smalldata/airlines/allyears2k_headers.zip")
 
@@ -783,7 +788,7 @@ Example in Python
 import h2o
 from h2o.estimators.glm import H2OGeneralizedLinearEstimator
 h2o.init()
-h2o_df = h2o.import_file("http://s3.amazonaws.com/h2o- public-test-data/smalldata/airlines/ allyears2k_headers.zip")
+h2o_df = h2o.import_file("http://s3.amazonaws.com/h2o-public-test-data/smalldata/airlines/allyears2k_headers.zip")
 
 # stops the model when we reach 10 active predictors
 # Objective epsilon and gradient epsilon stopping
@@ -804,7 +809,7 @@ H2O’s GLM has several advanced features to help build better models.
 
 5.7.1 Standardizing Data
 
-The standardize parameter, which is enabled by default, standardizes numeric columns to have zero mean and unit variance. This parameter must be enabled (using standardize=TRUE) to produce standardized coefficient magnitudes in the model output.
+The standardize parameter, which is enabled by default, standardizes numeric columns to have zero mean and unit variance. This parameter must be enabled (using standardize = TRUE) to produce standardized coefficient magnitudes in the model output.
 
 We recommend enabling standardization when using regularization (i.e. lambda is chosen by H2O or greater than 0). Only advanced users should disable standardization.
 
@@ -812,7 +817,7 @@ We recommend enabling standardization when using regularization (i.e. lambda is 
 
 Collinear columns can cause problems during model fitting. The preferred way to deal with collinearity is to add some regularization (either L1, L2 or Elastic Net). This is the default H2O behavior. However, if you want a non-regularized solution, you can choose to automatically remove collinear columns by setting the remove_collinear_columns option.
 
-This option can only be used with the IRLSM solver and no regularization. If selected, H2O will automatically remove columns if it detects collinearity. Which columns are removed depends on the order of the columns in the vector of coefficients (Intercept first, then categorical variables ordered by cadrinality from largest to smallest, and then numbers).
+This option can only be used with the IRLSM solver and no regularization. If selected, H2O will automatically remove columns if it detects collinearity. Which columns are removed depends on the order of the columns in the vector of coefficients (Intercept first, then categorical variables ordered by cardinality from largest to smallest, and then numbers).
 
 Example in R
 
@@ -833,7 +838,7 @@ h2o.fit
 
 5.7.3 P-Values
 
-Z-score, standard error and p-values are classical statistical measures of model quality. p-values are essentially hypothesis tests on the values of each coefficient. A high p-value means that a coefficient is unreliable (insiginificant) while a low p-value suggest that the coefficient is statistically significant.
+Z-score, standard error and p-values are classical statistical measures of model quality. p-values are essentially hypothesis tests on the values of each coefficient. A high p-value means that a coefficient is unreliable (insignificant) while a low p-value suggest that the coefficient is statistically significant.
 
 You can request p-values by setting the compute_p_values option. It can only be used with the IRLSM solver and no regularization. It is recommended that you also set the remove_collinear_columns option. Otherwise, H2O will return an error if it detects collinearity in the dataset and p-values are requested.
 
@@ -882,6 +887,7 @@ Example in Python
 
 import h2o
 from h2o.estimators.glm import H2OGeneralizedLinearEstimator
+
 h2o.init()
 h2o_df = h2o.import_file("http://h2o-public-test-data.s3.amazonaws.com/smalldata/prostate/prostate.csv")
 h2o_df[’CAPSULE’] = h2o_df[’CAPSULE’].asfactor()
@@ -907,6 +913,7 @@ Use caution when including α = 0 or α = 1 in the grid search. α = 0 will prod
 Example in R
 
 library(h2o)
+
 h2o.init()
 path = system.file("extdata", "prostate.csv", package = "h2o")
 h2o_df = h2o.importFile(path)
@@ -955,6 +962,7 @@ While automatic lambda search is the preferred method, a grid search over lambda
 Example in R
 
 library(h2o)
+
 h2o.init()
 path = system.file("extdata", "prostate.csv", package = "h2o")
 h2o_df = h2o.importFile(path)
@@ -979,6 +987,7 @@ Example in Python
 import h2o
 from h2o.estimators.glm import H2OGeneralizedLinearEstimator
 from h2o.grid.grid_search import H2OGridSearch
+
 h2o.init()
 h2o_df = h2o.import_file("http://h2o-public-test-data.s3.amazonaws.com/smalldata/prostate/prostate.csv")
 h2o_df[’CAPSULE’] = h2o_df[’CAPSULE’].asfactor()
@@ -1035,321 +1044,149 @@ The following sections represent the output produced by logistic regression (i.e
 
 Example in R
 
-1 2 3
-4 5 6 7 8 9
-10
-1 2
-3 4
 library(h2o)
+
 h2o.init()
-path = system.file("extdata", "prostate.csv", package
-   = "h2o")
+path = system.file("extdata", "prostate.csv", package = "h2o")
 h2o_df = h2o.importFile(path)
 h2o_df$CAPSULE = as.factor(h2o_df$CAPSULE)
 rand_vec <- h2o.runif(h2o_df, seed = 1234)
 train <- h2o_df[rand_vec <= 0.8,]
 valid <- h2o_df[rand_vec > 0.8,]
-binomial.fit = h2o.glm(y = "CAPSULE", x = c("AGE", "
-   RACE", "PSA", "GLEASON"), training_frame = train,
-   validation_frame = valid, family = "binomial")
+binomial.fit = h2o.glm(
+  y = "CAPSULE", 
+  x = c("AGE", "RACE", "PSA", "GLEASON"), 
+  training_frame = train,
+  validation_frame = valid, 
+  family = "binomial")
 print(binomial.fit)
 
 Example in Python
 
 import h2o
-from h2o.estimators.glm import
-   H2OGeneralizedLinearEstimator
+from h2o.estimators.glm import H2OGeneralizedLinearEstimator
+
 h2o.init()
 h2o_df = h2o.import_file("http://h2o-public-test-data.
 s3.amazonaws.com/smalldata/prostate/prostate.csv")
-GLM Model Output | 39
 h2o_df[’CAPSULE’] = h2o_df[’CAPSULE’].asfactor()
 r = h2o_df[0].runif(seed=1234)
 train = h2o_df[r <= 0.8]
 valid = h2o_df[r > 0.8]
-binomial_fit = H2OGeneralizedLinearEstimator(family =
-   "binomial")
-binomial_fit.train(y = "CAPSULE", x = ["AGE", "RACE",
-   "PSA", "GLEASON"], training_frame = train,
-   validation_frame=valid)
+binomial_fit = H2OGeneralizedLinearEstimator(family = "binomial")
+binomial_fit.train(
+  y = "CAPSULE", 
+  x = ["AGE", "RACE", "PSA", "GLEASON"], 
+  training_frame = train,
+  validation_frame=valid)
 print binomial_fit
-5 6 7 8 9
-10
-11
-40 | GLM Model Output
-1 Model Details:
-2 ==============
-3
-4 H2OBinomialModel: glm
-5 Model ID: GLM_model_R_1439511782434_25
-6 GLM Model:
-7 family link
-regularization number_of_predictors_total number_of_active_predictors number_of_iterations training_frame
-8 1 binomial logit Elastic 4.674E-4 )
-subset_39 10 Coefficients:
-Net (alpha = 0.5, lambda =
-              4
-55
-standardized_coefficients
-                -0.414440
-                -0.143745
-                -0.093423
-                 0.604644
-                 1.298815
-9 11
-    names coefficients
-Intercept    -6.467393
-      AGE    -0.021983
-     RACE    -0.295770
-      PSA     0.028551
-  GLEASON     1.156808
-12 1
-13 2
-14 3
-15 4
-16 5
-17
-18 H2OBinomialMetrics: glm
-19 ** Reported on training data. **
-20
-21 MSE: 0.1735008
-22 Rˆ2: 0.2842015
-23 LogLoss: 0.5151585
-24 AUC: 0.806806
-25 Gini: 0.6136121
-26 Null Deviance: 403.9953
-27 Residual Deviance: 307.0345
-28 AIC: 317.0345
-29
-30 Confusion Matrix for F1-optimal threshold:
-                     Error     Rate
-                  0.285714  =50/175
-                  0.195122  =24/123
-                  0.248322  =74/298
-31
-32 0
-33 1
-34 Totals 149 149
-35
-01 125 50 24 99
-
-36 Maximum Metrics: 37
-38 1
-39 2
-                         metric threshold
-                         max f1  0.301518
-                         max f2  0.203412
-                   max f0point5  0.549771
-                   max accuracy  0.301518
-                  max precision  0.997990
-               max absolute_MCC  0.301518
-     max min_per_class_accuracy  0.415346
-46 H2OBinomialMetrics: glm
-47 ** Reported on validation data. **
-48
-49 MSE: 0.1981162
-50 Rˆ2: 0.1460683
-51 LogLoss: 0.5831277
-52 AUC: 0.7339744
-53 Gini: 0.4679487
-54 Null Deviance: 108.4545
-55 Residual Deviance: 95.63294
-56 AIC: 105.6329
-57
-58 Confusion
-59 0 1 Error Rate
-60 0 35 17 0.326923 =17/52
-   value idx
-0.727941 147
-0.809328 235
-0.712831  91
-0.751678 147
-1.000000   0
-0.511199 147
-0.739837 134
-GLM Model Output | 41
-40 3
-41 4
-42 5
-43 6
-44 7
-45
-Matrix for F1-optimal threshold:
-        22 0.266667   =8/30
-        39 0.304878  =25/82
-                    metric threshold
-                    max f1  0.469237
-                    max f2  0.203366
-              max f0point5  0.527267
-              max accuracy  0.593421
-             max precision  0.949357
-          max absolute_MCC  0.469237
-max min_per_class_accuracy  0.482906
-61 18
-62 Totals 43
-63
-64 Maximum Metrics: 65
-   value idx
-0.637681  38
-0.788043  63
-0.616438  28
-0.719512  18
-1.000000   0
-0.391977  38
-0.692308  36
-66 1
-67 2
-68 3
-69 4
-70 5
-71 6
-72 7
-
-42 | GLM Model Output
 
 6.1 Coefficients and Normalized Coefficients
 
 Coefficients are the predictor weights (i.e. the actual model used for prediction). Coefficients should be used to make predictions for new data points:
-1   binomial.fit@model$coefficients
-1   binomial_fit.coef()
-1 2
-Intercept         AGE        RACE         PSA
-   GLEASON
--6.46739299 -0.02198278 -0.29576986  0.02855057
-   1.15680761
+
+binomial.fit@model$coefficients
+binomial_fit.coef()
+
 If the standardize option is enabled, H2O returns another set of coefficients: the standardized coefficients. These are the predictor weights of the standardized data and are included only for informational purposes (e.g. to compare relative variable importance).
+
 In this case, the “normal” coefficients are obtained from the standardized coefficients by reversing the data standardization process (de-scaled, with the intercept adjusted by an added offset) so that they can be applied to data in its original form (i.e. no standardization prior to scoring). Note: These are not the same as coefficients of a model built on non-standardized data.
+
 Standardized coefficients are useful for comparing the relative contribution of different predictors to the model:
-1   binomial.fit@model$coefficients_table
-1   binomial_fit.pprint_coef()
-1 2 3 4 5 6 7
-Coefficients:
-      names coefficients standardized_coefficients
-1 Intercept    -6.467393                 -0.414440
-2       AGE
-3      RACE
-4       PSA
-5   GLEASON
--0.021983
--0.295770
- 0.028551
- 1.156808
--0.143745
--0.093423
- 0.604644
- 1.298815
+
+binomial.fit@model$coefficients_table
+binomial_fit.pprint_coef()
+
 This view provides a sorted list of standardized coefficients in descending order for easy comparison:
-GLM Model Output | 43
-1   binomial.fit@model$standardized_coefficient_magnitudes
-1
-1 2 3 4 5 6
-sorted(binomial_fit.coef_norm().items(), key=lambda x:
-   x[1], reverse=True)
-Standardized Coefficient Magnitudes:
-          names coefficients sign
-GLEASON GLEASON     1.298815  POS
-PSA         PSA
-AGE         AGE
-RACE       RACE
-0.604644  POS
-0.143745  NEG
-0.093423  NEG
+
+binomial.fit@model$standardized_coefficient_magnitudes
+sorted(binomial_fit.coef_norm().items(), 
+       key = lambda x:x[1], 
+       reverse = True)
+
 6.2 Model Statistics
+
 Various model statistics are available:
-MSE is the mean squared error: MSE = 1 􏰇N
-(actuali − predictioni)2 LogLoss is the log loss. LogLoss = 1 􏰇N 􏰇C yilog(pi,j)
-N i=1 σy2
-Rˆ2 is the R squared: R2 = 1 − MSE
-AUC is available only for binomial models and is defined the area under ROC
-curve.
+
+MSE is the mean squared error: 
+
+MSE = (1/N)*sum((actual[i] − prediction[i])^2, i - 1:N)
+
+Rˆ2 is the R squared: R2 = 1 − MSE/σ[y]^2
+
+LogLoss is the log loss. 
+
+LogLoss = (1/N)*sum(sum(y[i]*log(p[i, j]), j = 1:C), i = 1:N)
+
+AUC is available only for binomial models and is defined the area under ROC curve.
+
 Null deviance Deviance (defined by selected family) computed for the null model.
+
 Residual deviance Deviance of the built model
-AIC is based on log-likelihood, which is summed up similarly to deviance Retrieve these statistics using the following accessor functions:
+
+AIC is based on log-likelihood, which is summed up similarly to deviance 
+
+Retrieve these statistics using the following accessor functions:
 
 Example in R
 
-1 2 3
-4 5 6
-Nij
 h2o.num_iterations(binomial.fit)
 h2o.null_dof(binomial.fit, train = TRUE, valid = TRUE)
-h2o.residual_dof(binomial.fit, train = TRUE, valid =
-   TRUE)
+h2o.residual_dof(binomial.fit, train = TRUE, valid = TRUE)
 h2o.mse(binomial.fit, train = TRUE, valid = TRUE)
 h2o.r2(binomial.fit, train = TRUE, valid = TRUE)
-44 |
-GLM Model Output
 h2o.logloss(binomial.fit, train = TRUE, valid = TRUE)
 h2o.auc(binomial.fit, train = TRUE, valid = TRUE)
 h2o.giniCoef(binomial.fit, train = TRUE, valid = TRUE)
-h2o.null_deviance(binomial.fit, train = TRUE, valid =
-   TRUE)
-h2o.residual_deviance(binomial.fit, train = TRUE,
-   valid = TRUE)
+h2o.null_deviance(binomial.fit, train = TRUE, valid = TRUE)
+h2o.residual_deviance(binomial.fit, train = TRUE, valid = TRUE)
 h2o.aic(binomial.fit, train = TRUE, valid = TRUE)
-7 8 9
-10 11 12
-1 binomial_fit.summary()
-2 binomial_fit._model_json["output"]["model_summary"].
+
+Example in Python
+
+binomial_fit.summary()
+binomial_fit._model_json["output"]["model_summary"].
       __getitem__(’number_of_iterations’)
-3
-4 binomial_fit.null_degrees_of_freedom(train=True, valid
-=True)
-5 binomial_fit.residual_degrees_of_freedom(train=True,
-valid=True)
-6
-7 binomial_fit.mse(train=True, valid=True)
-8 binomial_fit.r2(train=True, valid=True)
-9 binomial_fit.logloss(train=True, valid=True)
-10 binomial_fit.auc(train=True, valid=True)
-11 binomial_fit.giniCoef(train=True, valid=True)
-12 binomial_fit.null_deviance(train=True, valid=True)
-13 binomial_fit.residual_deviance(train=True, valid=True)
-14 binomial_fit.aic(train=True, valid=True)
+
+binomial_fit.null_degrees_of_freedom(train = True, valid = True)
+binomial_fit.residual_degrees_of_freedom(train = True, valid = True)
+
+binomial_fit.mse(train = True, valid = True)
+binomial_fit.r2(train = True, valid = True)
+binomial_fit.logloss(train = True, valid = True)
+binomial_fit.auc(train = True, valid = True)
+binomial_fit.giniCoef(train = True, valid = True)
+binomial_fit.null_deviance(train = True, valid = True)
+binomial_fit.residual_deviance(train = True, valid = True)
+binomial_fit.aic(train = True, valid = True)
 
 6.3 Confusion Matrix
 
 Fetch the confusion matrix directly using the following accessor function:
+
 Example in R
-1 2
-Example in Python
+
 h2o.confusionMatrix(binomial.fit, valid = FALSE)
 h2o.confusionMatrix(binomial.fit, valid = TRUE)
 
 Example in Python
-1 2
-1   binomial.fit@model$scoring_history
-Example in Python
-1   binomial_fit.scoring_history
-1 2
-3 4 5 6 7 8
+
+binomial_fit.confusion_matrix(valid = False)
+binomial_fit.confusion_matrix(valid = True)
+
+binomial.fit@model$scoring_history
 
 6.4 Scoring History
 
 The following output example represents a sample scoring history:
-Making Predictions | 45
-binomial_fit.confusion_matrix(valid=False)
-binomial_fit.confusion_matrix(valid=True)
-Scoring History:
-            timestamp   duration iteration
-               log_likelihood objective
-1 2015-08-13 19:05:17  0.000 sec         0
-   201.99764   0.67784
-2 2015-08-13 19:05:17  0.002 sec         1
-   158.46117   0.53216
-3 2015-08-13 19:05:17  0.003 sec         2
-   153.74404   0.51658
-4 2015-08-13 19:05:17  0.004 sec         3
-   153.51935   0.51590
-5 2015-08-13 19:05:17  0.005 sec         4
-   153.51723   0.51590
-6 2015-08-13 19:05:17  0.006 sec         5
-   153.51723   0.51590
+
+Example in Python
+
+binomial_fit.scoring_history
 
 7 Making Predictions
 
 Once you have built a model, you can use it to make predictions using two different approaches: the in-H2O batch scoring approach and the real-time nano-fast POJO approach.
-46 | Making Predictions
 
 7.1 Batch In-H2O Predictions
 
@@ -1357,141 +1194,123 @@ Batch in-H2O predictions are made using a normal H2O cluster on a new H2OFrame. 
 
 Example in R
 
-1 library(h2o)
-2 h2o.init()
-3 path = system.file("extdata", "prostate.csv", package
+library(h2o)
+
+h2o.init()
+path = system.file("extdata", "prostate.csv", package
 = "h2o")
-4 h2o_df = h2o.importFile(path)
-5 h2o_df$CAPSULE = as.factor(h2o_df$CAPSULE)
-6 rand_vec <- h2o.runif(h2o_df, seed = 1234)
-7 train <- h2o_df[rand_vec <= 0.8,]
-8 valid <- h2o_df[(rand_vec > 0.8) & (rand_vec <= 0.9),]
-9 test <- h2o_df[rand_vec > 0.9,]
-10 binomial.fit = h2o.glm(y = "CAPSULE", x = c("AGE", " RACE", "PSA", "GLEASON"), training_frame = train, validation_frame = valid, family = "binomial")
-11
-12 # Make and export predictions.
-13 pred = h2o.predict(binomial.fit, test)
-14 h2o.exportFile(pred, "/tmp/pred.csv", force = TRUE)
-15 # Or you can export the predictions to hdfs:
-16 # h2o.exportFile(pred, "hdfs://namenode/path/to/file
+h2o_df = h2o.importFile(path)
+h2o_df$CAPSULE = as.factor(h2o_df$CAPSULE)
+rand_vec <- h2o.runif(h2o_df, seed = 1234)
+train <- h2o_df[rand_vec <= 0.8,]
+valid <- h2o_df[(rand_vec > 0.8) & (rand_vec <= 0.9),]
+test <- h2o_df[rand_vec > 0.9,]
+binomial.fit = h2o.glm(
+  y = "CAPSULE", 
+  x = c("AGE", "RACE", "PSA", "GLEASON"), 
+  training_frame = train, 
+  validation_frame = valid, 
+  family = "binomial")
+
+# Make and export predictions.
+pred = h2o.predict(binomial.fit, test)
+h2o.exportFile(pred, "/tmp/pred.csv", force = TRUE)
+# Or you can export the predictions to hdfs:
+# h2o.exportFile(pred, "hdfs://namenode/path/to/file
 .csv")
-17
-18 # Calculate metrics.
-19 perf = h2o.performance(binomial.fit, test)
-20 print(perf)
+
+# Calculate metrics.
+perf = h2o.performance(binomial.fit, test)
+print(perf)
 
 Example in Python
 
-1 h2o.init()
-2 h2o_df = h2o.import_file("http://h2o-public-test-data.
-      s3.amazonaws.com/smalldata/prostate/prostate.csv")
-3 h2o_df[’CAPSULE’] = h2o_df[’CAPSULE’].asfactor()
-4
-5 rand_vec = h2o_df.runif(1234) 6
-7 train = h2o_df[rand_vec <= 0.8]
-8 valid = h2o_df[(rand_vec > 0.8) & (rand_vec <= 0.9)]
-9 test = h2o_df[rand_vec > 0.9]
-10 binomial_fit = H2OGeneralizedLinearEstimator(family = "binomial")
-11 binomial_fit.train(y = "CAPSULE", x = ["AGE", "RACE", "PSA", "GLEASON"], training_frame = train, validation_frame = valid)
-12
-13 # Make and export predictions.
-14 pred = binomial_fit.predict(test)
-15 h2o.export_file(pred, "/tmp/pred.csv", force = True)
-16 # Or you can export the predictions to hdfs:
-17 # h2o.exportFile(pred, "hdfs://namenode/path/to/file
-Making Predictions | 47
-.csv")
-19 # Calculate metrics.
-18
-20 binomial_fit.model_performance(test)
+h2o.init()
+h2o_df = h2o.import_file("http://h2o-public-test-data.s3.amazonaws.com/smalldata/prostate/prostate.csv")
+h2o_df[’CAPSULE’] = h2o_df[’CAPSULE’].asfactor()
+
+rand_vec = h2o_df.runif(1234)
+
+train = h2o_df[rand_vec <= 0.8]
+valid = h2o_df[(rand_vec > 0.8) & (rand_vec <= 0.9)]
+test = h2o_df[rand_vec > 0.9]
+binomial_fit = H2OGeneralizedLinearEstimator(family = "binomial")
+binomial_fit.train(y = "CAPSULE", x = ["AGE", "RACE", "PSA", "GLEASON"], training_frame = train, validation_frame = valid)
+
+# Make and export predictions.
+pred = binomial_fit.predict(test)
+h2o.export_file(pred, "/tmp/pred.csv", force = True)
+# Or you can export the predictions to hdfs:
+# h2o.exportFile(pred, "hdfs://namenode/path/to/file.csv")
+
+# Calculate metrics.
+binomial_fit.model_performance(test)
+
 Here is an example of making predictions on new data:
+
 # Remove the response column to simulate new data
-   points arriving without the answer being known.
+# points arriving without the answer being known.
 newdata = test
 newdata$CAPSULE <- NULL
 newpred = h2o.predict(binomial.fit, newdata)
 head(newpred)
-1
-2 3 4 5
-1
-2 3
+
 # Remove the response column to simulate new data
-   points arriving without the answer being known.
+# points arriving without the answer being known.
 newdata = test
 newdata[’CAPSULE’] = None
-48 | Making Predictions
-4 5
-1 2 3 4 5 6 7
 newpred = binomial_fit.predict(newdata)
 newpred
-  predict        p0        p1
-1       1 0.1676892 0.8323108
-2       0 0.4824181 0.5175819
-3       1 0.2000061 0.7999939
-4       0 0.9242169 0.0757831
-5       0 0.5044669 0.4955331
-6       0 0.7272743 0.2727257
-1 2
-1 2 3 4
-1 2 3 4 5 6 7
+
 The three columns in the prediction file are the predicted class, the probability that the prediction is class 0, and the probability that the prediction is class 1. The predicted class is chosen based on the maximum-F1 threshold.
+
 You can change the threshold manually, for example to 0.3, and recalculate the predict column like this:
+
 newpred$predict = newpred$p1 > 0.3
 head(newpred)
-#manually define threshold for predictions to 0.3
+# manually define threshold for predictions to 0.3
 import pandas as pd
 pred = binomial_fit.predict(h2o_df)
-pred[’predict’] = pred[’p1’]>0.3
-predict p0 p1
-1       1 0.1676892 0.8323108
-2       1 0.4824181 0.5175819
-3       1 0.2000061 0.7999939
-4       0 0.9242169 0.0757831
-5       1 0.5044669 0.4955331
-6       0 0.7272743 0.2727257
+pred[’predict’] = pred[’p1’] > 0.3
 
 7.2 Low-latency Predictions using POJOs
 
 For nano-fast scoring, H2O GLM models can be directly rendered as a Plain Old Java Object (POJO). POJOs are very low-latency and can easily be embedded in any Java environment (a customer-facing web application, a Storm bolt, or a Spark Streaming pipeline, for example).
-Making Predictions | 49
+
 The POJO does nothing but pure math, and has no dependencies on any other software packages (not even H2O), so it is easy to implement.
+
 Directions for using the POJO in detail are beyond the scope of this document, but the following example demonstrates how to generate and view a POJO. To access the POJO from the Flow Web UI, click the Download POJO button at the bottom of the cell containing the generated model.
-For more information on how to use an H2O POJO, refer to the POJO Quick Start Guide at https://github.com/h2oai/h2o-3/blob/master/ h2o-docs/src/product/howto/POJO_QuickStart.md.
+
+For more information on how to use an H2O POJO, refer to the POJO Quick Start Guide at https://github.com/h2oai/h2o-3/blob/master/h2o-docs/src/product/howto/POJO_QuickStart.md.
 
 Example in R
 
-1 2 3
-4 5 6
-7
-1 2
-3 4
-5 6
-7 8
 library(h2o)
 h2o.init()
-path = system.file("extdata", "prostate.csv", package
-   = "h2o")
+path = system.file("extdata", "prostate.csv", package = "h2o")
 h2o_df = h2o.importFile(path)
 h2o_df$CAPSULE = as.factor(h2o_df$CAPSULE)
-binomial.fit = h2o.glm(y = "CAPSULE", x = c("AGE", "
-   RACE", "PSA", "GLEASON"), training_frame = h2o_df,
-    family = "binomial")
+binomial.fit = h2o.glm(
+  y = "CAPSULE", 
+  x = c("AGE", "RACE", "PSA", "GLEASON"), 
+  training_frame = h2o_df,
+  family = "binomial")
 h2o.download_pojo(binomial.fit)
-Example in Python
-import h2o
-from h2o.estimators.glm import
-   H2OGeneralizedLinearEstimator
-h2o.init()
-h2o_df = h2o.import_file("http://h2o-public-test-data.
-   s3.amazonaws.com/smalldata/prostate/prostate.csv")
-h2o_df[’CAPSULE’] = h2o_df[’CAPSULE’].asfactor()
-binomial_fit = H2OGeneralizedLinearEstimator(family =
-   "binomial")
-binomial_fit.train(y = "CAPSULE", x = ["AGE", "RACE",
-   "PSA", "GLEASON"], training_frame = h2o_df)
-h2o.download_pojo(binomial_fit)
 
-50 | Best Practices
+Example in Python
+
+import h2o 
+from h2o.estimators.glm import H2OGeneralizedLinearEstimator
+
+h2o.init()
+h2o_df = h2o.import_file("http://h2o-public-test-data.s3.amazonaws.com/smalldata/prostate/prostate.csv")
+h2o_df[’CAPSULE’] = h2o_df[’CAPSULE’].asfactor()
+binomial_fit = H2OGeneralizedLinearEstimator(family = "binomial")
+binomial_fit.train(
+  y = "CAPSULE", 
+  x = ["AGE", "RACE", "PSA", "GLEASON"], 
+  training_frame = h2o_df)
+h2o.download_pojo(binomial_fit)
 
 8 Best Practices
 
@@ -1516,61 +1335,61 @@ Here are a few rules of thumb to follow:
 8.1 Verifying Model Results
 
 To determine the accuracy of your model, use the following guidelines:
-􏰙 Look for conspicuously different cross-validation results between folds:
+
+- Look for conspicuously different cross-validation results between folds:
 
 Example in R
 
-1 2 3
-4
-5 6
 library(h2o)
 h2o.init()
-h2o_df = h2o.importFile("http://s3.amazonaws.com/
-   h2o-public-test-data/smalldata/airlines/
-   allyears2k_headers.zip")
-model = h2o.glm(y = "IsDepDelayed", x = c("Year",
-   "Origin"), training_frame = h2o_df, family = "
-   binomial", nfolds = 5)
+h2o_df = h2o.importFile("http://s3.amazonaws.com/h2o-public-test-data/smalldata/airlines/allyears2k_headers.zip")
+model = h2o.glm(
+  y = "IsDepDelayed", 
+  x = c("Year", "Origin"), 
+  training_frame = h2o_df, 
+  family = "binomial", 
+  nfolds = 5)
 print(paste("full model training auc:",
-   model@model$training_metrics@metrics$AUC))
-print(paste("full model cv auc:", model@model$
-cross_validation_metrics@metrics$AUC))
-Example in Python
-Best Practices | 51
-for (i in 1:5) {
-    cv_model_name = model@model$cross_validation_
-   models[[i]]$name
-cv_model = h2o.getModel(cv_model_name)
-print(paste("cv fold ", i, " training auc:",
-   cv_model@model$training_metrics@metrics$
-   AUC, " validation auc: ", cv_model@model$
-   validation_metrics@metrics$AUC))
+  model@model$training_metrics@metrics$AUC))
+print(paste("full model cv auc:", 
+  model@model$cross_validation_metrics@metrics$AUC))
+for(i in 1:5) {
+  cv_model_name = model@model$cross_validation_models[[i]]$name
+  cv_model = h2o.getModel(cv_model_name)
+  print(paste("cv fold ", i, " training auc:",
+     cv_model@model$training_metrics@metrics$AUC, 
+     " validation auc: ", 
+     cv_model@model$validation_metrics@metrics$AUC))
 }
-7 8
-9 10
-11
-1 h2o_df = h2o.import_file("http://s3.amazonaws.com/ h2o-public-test-data/smalldata/airlines/ allyears2k_headers.zip")
-2 model = H2OGeneralizedLinearEstimator(family = " binomial", nfolds = 5)
-3 model.train(y = "IsDepDelayed", x = ["Year", " Origin"], training_frame = h2o_df)
-4 5
-6 print "full model training auc:", model.auc()
-7 print "full model cv auc:", model.auc(xval=True)
-8 for model_ in model.get_xval_models():
-9 print model_.model_id, " training auc:",
-          model_.auc(), " validation auc: ", model_.
-          auc(valid=True)
-􏰙 Look for explained deviance (1 − N ullDev−ResDev ) N ullDev
-– Too close to 0: model doesn‘t predict well (underfitting)
-– Too close to 1: model predicts too well due to noisy data (overfitting) 􏰙 For logistic regression (i.e. binomial classification) models, look for AUC
-– Too close to 0.5: model doesn‘t predict well (underfitting)
-– Too close to 1: model predicts too well due to noisy data (overfitting)
-􏰙 Look at the number of iterations or scoring history to see if GLM stops early for a specific lambda; performing all the iterations usually means the solution is not good. This is controlled by the max iterations parameter.
 
-52 | Implementation Details
+Example in Python
 
-􏰙 The fewer the NA values in your training data, the better; GLM will either skip or mean-impute rows with NA values. Always check degrees of freedom in the output model. Degrees of freedom is the number of observations used to train the model minus the size of the model. If this number is much smaller than expected, it is likely that too many rows have been excluded due to missing values.
-– If you have few columns with many NAs, you might accidentally be losing all your rows, so it‘s better to exclude them.
-– If you have many columns with small fraction of uniformly-distributed missing values, every row will likely have at least one missing value. In this case, impute the NAs (e.g. substituted with mean values) before modeling.
+h2o_df = h2o.import_file("http://s3.amazonaws.com/h2o-public-test-data/smalldata/airlines/allyears2k_headers.zip")
+model = H2OGeneralizedLinearEstimator(family = "binomial", nfolds = 5)
+model.train(y = "IsDepDelayed", 
+            x = ["Year", " Origin"], 
+            training_frame = h2o_df)
+
+print "full model training auc:", model.auc()
+print "full model cv auc:", model.auc(xval=True)
+for model_ in model.get_xval_models():
+    print model_.model_id, " training auc:",
+       model_.auc(), " validation auc: ", model_.
+       auc(valid=True)
+
+- Look for explained deviance (1 − (NullDev − ResDev)/ NullDev)
+    + Too close to 0: model doesn‘t predict well (under-fitting)
+    + Too close to 1: model predicts too well due to noisy data (overfitting)
+
+- For logistic regression (i.e. binomial classification) models, look for AUC
+    + Too close to 0.5: model doesn‘t predict well (under-fitting)
+    + Too close to 1: model predicts too well due to noisy data (overfitting)
+
+- Look at the number of iterations or scoring history to see if GLM stops early for a specific lambda; performing all the iterations usually means the solution is not good. This is controlled by the max_iterations parameter.
+
+- The fewer the NA values in your training data, the better; GLM will either skip or mean-impute rows with NA values. Always check degrees of freedom in the output model. Degrees of freedom is the number of observations used to train the model minus the size of the model. If this number is much smaller than expected, it is likely that too many rows have been excluded due to missing values.
+    + If you have few columns with many NAs, you might accidentally be losing all your rows, so it‘s better to exclude them.
+    + If you have many columns with small fraction of uniformly-distributed missing values, every row will likely have at least one missing value. In this case, impute the NAs (e.g. substituted with mean values) before modeling.
 
 9 Implementation Details
 
@@ -1578,20 +1397,19 @@ The following sections discuss some of the implementation choices in H2O’s GLM
 
 9.1 Categorical Variables
 
-When applying linear models to datasets with categorical variables, the usual approach is to expand the categoricals into a set of binary vectors, with one vector per each categorical level (e.g. by calling model.matrix in R). H2O performs similar expansions automatically and no prior changes to the dataset are needed. Each categorical column is treated as a set of sparse binary vectors.
+When applying linear models to datasets with categorical variables, the usual approach is to expand the categorical variables into a set of binary vectors, with one vector per each categorical level (e.g. by calling model.matrix in R). H2O performs similar expansions automatically and no prior changes to the dataset are needed. Each categorical column is treated as a set of sparse binary vectors.
 
 9.1.1 Largest Categorical Speed Optimization
 
-Categoricals have special handling during GLM computation as well. When forming the gram matrix, we can take advantage of the fact that columns belonging to the same categorical never co-occur and the gram matrix region belonging to these columns will not have any non-zero elements outside of the diagonal.
-This keeps it in sparse representation, taking only O(N) elements instead of O(N ∗ N ). Furthermore, the complexity of Choelsky decomposition of a matrix that starts with a diagonal region can be greatly reduced. H2O’s GLM exploits these two facts to handle the largest categorical “for free”. Therefore, when
-analyzing the performance of GLM in the equation expressed above, we can subtract the size of the largest categoricals from the number of predictors.
-N = 􏰈(∥c.domain∥) − arg max ∥c.domain∥ + ∥N ums∥
-c∈C
-c∈C
+Categorical variables have special handling during GLM computation as well. When forming the gram matrix, we can take advantage of the fact that columns belonging to the same categorical never co-occur and the gram matrix region belonging to these columns will not have any non-zero elements outside of the diagonal.
+
+This keeps it in sparse representation, taking only O(N) elements instead of O(N*N). Furthermore, the complexity of Choelsky decomposition of a matrix that starts with a diagonal region can be greatly reduced. H2O’s GLM exploits these two facts to handle the largest categorical “for free”. Therefore, when analyzing the performance of GLM in the equation expressed above, we can subtract the size of the largest categorical variables from the number of predictors.
+
+N = sum(∥c.domain∥, c ∈ C) − arg max(∥c.domain∥, c ∈ C) + ∥Nums∥
 
 9.2 Performance Characteristics
 
-This section discusses the CPU and memory cost of each available non- experimental solver for running GLM.
+This section discusses the CPU and memory cost of each available non-experimental solver for running GLM.
 
 9.2.1 IRLSM Solver
 
@@ -1599,36 +1417,37 @@ The implementation is based on iterative re-weighted least squares with an ADMM 
 
 1. Generate weighted least squares problem based on previous solution, i.e. vector of weights w and response z
 
-2. Compute the weighted gram matrix XT WX and XT z vector
+2. Compute the weighted gram matrix t(X)*W*X and t(X)*z vector
 
-3. Decompose the gram matrix (Cholesky decomposition) and apply ADMM
-solver to solve the l1 penalized least squares problem
+3. Decompose the gram matrix (Cholesky decomposition) and apply ADMM solver to solve the l1 penalized least squares problem
+
 Steps 1 and 2 are performed distributively. Step 3 is computed in parallel on a single node. This method characterizes the computational complexity and scalability of a dataset with M observations and N columns (predictors) on a cluster with n nodes with p CPUs each.
-Implementation Details | 53
-Gram matrix (XT X) (distributed)
-ADMM + Cholesky decomposition (single node)
-CPU
-N3 O( p )
-Memory
-O(training data) + O(gram matrix) O(MN) + O(N2pn)
-O(N2)
-MN2 O( )
-pn
 
-54 | Implementation Details
+- Gram matrix (t(X)*X) (distributed)
+    + CPU:  O(M*N^2/(p*n))
+    + Memory:  O(training data) + O(gram matrix), O(M*N) + O(N^2/(p*n)
+
+- ADMM + Cholesky decomposition (single node)
+    + CPU:  O(N^3/p)
+    + Memory: O(N^2)
+
 M Number of rows in the training data
+
 N Number of predictors in the training data
+
 p Number of CPUs per node
+
 n Number of nodes in the cluster
+
 If M >> N, the algorithm scales linearly both in the number of nodes and the number of CPUs per node. However, the algorithm is limited in the number of predictors it can handle, since the size of the Gram matrix grows quadratically, due to a memory and network throughput issue with the number of predictors.
-Its decomposition cost grows as the cube of the number of predictors increases, which is a computational cost issue. In many cases, H2O can work around these limitations due to its handling of categoricals and by employing strong rules to filter out inactive predictors.
+
+Its decomposition cost grows as the cube of the number of predictors increases, which is a computational cost issue. In many cases, H2O can work around these limitations due to its handling of categorical variables and by employing strong rules to filter out inactive predictors.
 
 9.2.2 L-BFGS Solver
 
-In each iteration, L-BFGS computes a gradient at the current vector of coeffi- cients and then computes an updated vector of coefficients in an approximated Newton-method step.
-The cost of the coefficient update is k ∗ N , where N is number of predictors and k is a constant, the cost of gradient computation is M∗N where M is
-pn
-number of observations in the dataset and pn is the number of CPU cores in the cluster. Since k is a small constant, the runtime of L-BFGS is dominated by the gradient computation, which is fully parallelized, scaling L-BFGS almost linearly.
+In each iteration, L-BFGS computes a gradient at the current vector of coefficients and then computes an updated vector of coefficients in an approximated Newton-method step.
+
+The cost of the coefficient update is k*N, where N is number of predictors and k is a constant, the cost of gradient computation is M*N/(p*n) where M is number of observations in the dataset and p*n is the number of CPU cores in the cluster. Since k is a small constant, the runtime of L-BFGS is dominated by the gradient computation, which is fully parallelized, scaling L-BFGS almost linearly.
 
 9.3 FAQ
 
@@ -1658,7 +1477,7 @@ training frame: An H2OFrame object containing the variables in the model.
 
 model id: (Optional) The unique ID assigned to the generated model. If not specified, an ID is generated automatically.
 
-validation frame: An H2OParsedData object containing the val- idation dataset used to construct confusion matrix. If blank, the training data is used by default.
+validation frame: An H2OParsedData object containing the validation dataset used to construct confusion matrix. If blank, the training data is used by default.
 
 max iterations: A non-negative integer specifying the maximum number of iterations.
 
@@ -1698,12 +1517,11 @@ nlambdas: The number of lambda values when lambda search = TRUE. Default is -1.
 
 lambda_min_ratio: Smallest value for lambda as a fraction of lambda.max, the entry value, which is the smallest value for which all coefficients in the model are zero. If the number of observations is greater than the number of variables then lambda min ratio = 0.0001; if the number of observations is less than the number of variables then lambda min ratio = 0.01. Default is -1.0.
 
-nfolds: Number of folds for cross-validation. If nfolds >=2, then validation frame must remain blank. Default is 0.
+nfolds: Number of folds for cross-validation. If nfolds >= 2, then validation frame must remain blank. Default is 0.
 
 fold_column: (Optional) Column with cross-validation fold index assignment per observation.
 
-fold_assignment: Cross-validation fold assignment scheme, if
-fold column is not specified. The following options are supported: AUTO, Random, or Modulo.
+fold_assignment: Cross-validation fold assignment scheme, if fold column is not specified. The following options are supported: AUTO, Random, or Modulo.
 
 keep_cross_validation_predictions: Specify whether to keep the predictions of the cross-validation models.
 
@@ -1723,7 +1541,7 @@ seed: Specify the random number generator (RNG) seed for algorithm components de
 
 11 References
 
-Jerome Friedman, Trevor Hastie, and Rob Tibshirani. Regularization Paths for Generalized Linear Models via Coordinate Descent. Journal of Statis- tical Software, 33(1), 2009. URL http://core.ac.uk/download/pdf/ 6287975.pdf
+Jerome Friedman, Trevor Hastie, and Rob Tibshirani. Regularization Paths for Generalized Linear Models via Coordinate Descent. Journal of Statistical Software, 33(1), 2009. URL http://core.ac.uk/download/pdf/ 6287975.pdf
 
 Jacob Bien, Jerome Friedman, Trevor Hastie, Noah Simon, Jonathan Taylor, Rob Tibshirani, and Ryan J. Tibshirani. Strong Rules for Discarding Predictors in Lasso-type Problems. Journal of the Royal Statistical Society. Series B, 74(1), 2012. URL http://statweb.stanford.edu/ ̃tibs/ftp/strong. pdf
 
@@ -1731,7 +1549,7 @@ Hui Zou and Trevor Hastie. Regularization and variable selection via the Elastic
 
 Rob Tibshirani. Regression Shrinkage and Selection via the Lasso. Journal of the Royal Statistical Society. Series B (Methodological), 58(1):267–288, 1996. URL http://statweb.stanford.edu/ ̃tibs/lasso/lasso.pdf
 
-Stephen Boyd, Neal Parikh, Eric Chu, Borja Peleato, and Jonahtan Eckstein. Distributed Optimization and Statistical Learning via the Alternating Di- rection Method of Multipliers. Foundations and Trends in Machine Learning, 3(1):1–122, 1996. URL https://web.stanford.edu/ ̃boyd/papers/ pdf/admm_distr_stats.pdf
+Stephen Boyd, Neal Parikh, Eric Chu, Borja Peleato, and Jonahtan Eckstein. Distributed Optimization and Statistical Learning via the Alternating Di- rection Method of Multipliers. Foundations and Trends in Machine Learning, 3(1):1–122, 1996. URL https://web.stanford.edu/ ̃boyd/papers/pdf/admm_distr_stats.pdf
 
 Neal Parikh and Stephen Boyd. Proximal Algorithms. Foundations and Trends in Optimization, 1(3):123–231, 2014. URL http://web.stanford.edu/̃boyd/papers/pdf/prox_algs.pdf
 
@@ -1743,7 +1561,7 @@ H2O.ai Team. H2O GitHub Repository, 2016. URL https://github. com/h2oai
 
 H2O.ai Team. H2O Datasets, 2016. URL http://data.h2o.ai H2O.ai Team. H2O JIRA, 2016. URL https://jira.h2o.ai
 
-H2O.ai Team. H2Ostream, 2016. URL https://groups.google.com/ d/forum/h2ostream
+H2O.ai Team. H2Ostream, 2016. URL https://groups.google.com/d/forum/h2ostream
 
 H2O.ai Team. H2O R Package Documentation, 2016. URL http:// h2o-release.s3.amazonaws.com/h2o/latest_stable_Rdoc.html
 
