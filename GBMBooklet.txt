@@ -255,14 +255,20 @@ the AUC improves (goes up) by less than 0.1 percent for 5 consecutive scor-
 ing events, specify stopping rounds=5, stopping tolerance=0.001 and stopping metric="AUC".
 􏰀 To not stop model building even after metrics have converged, disable this feature with stopping rounds=0.
 􏰀 To compute the best number of trees with cross-validation, simply specify stopping rounds>0 as in the examples above, in combination with nfolds>1, and the main model will pick the ideal number of trees from the convergence behavior of the nfolds cross-validation models.
+
 4.5.2 Time-based Early Stopping
+
 To stop model training after a given amount of seconds, specify max runtime secs > 0. This option is also available for grid searches and models with cross- validation. Note: The model(s) will likely end up with fewer trees than specified
 by ntrees.
+
 4.5.3 Stochastic GBM
+
 Stochastic GBM is a way to improve generalization by sampling columns (per split) and rows (per tree) during the model building process. To control the sam- pling ratios use sample rate for rows (per tree), col sample rate per tree for columns per tree and col sample rate for columns per split. All three parameters must range from 0 to 1, and default to 1.
 ￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼
 14 | Overview
-￼4.5.4 Distributions and Loss Functions
+
+4.5.4 Distributions and Loss Functions
+
 Distributions and loss functions are tightly coupled. By specifying the distribu- tion, the loss function is automatically selected as well. For exponential families such as Poisson, Gamma, Tweedie, the canonical logarithmic link function is used.
 For example, to predict the 80-th percentile of the petal length of the Iris dataset in R, use the following:
 Example in R
@@ -298,9 +304,13 @@ gbm.train(x=range(0,2), y="petal_len", training_frame=
 print(gbm.predict(splits[1]))
 ￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼
 Use Case: Airline Data Classification | 15
-￼5 Use Case: Airline Data Classification
+
+5 Use Case: Airline Data Classification
+
 Download the Airline dataset from: https://github.com/h2oai/h2o-2/ blob / master / smalldata / airlines / allyears2k _ headers . zip and save the .csv file to your working directory.
+
 5.1 Loading Data
+
 Loading a dataset in R or Python for use with H2O is slightly different from the usual methodology because the datasets must be converted into H2OParsedData objects. For this example, download the toy weather dataset from https://github.com/h2oai/h2o-2/blob/master/ smalldata/weather.csv.
 Load the data to your current working directory in your R Console (do this for any future dataset downloads), and then run the following command.
 Example in R
@@ -326,7 +336,9 @@ weather_hex = h2o.import_file("http://h2o-public-test-
 ￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼# Get a summary of the data
 16 | Use Case: Airline Data Classification
 ￼￼￼￼7 ￼ ￼ weather_hex.describe()
-￼￼￼￼5.2 Performing a Trial Run
+
+5.2 Performing a Trial Run
+
 Load the Airline dataset into H2O and select the variables to use to predict the response. The following example models delayed flights based on the departure’s scheduled day of the week and day of the month.
 Example in R
   # Load the data and prepare for modeling
@@ -433,7 +445,9 @@ Example in Python
 ￼￼￼￼￼￼￼￼￼￼￼￼￼
 Example in Python
 Use Case: Airline Data Classification | 19
-￼5.3 Extracting and Handling the Results
+
+5.3 Extracting and Handling the Results
+
 Now, extract the parameters of the model, examine the scoring process, and make predictions on the new data.
 Example in R
 1 2 3 4 5
@@ -461,14 +475,20 @@ pred = as.data.frame(prediction)
 ￼￼￼￼￼￼￼￼￼￼# Perform classification on the held out data
 pred = air_model.predict(air_test_hex)
 pred.head()
-￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼5.4 Web Interface
+
+5.4 Web Interface
+
 H2O users have the option of using an intuitive web interface for H2O, Flow. After loading data or training a model, point your browser to your IP address and port number (e.g., localhost:12345) to launch the web interface. In the web UI, click Admin > Jobs to view specific details about your model or click Data > List All Frames to view all current H2O frames.
+
 5.5 Variable Importances
+
 The GBM algorithm automatically calculates variable importances. The model output includes the absolute and relative predictive strength of each feature in the prediction task. To extract the variable importances from the model:
 􏰀 In R: Use h2o.varimp(air.model)
 􏰀 In Python: Use air model.varimp(return list=True)
 To view a visualization of the variable importances using the web interface, click the Model menu, then select List All Models. Click the Inspect button next to the model, then select output - Variable Importances.
+
 5.6 Supported Output
+
 The following algorithm outputs are supported:
 􏰀 Regression: Mean Squared Error (MSE), with an option to output
 variable importances or a Plain Old Java Object (POJO) model
@@ -476,7 +496,9 @@ variable importances or a Plain Old Java Object (POJO) model
 with an option to output variable importances or a Java POJO model
 􏰀 Classification: Confusion Matrix (with an option to output variable
 importances or a Java POJO model)
+
 5.7 Java Models
+
 To access Java code to use to build the current model in Java, click the Preview POJO button at the bottom of the model results. This button
 ￼￼
 Use Case: Airline Data Classification | 21
@@ -487,7 +509,11 @@ To download the model:
 3. Set the new directory as the working directory.
 4. Follow the curl and java compile commands displayed in the in- structions at the top of the Java model.
 For more information on how to use an H2O POJO, refer to the POJO Quick Start Guide at https://github.com/h2oai/h2o-3/blob/master/ h2o-docs/src/product/howto/POJO_QuickStart.md.
-5.8 Grid Search for Model Comparison 5.8.1 Cartesian Grid Search
+
+5.8 Grid Search for Model Comparison 
+
+5.8.1 Cartesian Grid Search
+
 To run a Cartesian hyper-parameter grid search in R, use the following:
 Example in R
 1 2 3 4 5 6 7
@@ -554,7 +580,9 @@ for g in gs:
 8 9
 10 11
 12
+
 5.8.2 Random Grid Search
+
 If the search space is too large (i.e., you don’t want to restrict the parameters too much), you can also let the Grid Search make random model selections for you. Just specify how many models (and/or how much training time) you want, and a seed to make the random selection deterministic:
 Example in R
 ntrees_opt <- seq(1,100)
@@ -597,7 +625,9 @@ gs.train(x=myX, y="IsDepDelayed", training_frame=
 24 | Use Case: Airline Data Classification
 ￼￼￼￼￼￼￼￼￼
 Use Case: Airline Data Classification | 25
-￼5.9 Model Parameters
+
+5.9 Model Parameters
+
 This section describes the functions of the parameters for GBM.
 􏰀 x: A vector containing the names of the predictors to use while building the GBM model.
 􏰀 y: A character string or index that represents the response variable in the model.
@@ -657,33 +687,53 @@ Use Case: Airline Data Classification | 27
 􏰀 class sampling factors: Desired over/under-sampling ratios per class (in lexicographic order). If not specified, sampling factors will be automatically computed to obtain class balance during training. Requires balance classes.
 􏰀 max after balance size: Maximum relative size of the training data after balancing class counts; can be less than 1.0. The default is 5.
 􏰀 model id: The unique ID assigned to the generated model. If not specified, an ID is generated automatically.
-￼￼￼￼￼￼￼￼￼￼￼￼￼￼
-References | 29
-￼6 References
+
+6 References
+
 Cliff Click. Building a Distributed GBM on H2O, 2013. URL http:
 //h2o.ai/blog/2013/10/building-distributed-gbm-h2o/
-Thomas Dietterich and Eun Bae Kong. Machine Learning Bias, Statistical Bias, and Statistical Variance of Decision Tree Algorithms. 1995. URL http://www.iiia.csic.es/ ̃vtorra/tr-bias.pdf
+
+Thomas Dietterich and Eun Bae Kong. Machine Learning Bias, Statistical Bias, and Statistical Variance of Decision Tree Algorithms. 1995. URL http://www.iiia.csic.es/̃vtorra/tr-bias.pdf
+
 Jane Elith, John R. Leathwick, and Trevor Hastie. A Working Guide to Boosted Regression Trees. Journal of Animal Ecology, 77(4):802–813, 2008. URL http://onlinelibrary.wiley.com/doi/10.1111/j. 1365-2656.2008.01390.x/abstract
-Jerome H. Friedman. Greedy Function Approximation: A Gradient Boost- ing Machine. Annals of Statistics, 29:1189–1232, 1999. URL http:// statweb.stanford.edu/?jhf/ftp/trebst.pdf
-Jerome Friedman, Trevor Hastie, and Robert Tibshirani. Discussion of Boost- ing Papers. Annual Statistics, 32:102–107, 2004. URL http://web. stanford.edu/?hastie/Papers/boost_discussion.pdf
+
+Jerome H. Friedman. Greedy Function Approximation: A Gradient Boosting Machine. Annals of Statistics, 29:1189–1232, 1999. URL http://statweb.stanford.edu/?jhf/ftp/trebst.pdf
+
+Jerome Friedman, Trevor Hastie, and Robert Tibshirani. Discussion of Boosting Papers. Annual Statistics, 32:102–107, 2004. URL http://web. stanford.edu/?hastie/Papers/boost_discussion.pdf
+
 Jerome Friedman, Trevor Hastie, and Robert Tibshirani. Additive Logistic Re- gression: a Statistical View of Boosting. Annals of Statistics, 28:2000, 1998. URL http://projecteuclid.org/DPubS?service=UI&version= 1.0&verb=Display&handle=euclid.aos/1016218223
-Jerome Friedman, Trevor Hastie, and Robert Tibshirani. The Elements of Statistical Learning. Springer, New York, 2001. URL http://statweb. stanford.edu/?tibs/ElemStatLearn/printings/ESLII_print10. pdf
+
+Jerome Friedman, Trevor Hastie, and Robert Tibshirani. The Elements of Statistical Learning. Springer, New York, 2001. URL http://statweb. stanford.edu/?tibs/ElemStatLearn/printings/ESLII_print10.pdf
+
 H2O.ai Team. H2O website, 2016. URL http://h2o.ai
 H2O.ai Team. H2O documentation, 2016. URL http://docs.h2o.ai
 H2O.ai Team. H2O GitHub Repository, 2016. URL https://github. com/h2oai
 H2O.ai Team. H2O Datasets, 2016. URL http://data.h2o.ai H2O.ai Team. H2O JIRA, 2016. URL https://jira.h2o.ai
 H2O.ai Team. H2Ostream, 2016. URL https://groups.google.com/ d/forum/h2ostream
 H2O.ai Team. H2O R Package Documentation, 2016. URL http:// h2o-release.s3.amazonaws.com/h2o/latest_stable_Rdoc.html
-30 | Authors
-￼7 Authors Cliff Click
+
+7 Authors 
+
+Cliff Click
+
 Cliff Click is the CTO and Co-Founder of H2O, makers of H2O, the open-source math and machine learning engine for Big Data. Cliff is invited to speak regularly at industry and academic conferences and has published many papers about HotSpot technology. He holds a PhD in Computer Science from Rice University and about 15 patents.
+
 Michal Malohlava
+
 Michal is a geek, developer, Java, Linux, programming languages enthusiast developing software for over 10 years. He obtained PhD from the Charles University in Prague in 2012 and post-doc at Purdue University. He participated in design and development of various systems including SOFA and Fractal component systems or jPapabench control system.
+
 Arno Candel
+
 Arno is the Chief Architect of H2O, a distributed and scalable open-source machine learning platform and the main author of H2O Deep Learning. Arno holds a PhD and Masters summa cum laude in Physics from ETH Zurich, Switzerland. He has authored dozens of scientific papers and is a sought- after conference speaker. Arno was named 2014 Big Data All-Star by Fortune Magazine. Follow him on Twitter: @ArnoCandel.
+
 Viraj Parmar
+
 Prior to joining H2O as a data and math hacker intern, Viraj worked in a research group at the MIT Center for Technology and Design. His interests are in software engineering and large-scale machine learning.
+
 Hank Roark
+
 Hank is a Data Scientist and Hacker at H2O. Hank comes to H2O with a background turning data into products and system solutions and loves helping others find value in their data. Hank has an SM from MIT in Engineering and Management and BS Physics from Georgia Tech.
+
 Jessica Lanford
+
 Jessica is a word hacker and seasoned technical communicator at H2O.ai. She brings our product to life by documenting the many features and functionality of H2O. Having worked for some of the top companies in technology including Dell, AT&T, and Lam Research, she is an expert at translating complex ideas to digestible articles.
