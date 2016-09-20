@@ -1,0 +1,2003 @@
+Machine Learning with Python and H2O
+
+by Spencer Aiello, Cliff Click, Hank Roark, and Ludi Rehak 
+
+Edited by: Jessica Lanford
+
+http://h2o.ai/resources/
+
+July 2016: Third Edition
+
+Contents
+
+1 Introduction
+
+2 What is H2O?  
+2.1 ExampleCode  
+2.2 Citation 
+
+3 Installation 
+3.1 InstallationinPython 
+
+4 Data Preparation  
+4.1 Viewing Data  
+4.2 Selection  
+4.3 Missing Data  
+4.4 Operations   
+4.5 Merging   
+4.6 Grouping  
+4.7 Using Date and Time Data  
+4.8 Categoricals  
+4.9 Loading and Saving Data  
+
+5 Machine Learning  
+5.1 Modeling   
+5.1.1 Supervised Learning  
+5.1.2 Unsupervised Learning  
+5.2 Running Models  
+5.2.1 Gradient Boosting Models(GBM)  
+5.2.2 Generalized Linear Models(GLM)  
+5.2.3 K-means  
+5.2.4 Principal Components Analysis (PCA)  
+5.3 Grid Search  
+5.4 Integration with scikit-learn  
+5.4.1 Pipelines  
+5.4.2 Randomized Grid Search  
+
+6 References 39
+
+1 Introduction
+
+This documentation describes how to use H2O from Python. More information on H2O’s system and algorithms (as well as complete Python user documentation) is available at the H2O website at http://docs.h2o.ai.
+
+H2O Python uses a REST API to connect to H2O. To use H2O in Python or launch H2O from Python, specify the IP address and port number of the H2O instance in the Python environment. Datasets are not directly transmitted through the REST API. Instead, commands (for example, importing a dataset at specified HDFS location) are sent either through the browser or the REST API to perform the specified task.
+
+The dataset is then assigned an identifier that is used as a reference in commands to the web server. After one prepares the dataset for modeling by defining significant data and removing insignificant data, H2O is used to create a model representing the results of the data analysis. These models are assigned IDs that are used as references in commands.
+
+Depending on the size of your data, H2O can run on your desktop or scale using multiple nodes with Hadoop, an EC2 cluster, or Spark. Hadoop is a scalable open-source file system that uses clusters for distributed storage and dataset processing. H2O nodes run as JVM invocations on Hadoop nodes. For performance reasons, we recommend that you do not run an H2O node on the same hardware as the Hadoop NameNode.
+
+H2O helps Python users make the leap from single machine based processing to large-scale distributed environments. Hadoop lets H2O users scale their data processing capabilities based on their current needs. Using H2O, Python, and Hadoop, you can create a complete end-to-end data analysis solution.
+
+This document describes the four steps of data analysis with H2O:
+
+1. installing H2O
+
+2. preparing your data for modeling
+
+3. creating a model using simple but powerful machine learning algorithms 
+
+4. scoring your models
+
+2 What is H2O?
+
+H2O is fast, scalable, open-source machine learning and deep learning for smarter applications. With H2O, enterprises like PayPal, Nielsen Catalina, Cisco, and others can use all their data without sampling to get accurate predictions faster. Advanced algorithms such as deep learning, boosting, and bagging ensembles are built-in to help application designers create smarter applications through elegant APIs. Some of our initial customers have built powerful domain-specific predictive engines for recommendations, customer churn, propensity to buy, dynamic pricing, and fraud detection for the insurance, healthcare, telecommunications, ad tech, retail, and payment systems industries.
+
+Using in-memory compression, H2O handles billions of data rows in-memory, even with a small cluster. To make it easier for non-engineers to create complete analytic workflows, H2O’s platform includes interfaces for R, Python, Scala, Java, JSON, and CoffeeScript/JavaScript, as well as a built-in web interface, Flow. H2O is designed to run in standalone mode, on Hadoop, or within a Spark Cluster, and typically deploys within minutes.
+
+H2O includes many common machine learning algorithms, such as generalized linear modeling (linear regression, logistic regression, etc.), Na ̈ıve Bayes, principal components analysis, k-means clustering, and others. H2O also implements best-in-class algorithms at scale, such as distributed random forest, gradient boosting, and deep learning. Customers can build thousands of models and compare the results to get the best predictions.
+
+H2O is nurturing a grassroots movement of physicists, mathematicians, and computer scientists to herald the new wave of discovery with data science by collaborating closely with academic researchers and industrial data scientists. Stanford university giants Stephen Boyd, Trevor Hastie, Rob Tibshirani advise the H2O team on building scalable machine learning algorithms. With hundreds of meetups over the past three years, H2O has become a word-of-mouth phenomenon, growing amongst the data community by a hundred-fold, and is now used by 30,000+ users and is deployed using R, Python, Hadoop, and Spark in 2000+ corporations.
+
+Try it out
+
+- Download H2O directly at http://h2o.ai/download.
+
+- Install H2O’s R package from CRAN at https://cran.r-project.
+org/web/packages/h2o/.
+
+- Install the Python package from PyPI at https://pypi.python. org/pypi/h2o/.
+
+Join the community
+
+- To learn about our meetups, training sessions, hackathons, and product updates, visit http://h2o.ai.
+
+- Visit the open source community forum at https://groups.google. com/d/forum/h2ostream.
+
+- Join the chat at https://gitter.im/h2oai/h2o-3.
+
+2.1 Example Code
+
+Python code for the examples in this document is located here:
+
+https://github.com/h2oai/h2o-3/tree/master/h2o-docs/src/ booklets/v2_2015/source/python
+
+2.2 Citation
+
+To cite this booklet, use the following:
+
+Aiello, S., Cliff, C., Roark, H., Rehak, L., and Lanford, J. (Jul 2016). Machine Learning with Python and H2O. http://h2o.ai/resources/.
+
+3 Installation
+
+H2O requires Java; if you do not already have Java installed, install it from https://java.com/en/download/ before installing H2O.
+
+The easiest way to directly install H2O is via a Python package.
+
+(Note: The examples in this document were created with H2O version 3.8.3.2.)
+
+3.1 Installation in Python
+
+To load a recent H2O package from PyPI, run:
+
+pip install h2o
+
+To download the latest stable H2O-3 build from the H2O download page: 
+
+1. Go to http://h2o.ai/download.
+
+2. Choose the latest stable H2O-3 build.
+
+3. Click the “Install in Python” tab.
+
+4. Copy and paste the commands into your Python session. 
+
+After H2O is installed, verify the installation:
+
+import h2o
+
+# Start H2O on your local machine
+h2o.init()
+
+# Get help
+help(h2o.estimators.glm.H2OGeneralizedLinearEstimator)
+help(h2o.estimators.gbm.H2OGradientBoostingEstimator)
+
+# Show a demo
+h2o.demo("glm")
+h2o.demo("gbm")
+
+4 Data Preparation
+
+The next sections of the booklet demonstrate the Python interface using examples, which include short snippets of code and the resulting output.
+
+In H2O, these operations all occur distributed and in parallel and can be used on very large datasets. More information about the Python interface to H2O can be found at docs.h2o.ai.
+
+Typically, we import and start H2O on the same machine as the running Python process:
+
+import h2o 
+h2o.init()
+
+To connect to an established H2O cluster (in a multi-node Hadoop environment, for example):
+
+h2o.init(ip = "123.45.67.89", port = 54321)
+
+To create an H2OFrame object from a Python tuple:
+
+df = h2o.H2OFrame(zip(*((1, 2, 3),
+                   (’a’, ’b’, ’c’),
+                   (0.1, 0.2, 0.3))))
+df
+
+To create an H2OFrame object from a Python list:
+
+df = h2o.H2OFrame(zip(*[[1, 2, 3],
+                   [’a’, ’b’, ’c’],
+                   [0.1, 0.2, 0.3]]))
+df
+
+To create an H2OFrame object from collections.OrderedDict or a Python dict:
+
+df = h2o.H2OFrame({’A’: [1, 2, 3],
+                   ’B’: [’a’, ’b’, ’c’],
+                   ’C’: [0.1, 0.2, 0.3]})
+df
+
+To create an H2OFrame object from a Python dict and specify the column types:
+
+df2 = h2o.H2OFrame.from_python(
+    {’A’: [1, 2, 3],
+     ’B’: [’a’, ’a’, ’b’],
+     ’C’: [’hello’, ’all’, ’world’],
+     ’D’: [’12MAR2015:11:00:00’, ’13MAR2015:12:00:00’, ’14MAR2015:13:00:00’]},
+     column_types = [’numeric’, ’enum’, ’string’, ’time’])
+df2
+
+To display the column types:
+
+df2.types
+
+4.1 Viewing Data
+
+To display the top and bottom of an H2OFrame:
+
+import numpy as np
+
+df = h2o.H2OFrame.from_python(
+    np.random.randn(4,100).tolist(), 
+    column_names = list(’ABCD’))
+df.head()
+df.tail(5)
+
+To display the column names:
+
+df.columns
+
+To display compression information, distribution (in multi-machine clusters), and summary statistics of your data:
+
+df.describe()
+
+4.2 Selection
+
+To select a single column by name, resulting in an H2OFrame:
+
+df[’A’]
+
+To select a single column by index, resulting in an H2OFrame:
+
+df[1]
+
+To select multiple columns by name, resulting in an H2OFrame:
+
+df[[’B’, ’C’]]
+
+To select multiple columns by index, resulting in an H2OFrame:
+
+df[0:2]
+
+To select multiple rows by slicing, resulting in an H2OFrame:
+
+Note By default, H2OFrame selection is for columns, so to slice by rows and get all columns, be explicit about selecting all columns:
+
+df[2:7, :]
+
+To select rows based on specific criteria, use Boolean masking:
+
+df2[ df2["B"] == "a", :]
+
+4.3 Missing Data
+
+The H2O parser can handle many different representations of missing data types, including ‘’ (blank), ‘NA’, and None (Python). They are all displayed as NaN in Python.
+
+To create an H2OFrame from Python with missing elements:
+
+df3 = h2o.H2OFrame.from_python(
+    {’A’: [1, 2, 3,None,’’],
+     ’B’: [’a’, ’a’, ’b’, ’NA’, ’NA’],
+     ’C’: [’hello’, ’all’, ’world’, None, None],
+     ’D’: [’12MAR2015:11:00:00’,None,
+           ’13MAR2015:12:00:00’,None,
+           ’14MAR2015:13:00:00’]},
+    column_types=[’numeric’, ’enum’, ’string’, ’time’])
+
+df3
+
+To determine which rows are missing data for a given column (‘1’ indicates missing):
+
+df3["A"].isna()
+
+To change all missing values in a column to a different value:
+
+df3
+
+To determine the locations of all missing data in an H2OFrame:
+
+df3.isna()
+
+4.4 Operations
+
+When performing a descriptive statistic on an entire H2OFrame, missing data is generally excluded and the operation is only performed on the columns of the appropriate data type:
+
+df3 = h2o.H2OFrame.from_python(
+    {’A’: [1, 2, 3,None,’’],
+     ’B’: [’a’, ’a’, ’b’, ’NA’, ’NA’],
+     ’C’: [’hello’, ’all’, ’world’, None, None],
+     ’D’: [’12MAR2015:11:00:00’,None,
+           ’13MAR2015:12:00:00’,None,
+           ’14MAR2015:13:00:00’]},
+    column_types=[’numeric’, ’enum’, ’string’, ’time’])
+
+df4.mean(na_rm=True)
+
+When performing a descriptive statistic on a single column of an H2OFrame, missing data is generally not excluded:
+
+df4["A"].mean()
+df4["A"].mean(na_rm = True)
+
+In both examples, a native Python object is returned (list and float respectively in these examples).
+
+When applying functions to each column of the data, an H2OFrame containing the means of each column is returned:
+
+df5 = h2o.H2OFrame.from_python(
+    np.random.randn(4,100).tolist(),
+    column_names=list(’ABCD’))
+
+df5.apply(lambda x: x.mean(na_rm = True))
+
+When applying functions to each row of the data, an H2OFrame containing the sum of all columns is returned:
+
+1 2 3 4 5 6 7 8 9
+10 11 12 13
+1 In [49]: df6 = h2o.H2OFrame(
+2 np.random.randint(0, 7, size=100).tolist())
+3
+4 Parse Progress: [###############################] 100%
+5 Uploaded py5b584604-73ff-4037-9618-c53122cd0343 into cluster with 100 rows
+and 1 cols
+6
+7 In [50]: df6.hist(plot=False) 8
+9 Parse Progress: [###############################] 100%
+10 Uploaded py8a993d29-e354-44cf-b10e-d97aa6fdfd74 into cluster with 8 rows and 1 cols
+In [26]: df5.apply(lambda row: sum(row), axis=1)
+Out[26]: H2OFrame with 100 rows and 1 columns:
+         C1
+0  0.906854
+1  0.790760
+2 -0.217604
+3 -0.978141
+4  2.180175
+5 -2.420732
+6  0.875716
+7 -1.077747
+8  2.321706
+9 -0.700436
+
+H2O provides many methods for histogramming and discretizing data. Here is an example using the hist method on a single data frame:
+
+11 Out[50]: H2OFrame
+with 8 rows
+ mids_true
+       NaN
+       0.0
+       0.5
+       1.0
+       0.0
+       1.5
+       2.0
+and 5
+ mids
+  NaN
+1.125
+1.875
+2.625
+3.375
+4.125
+4.875
+columns:
+  density
+ 0.000000
+ 0.116667
+ 0.070000
+ 0.198333
+ 0.000000
+ 0.186667
+ 0.221667
+12
+13 0
+14 1
+15 2
+16 3
+17 4
+18 5
+19 6
+breaks  counts
+  0.75     NaN
+  1.50      10
+  2.25       6
+  3.00      17
+  3.75       0
+  4.50      16
+  5.25      19
+
+H2O includes a set of string processing methods in the H2OFrame class that make it easy to operate on each element in an H2OFrame.
+
+To determine the number of times a string is contained in each element:
+
+1   In [62]: df7 = h2o.H2OFrame.from_python(
+2   [’Hello’, ’World’, ’Welcome’, ’To’, ’H2O’, ’World’])
+3
+4   In [63]: df7
+5   Out[63]: H2OFrame with 6 rows and 1 columns:
+6
+7   0
+8   1
+9   2
+103 114 125
+     C1
+  Hello
+  World
+Welcome
+     To
+    H2O
+  World
+
+13
+14   In [65]: df7.countmatches(’l’)
+15   Out[65]: H2OFrame with 6 rows and 1 columns: 16   C1
+17   0 2
+18   1 1
+19   2 1
+20   3 0
+21   4 0
+22   5 1
+
+To replace the first occurrence of ‘l’ (lower case letter) with ‘x’ and return a new H2OFrame:
+
+1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9
+1   In [98]: df8 = h2o.H2OFrame.from_python(np.random.randn(100,4).tolist(), column_names=list(’ABCD’))
+2
+3   Parse Progress: [###############################] 100%
+4   Uploaded py9607f2cc-087a-4d99-ba9f-917ca852c1f2 into cluster with 100 rows
+and 4 cols
+5
+6   In [99]: df9 = h2o.H2OFrame.from_python(
+7   np.random.randn(100,4).tolist(), 8   column_names=list(’ABCD’))
+9
+10   Parse Progress: [###############################] 100%
+11   Uploaded pycb8b3aba-77d6-4383-88dd-4729f1f2c314 into cluster with 100 rows
+In [89]: df7.sub(’l’,’x’)
+Out[89]: H2OFrame with 6 rows and 1 columns:
+C1
+0 Hexlo
+1 Worxd
+2  Wexcome
+3       To
+4      H2O
+5    Worxd
+
+For global substitution, use gsub. Both sub and gsub support regular expressions. To split strings based on a regular expression:
+
+In [86]: df7.strsplit(’(l)+’)
+Out[86]: H2OFrame with 6 rows and 2 columns:
+C1 C2 0 He o 1Wor d 2We come 3 To NaN 4 H2O NaN 5Wor d
+
+4.5 Merging
+
+To combine two H2OFrames together by appending one as rows and return a new H2OFrame:
+
+and 4 cols
+
+12
+13   In [100]: df8.rbind(df9)
+14   Out[100]: H2OFrame with 200 rows and 4 columns:
+15   A B C D
+16   0 -0.095807 0.944757 0.160959 0.271681
+17   1 -0.950010 0.669040 0.664983 1.535805
+18   2 0.172176 0.657167 0.970337 -0.419208
+19   3 0.589829 -0.516749 -1.598524 -1.346773
+20   4 1.044948 -0.281243 -0.411052 0.959717
+21   5 0.498329 0.170340 0.124479 -0.170742
+22   6 1.422841 -0.409794 -0.525356 2.155962
+23   7 0.944803 1.192007 -1.075689 0.017082
+
+For successful row binding, the column names and column types between the two H2OFrames must match.
+
+H2O also supports merging two frames together by matching column names:
+
+1 In [108]: df10 = h2o.H2OFrame.from_python( {
+2 ’A’: [’Hello’, ’World’,
+3 ’Welcome’, ’To’,
+4 ’H2O’, ’World’],
+5 ’n’: [0,1,2,3,4,5]} )
+6
+7 Parse Progress: [###############################] 100%
+8 Uploaded py57e84cb6-ce29-4d13-afe4-4333b2186c72 into cluster with 6 rows and
+2 cols
+9
+10 In [109]: df11 = h2o.H2OFrame.from_python(np.random.randint(0, 10, size=100).
+         tolist9), column_names=[’n’])
+11
+12 Parse Progress: [###############################] 100%
+13 Uploaded py090fa929-b434-43c0-81bd-b9c61b553a31 into cluster with 100 rows
+and 1 cols
+14
+15 In [112]: df11.merge(df10)
+16 Out[112]: H2OFrame with 100 rows and 2 columns:
+17 n A
+18 07 NaN
+1913 To 20 2 0 Hello 2139 NaN 2249 NaN 2353 To 2464 H2O 2574 H2O 26 8 5 World 2794 H2O
+
+1 2 3 4 5 6 7 8 9
+10
+11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28
+1 2 3 4 5 6 7 8 9
+10 11
+
+4.6 Grouping
+
+”Grouping” refers to the following process:
+
+- splitting the data into groups based on some criteria
+
+- applying a function to each group independently
+
+- combining the results into an H2OFrame
+
+To group and then apply a function to the results:
+
+In [123]: df12 = h2o.H2OFrame(
+    {’A’ : [’foo’, ’bar’, ’foo’, ’bar’,
+            ’foo’, ’bar’, ’foo’, ’foo’],
+     ’B’ : [’one’, ’one’, ’two’, ’three’,
+            ’two’, ’two’, ’one’, ’three’],
+     ’C’ : np.random.randn(8),
+     ’D’ : np.random.randn(8)})
+Parse Progress: [###############################] 100%
+Uploaded pyd297bab5-4e4e-4a89-9b85-f8fecf37f264 into cluster with 8 rows and
+4 cols
+In [124]: df12
+Out[124]: H2OFrame with
+     A         C
+0  foo  1.583908
+1  bar  1.055763
+2  foo -1.200572
+3  bar -1.066722
+4  foo -0.023385
+5  bar  0.758202
+6  foo  0.098259
+7  foo  0.412450
+      8 rows and 4 columns:
+    B         D
+  one -0.441779
+  one  1.733467
+  two  0.970428
+three -0.311055
+  two  0.077905
+  two  0.521504
+  one -1.391587
+                  three -0.050374
+In [125]: df12.group_by(’A’).sum().frame
+Out[125]: H2OFrame with
+2 rows and 4 columns:
+    sum_D
+ 1.943915
+-0.835406
+A 0 bar 1 foo
+   sum_C  sum_B
+0.747244      3
+0.870661      5
+
+To group by multiple columns and then apply a function:
+
+In [127]: df13 = df12.group_by([’A’,’B’]).sum().frame
+In [128]: df13
+Out[128]: H2OFrame with 6 rows and 4 columns:
+                            sum_D
+                         1.733467
+                         0.521504
+2  foo  three  0.412450 -0.050374
+3  foo    one  1.682168 -1.833366
+4  foo    two -1.223957  1.048333
+5  bar  three -1.066722 -0.311055
+A
+0 bar
+1 bar
+  B     sum_C
+one  1.055763
+two  0.758202
+
+To join the results into the original H2OFrame:
+
+1 2 3 4 5 6 7 8 9
+10 11
+
+In [129]: df12.merge(df13)
+Out[129]: H2OFrame with 8 rows and 6 columns:
+     A      B         C         D     sum_C     sum_D
+0  foo
+1  bar
+2  foo
+3  bar  three -1.066722 -0.311055 -1.066722 -0.311055
+one  1.583908 -0.441779  1.682168 -1.833366
+one  1.055763  1.733467  1.055763  1.733467
+two -1.200572  0.970428 -1.223957  1.048333
+4  foo
+5  bar
+6  foo
+7  foo  three  0.412450 -0.050374  0.412450 -0.050374
+two -0.023385  0.077905 -1.223957  1.048333
+two  0.758202  0.521504  0.758202  0.521504
+one  0.098259 -1.391587  1.682168 -1.833366
+
+4.7 Using Date and Time Data
+
+H2O has powerful features for ingesting and feature engineering using time data. Internally, H2O stores time information as an integer of the number of milliseconds since the epoch.
+
+To ingest time data natively, use one of the supported time input formats:
+
+In [140]: df14 = h2o.H2OFrame.from_python(
+        {’D’: [’18OCT2015:11:00:00’,
+               ’19OCT2015:12:00:00’,
+               ’20OCT2015:13:00:00’]},
+         column_types=[’time’])
+In [141]: df14.types
+Out[141]: {u’D’: u’time’}
+1 2 3 4 5 6 7 8
+1 2 3 4 5 6
+1 2 3 4 5 6
+To display the day of the month:
+In [142]: df14[’D’].day()
+Out[142]: H2OFrame with 3 rows and 1 columns:
+D 0 18 1 19 2 20
+To display the day of the week:
+In [143]: df14[’D’].dayOfWeek()
+Out[143]: H2OFrame with 3 rows and 1 columns:
+     D
+0  Sun
+1  Mon
+2  Tue
+
+4.8 Categoricals
+
+H2O handles categorical (also known as enumerated or factor) values in an H2OFrame. This is significant because categorical columns have specific treatments in each of the machine learning algorithms.
+
+Using ‘df12’ from above, H2O imports columns A and B as categorical/enumerated/factor types:
+
+1 2 3
+1 2
+1 2
+1
+2 3 4 5 6 7 8 9
+10 11 12 13
+In [145]: df12.types
+Out[145]: {u’A’: u’Enum’, u’B’: u’Enum’,
+           u’C’: u’Numeric’, u’D’: u’Numeric’}
+
+To determine if any column is a categorical/enumerated/factor type:
+
+In [148]: df12.anyfactor()
+Out[148]: True
+To view the categorical levels in a single column:
+In [149]: df12["A"].levels()
+Out[149]: [’bar’, ’foo’]
+
+To create categorical interaction features:
+
+In [163]: df12.interaction([’A’,’B’], pairwise=False, max_factors=3,
+     min_occurrence=1)
+Interactions Progress: [########################] 100% Out[163]: H2OFrame with 8 rows and 1 columns:
+       A_B
+0  foo_one
+1  bar_one
+2  foo_two
+3    other
+4  foo_two
+5    other
+6  foo_one
+7    other
+
+To retain the most common categories and set the remaining categories to a common ‘Other’ category and create an interaction of a categorical column with itself:
+
+1
+2 3 4 5 6 7 8 9
+10 11 12 13 14 15
+1 2 3 4 5 6 7 8 9
+10 11 12 13
+In [168]: bb_df = df12.interaction([’B’,’B’], pairwise=False, max_factors=2,
+     min_occurrence=1)
+Interactions Progress: [########################] 100%
+In [169]: bb_df
+Out[169]: H2OFrame with 8 rows and 1 columns:
+B_B
+0 one
+1 one
+2 two
+3 other
+4 two
+5 two
+6 one
+7 other
+
+These can then be added as a new column on the original dataframe:
+
+In [170]: df15 = df12.cbind(bb_df)
+In [171]: df15
+Out[171]: H2OFrame with 8 rows and 5 columns:
+A B C D B_B
+0  foo
+1  bar
+2  foo
+3  bar  three -1.066722 -0.311055  other
+one  1.583908 -0.441779    one
+one  1.055763  1.733467    one
+two -1.200572  0.970428    two
+4  foo
+5  bar
+6  foo
+7  foo  three  0.412450 -0.050374  other
+two -0.023385  0.077905    two
+two  0.758202  0.521504    two
+one  0.098259 -1.391587    one
+
+4.9 Loading and Saving Data
+
+In addition to loading data from Python objects, H2O can load data directly from:
+
+- disk
+
+- network file systems (NFS, S3)
+
+- distributed file systems (HDFS)
+
+- HTTP addresses
+
+H2O currently supports the following file types:
+
+- CSV (delimited) files 
+
+- ORC
+
+- SVMLite
+
+- ARFF 
+
+- XLS 
+
+- XLST
+
+To load data from the same machine running H2O:
+
+1
+1
+1
+1
+In[172]: df = h2o.upload_file("/pathToFile/fileName")
+
+To load data from the machine running Python to the machine running H2O:
+
+In[173]: df = h2o.import_file("/pathToFile/fileName")
+
+To save an H2OFrame on the machine running H2O:
+
+In[174]: h2o.export_file(df,"/pathToFile/fileName")
+
+To save an H2OFrame on the machine running Python:
+
+In[175]: h2o.download_csv(df,"/pathToFile/fileName")
+
+5 Machine Learning
+
+The following sections describe some common model types and features.
+
+5.1 Modeling
+
+The following section describes the features and functions of some common models available in H2O. For more information about running these models in Python using H2O, refer to the documentation on the H2O.ai website or to the booklets on specific models.
+
+H2O supports the following models:
+
+- Deep Learning
+
+- Naive Bayes
+
+- Principal Components Analysis (PCA)
+
+- K-means
+
+- Generalized Linear Models (GLM)
+
+- Gradient Boosted Regression (GBM)
+
+- Distributed Random Forest (DRF)
+
+The list is growing quickly, so check www.h2o.ai to see the latest additions.
+
+5.1.1 Supervised Learning
+
+Generalized Linear Models (GLM): Provides flexible generalization of ordinary linear regression for response variables with error distribution models other than a Gaussian (normal) distribution. GLM unifies various other statistical models, including Poisson, linear, logistic, and others when using l1 and l2 regularization.
+
+Distributed Random Forest: Averages multiple decision trees, each created on different random samples of rows and columns. It is easy to use, non-linear, and provides feedback on the importance of each predictor in the model, making it one of the most robust algorithms for noisy data.
+
+Gradient Boosting (GBM): Produces a prediction model in the form of an ensemble of weak prediction models. It builds the model in a stage-wise fashion and is generalized by allowing an arbitrary differentiable loss function. It is one of the most powerful methods available today.
+
+Deep Learning: Models high-level abstractions in data by using non-linear transformations in a layer-by-layer method. Deep learning is an example of supervised learning, which can use unlabeled data that other algorithms cannot.
+
+Naive Bayes: Generates a probabilistic classifier that assumes the value of a particular feature is unrelated to the presence or absence of any other feature, given the class variable. It is often used in text categorization.
+
+5.1.2 Unsupervised Learning
+
+K-Means: Reveals groups or clusters of data points for segmentation. It clusters observations into k-number of points with the nearest mean.
+
+Principal Component Analytis (PCA): The algorithm is carried out on a set of possibly collinear features and performs a transformation to produce a new set of uncorrelated features.
+
+Anomaly Detection: Identifies the outliers in your data by invoking the deep learning autoencoder, a powerful pattern recognition model.
+
+5.2 Running Models
+
+This section describes how to run the following model types:
+
+- Gradient Boosted Models (GBM)
+
+- Generalized Linear Models (GLM)
+
+- K-means
+
+- Principal Components Analysis (PCA) as well as how to generate predictions.
+
+5.2.1 Gradient Boosting Models (GBM)
+
+To generate gradient boosting models for creating forward-learning ensembles, use H2OGradientBoostingEstimator.
+
+The construction of the estimator defines the parameters of the estimator and the call to H2OGradientBoostingEstimator.train trains the estimator on the specified data. This pattern is common for each of the H2O algorithms.
+
+1 In [1]: import h2o 2
+3 In [2]: h2o.init() 4
+5 Java Version: java version "1.8.0_40"
+6 Java(TM) SE Runtime Environment (build 1.8.0_40-b27)
+7 Java HotSpot(TM) 64-Bit Server VM (build 25.40-b25, mixed mode)
+8 9
+10 Starting H2O JVM and connecting: .................. Connection successful!
+11 --------------------------
+12 H2O cluster uptime:
+13 H2O cluster version:
+14 H2O cluster name:
+15 H2O cluster total nodes:
+16 H2O cluster total memory:
+17 H2O cluster total cores:
+18 H2O cluster allowed cores:
+19 H2O cluster healthy:
+                                --------------------------
+                                1 seconds 738 milliseconds
+                                3.5.0.3238
+                                H2O_started_from_python
+                                1
+                                3.56 GB
+                                4
+                                4
+                                True
+                                127.0.0.1
+                                54321
+                                --------------------------
+27
+28 In [5]: iris_df = h2o.import_file(path=iris_data_path) 29
+30 Parse Progress: [###############################] 100%
+31 Imported /Users/hank/PythonEnvs/h2obleeding/bin/../h2o_data/iris.csv. Parsed
+20 H2O Connection ip:
+21 H2O Connection port:
+22 --------------------------
+23
+24 In [3]: from h2o.estimators.gbm import H2OGradientBoostingEstimator
+25
+26 In [4]: iris_data_path = h2o.system_file("iris.csv") # load demonstration
+data
+150 rows and 5 cols
+
+32
+33 In [6]: iris_df.describe()
+34 Rows:150 Cols:5
+35
+36 Chunk compression summary:
+37 chunktype chunkname count
+38 --------- --------- -----
+39 1-Byte Int C1 1
+40 1-Byte Flt C2 4
+41
+42 Frame distribution summary:
+43
+44 ---------------
+45 127.0.0.1:54321
+46 mean
+47 min
+48 max
+49 stddev
+50 total
+51
+52 In [7]: gbm_regressor = H2OGradientBoostingEstimator(distribution="gaussian",
+          ntrees=10, max_depth=3, min_rows=2, learn_rate="0.2")
+53
+54 In [8]: gbm_regressor.train(x=range(1,iris_df.ncol), y=0, training_frame=
+count_%  size  size_%
+-------  ----  ------
+   20    218B  18.890
+   80    936B  81.109
+size rows
+---- ----
+1.1KB 150
+1.1KB 150
+1.1KB 150
+1.1KB 150 0B00 1.1KB150 1
+chunks/col  chunks
+----------  ------
+15 15 15
+1
+5 0
+5
+iris_df)
+55
+56 gbm Model Build Progress: [#####################] 100% 57
+58 In [9]: gbm_regressor
+59 Out[9]: Model Details
+60 =============
+61 H2OGradientBoostingEstimator: Gradient Boosting Machine
+62 Model Key: GBM_model_python_1446220160417_2
+63
+64 Model Summary:
+65 number_of_trees
+66 model_size_in_bytes
+67 min_depth
+68 max_depth
+69 mean_depth
+70 min_leaves
+71 max_leaves
+72 mean_leaves
+73
+74 ModelMetricsRegression: gbm
+75 ** Reported on train data. **
+76
+77 MSE: 0.0706936802293
+78 Rˆ2: 0.896209989184
+79 Mean Residual Deviance: 0.0706936802293
+80
+81 Scoring History:
+| 10
+| 1535
+| 3
+| 3
+| 3
+| 7
+| 8
+| 7.8
+82
+83 -- 84
+85
+86
+timestamp            duration    number_of_trees
+     training_deviance
+-------------------  ----------  -----------------
+ -------------------
+2015-10-30 08:50:00  0.121 sec   1
+     0.472445
+2015-10-30 08:50:00  0.151 sec   2
+     0.334868
+2015-10-30 08:50:00  0.162 sec   3
+     0.242847
+training_MSE
+--------------
+0.472445
+0.334868
+0.242847
+
+87 2015-10-30 08:50:00 0.175 sec 0.184128
+88 2015-10-30 08:50:00 0.187 sec 0.14365
+89 2015-10-30 08:50:00 0.197 sec 0.116814
+90 2015-10-30 08:50:00 0.208 sec 0.0992098
+91 2015-10-30 08:50:00 0.219 sec 0.0864125
+92 2015-10-30 08:50:00 0.229 sec 0.077629
+93 2015-10-30 08:50:00 0.238 sec 0.0706937
+94
+95 Variable Importances:
+4 5 6 7 8 9 10
+scaled_importance
+-------------------
+1
+0.0667563
+0.0417627
+0.00917544
+0.184128
+0.14365
+0.116814
+0.0992098
+0.0864125
+0.077629
+0.0706937
+percentage
+------------
+0.894699
+0.0597268
+0.037365
+0.00820926
+96 variable
+97 ----------
+98 C3
+99 C2
+100 C5
+101 C4
+relative_importance
+---------------------
+227.562
+15.1912
+9.50362
+2.08799
+
+To generate a classification model that uses labels, use distribution="multinomial":
+
+1 In [10]: gbm_classifier = H2OGradientBoostingEstimator(distribution=" multinomial", ntrees=10, max_depth=3, min_rows=2, learn_rate="0.2")
+2
+3 In [11]: gbm_classifier.train(x=range(0,iris_df.ncol-1), y=iris_df.ncol-1,
+training_frame=iris_df) 5 gbm Model Build Progress: [#
+         #################################################] 100%
+6
+7 In [12]: gbm_classifier
+8 Out[12]: Model Details
+9 =============
+10 H2OGradientBoostingEstimator : Gradient Boosting Machine
+11 Model Key: GBM_model_python_1446220160417_4
+12
+13 Model Summary:
+14 number_of_trees model_size_in_bytes min_depth max_depth mean_depth min_leaves max_leaves mean_leaves
+15 -- ----------------- --------------------- ----------- ----------- ------------ ------------ ------------ -------------
+16 30 3933 1 3
+4
+2.93333 2 8
+5.86667
+17 18
+19 ModelMetricsMultinomial: gbm
+20 ** Reported on train data. **
+21
+22 MSE: 0.00976685294679
+23 Rˆ2: 0.98534972058
+24 LogLoss: 0.0782480971236
+25
+26 Confusion Matrix: vertical: actual; across: predicted 27
+28 Iris-setosa Iris-versicolor Iris-virginica Error Rate
+29 ------------- ----------------- ---------------- ---------- -------
+
+3050 0 0 0 0/50 31 0 49 1 0.02 1/50 320 0 50 0 0/50
+33 50 49 51 34
+35 Top-3 Hit Ratios:
+0.00666667  1 / 150
+36 k
+37 ---
+38 1
+39 2
+40 3
+41
+42 Scoring History:
+hit_ratio
+-----------
+0.993333
+1
+1
+43
+44 -- 45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+timestamp
+     training_logloss
+duration    number_of_trees    training_MSE
+    training_classification_error
+-------------------  ----------  -----------------
+ ------------------  -------------------------------
+2015-10-30 08:51:52  0.047 sec   1
+     0.758411            0.0266667
+2015-10-30 08:51:52  0.068 sec   2
+     0.550506            0.0266667
+2015-10-30 08:51:52  0.086 sec   3
+     0.412173            0.0266667
+2015-10-30 08:51:52  0.100 sec   4
+     0.313539            0.02
+2015-10-30 08:51:52  0.112 sec   5
+     0.243514            0.02
+2015-10-30 08:51:52  0.131 sec   6
+     0.19091             0.00666667
+2015-10-30 08:51:52  0.143 sec   7
+     0.151394            0.00666667
+2015-10-30 08:51:52  0.153 sec   8
+     0.120882            0.00666667
+2015-10-30 08:51:52  0.165 sec   9
+     0.0975897           0.00666667
+2015-10-30 08:51:52  0.180 sec   10
+     0.0782481           0.00666667
+--------------
+0.282326
+0.179214
+0.114954
+0.0744726
+0.0498319
+0.0340885
+0.0241071
+0.017606
+0.0131024
+0.00976685
+percentage
+------------
+0.774374
+0.217086
+0.00543422
+0.00310549
+55
+56 Variable Importances:
+57 variable
+58 ----------
+59 C4
+60 C3
+61 C1
+62 C2
+relative_importance    scaled_importance
+---------------------  -------------------
+192.761                1
+54.0381                0.280338
+1.35271                0.00701757
+0.773032               0.00401032
+
+5.2.2 Generalized Linear Models (GLM)
+
+Generalized linear models (GLM) are some of the most commonly-used models for many types of data analysis use cases. While some data can be analyzed using linear models, linear models may not be as accurate if the variables are more complex. For example, if the dependent variable has a non-continuous distribution or if the effect of the predictors is not linear, generalized linear models will produce more accurate results than linear models.
+
+Generalized Linear Models (GLM) estimate regression models for outcomes following exponential distributions in general. In addition to the Gaussian (i.e. normal) distribution, these include Poisson, binomial, gamma and Tweedie distributions. Each serves a different purpose and, depending on distribution and link function choice, it can be used either for prediction or classification.
+
+H2O’s GLM algorithm fits the generalized linear model with elastic net penalties. The model fitting computation is distributed, extremely fast,and scales extremely well for models with a limited number (∼low thousands) of predictors with non-zero coefficients.
+
+The algorithm can compute models for a single value of a penalty argument or the full regularization path, similar to glmnet. It can compute Gaussian (linear), logistic, Poisson, and gamma regression models. To generate a generalized linear model for developing linear models for exponential distributions, use H2OGeneralizedLinearEstimator. You can apply regularization to the model by adjusting the lambda and alpha parameters.
+
+1 In [13]: from h2o.estimators.glm import H2OGeneralizedLinearEstimator 2
+3 In [14]: prostate_data_path = h2o.system_file("prostate.csv")
+4
+5 In [15]: prostate_df = h2o.import_file(path=prostate_data_path) 6
+7 Parse Progress: [##################################################] 100%
+8 Imported /Users/hank/PythonEnvs/h2obleeding/bin/../h2o_data/prostate.csv.
+         Parsed 380 rows and 9 cols
+9
+10 In [16]: prostate_df["RACE"] = prostate_df["RACE"].asfactor() 11
+12 In [17]: prostate_df.describe()
+13 Rows:380 Cols:9
+14
+15 Chunk compression summary:
+16 chunk_type chunk_name count
+size_percentage
+17 ------------ ------------------------- -------
+count_percentage    size
+------------------  ------
+18 CBS
+19 C1N
+20 C2
+21 CUD
+22 C8D
+-----------------
+        Bits                       1
+       11.1111             118
+       55.5556             2.2
+       11.1111             828
+       11.1111             2.1
+       11.1111             3.0
+number_of_chunks_per_column
+B KB B KB KB
+9 9
+1.39381
+26.4588
+9.7803
+25.6556
+36.7116
+1-Byte Integers (w/o NAs)  5
+2-Byte Integers            1
+Unique Reals               1
+64-bit Reals               1
+23
+24 Frame distribution summary:
+25 size number_of_rows
+                          number_of_chunks
+26 --------------- ------ ---------------- -----------------------------
+         ------------------
+27 127.0.0.1:54321 8.3 KB 380 1
+28 mean 8.3KB380 1
+29 min
+30 max
+31 stddev
+32 total
+33
+34
+35
+36 In [18]: glm_classifier = H2OGeneralizedLinearEstimator(family="binomial",
+         nfolds=10, alpha=0.5)
+37
+38 In [19]: glm_classifier.train(x=["AGE","RACE","PSA","DCAPS"],y="CAPSULE",
+training_frame=prostate_df) 40 glm Model Build Progress: [#
+         #################################################] 100%
+8.3 KB  380
+8.3 KB  380
+0  B    0
+8.3 KB  380
+1 9 1 9 0 0 1 9
+39
+41
+42 In [20]: glm_classifier
+43 Out[20]: Model Details
+44 =============
+45 H2OGeneralizedLinearEstimator : Generalized Linear Model
+46 Model Key: GLM_model_python_1446220160417_6
+47
+48 GLM 49
+50
+Model: summary
+51 --
+52
+family    link    regularization
+     number_of_predictors_total    number_of_active_predictors
+     number_of_iterations    training_frame
+--------  ------  ---------------------------------------------
+ ----------------------------  -----------------------------
+ ----------------------  ----------------
+binomial logit Elastic Net (alpha = 0.5, lambda = 3.251E-4 ) 6 66
+py_3
+53 54
+55 ModelMetricsBinomialGLM: glm
+56 ** Reported on train data. **
+57
+58 MSE: 0.202434568594
+59 Rˆ2: 0.158344081513
+60 LogLoss: 0.59112610879
+61 Null degrees of freedom: 379
+62 Residual degrees of freedom: 374
+63 Null deviance: 512.288840185
+64 Residual deviance: 449.25584268
+65 AIC: 461.25584268
+66 AUC: 0.719098211972
+67 Gini: 0.438196423944
+68
+69 Confusion Matrix
+(Act/Pred) for max f1 @ threshold = 0.28443600654:
+70
+71 -----
+72 0
+73 1
+74 Total
+75
+76 Maximum Metrics: 77
+78 metric
+79 -------------------------- ----------- -------- -----
+80 max f1 0.284436 0.617512 273
+81 max f2 0.199001 0.77823 360
+0    1    Error
+---  ---  -------
+80   147  0.6476
+19   134  0.1242
+99   281  0.4368
+Rate
+-------------
+(147.0/227.0)
+(19.0/153.0)
+(166.0/380.0)
+Maximum metrics at their respective thresholds
+           threshold    value     idx
+
+82 max f0point5
+83 max accuracy
+84 max precision
+85 max absolute_MCC
+86 max min_per_class_accuracy
+87
+0.415159
+0.415159
+0.998619
+0.415159
+0.33266
+0.636672
+0.705263
+1
+0.369123
+0.656388
+108
+108
+0
+108
+175
+88 ModelMetricsBinomialGLM: glm
+89 ** Reported on cross-validation data. **
+90
+91 MSE: 0.209974707772
+92 Rˆ2: 0.126994679038
+93 LogLoss: 0.609520995116
+94 Null degrees of freedom: 379
+95 Residual degrees of freedom: 373
+96 Null deviance: 515.693473211
+97 Residual deviance: 463.235956288
+98 AIC: 477.235956288
+99 AUC: 0.686706400622
+100 Gini: 0.373412801244
+101
+102 Confusion Matrix
+103
+104 -----
+105 0
+106 1
+107 Total
+108
+109 Maximum Metrics: 110
+111 metric
+112 --------------------------
+113 max f1
+114 max f2
+115 max f0point5
+116 max accuracy
+117 max precision
+118 max absolute_MCC
+119 max min_per_class_accuracy
+120
+121 Scoring History:
+threshold
+= 0.326752491231:
+0    1
+---  ---
+135  92
+48   105
+183  197
+(Act/Pred) for max f1 @
+Error    Rate
+-------  -------------
+0.4053   (92.0/227.0)
+0.3137   (48.0/153.0)
+0.3684   (140.0/380.0)
+Maximum metrics at their respective thresholds
+threshold
+-----------
+0.326752
+0.234718
+0.405529
+0.405529
+0.999294
+0.405529
+0.336043
+value     idx
+--------  -----
+0.6       196
+0.774359  361
+0.632378  109
+0.702632  109
+1         0
+0.363357  109
+0.627451  176
+122
+123 --
+124 125 126 127 128 129
+timestamp
+-------------------
+ -----------
+2015-10-30 08:53:01
+2015-10-30 08:53:01
+2015-10-30 08:53:01
+2015-10-30 08:53:01
+2015-10-30 08:53:01
+2015-10-30 08:53:01
+duration
+----------
+0.000 sec
+0.004 sec
+0.005 sec
+0.005 sec
+0.005 sec
+0.006 sec
+iteration    log_likelihood
+-----------  ----------------
+0            256.482
+1            226.784
+2            224.716
+3            224.629
+4            224.628
+5            224.628
+objective
+0.674952
+0.597118
+0.591782
+0.59158
+0.591579
+0.591579
+
+5.2.3 K-means
+
+To generate a K-means model for data characterization, use h2o.kmeans(). This algorithm does not require a dependent variable.
+
+1 In [21]: from h2o.estimators.kmeans import H2OKMeansEstimator 2
+3 In [22]: cluster_estimator = H2OKMeansEstimator(k=3)
+4
+5 In [23]: cluster_estimator.train(x=[0,1,2,3], training_frame=iris_df) 6
+7 kmeans Model Build Progress: [#
+         #################################################] 100%
+8
+9 In [24]: cluster_estimator
+10 Out[24]: Model Details
+11 =============
+12 H2OKMeansEstimator : K-means
+13 Model Key: K-means_model_python_1446220160417_8
+14
+15 Model Summary:
+16 number_of_rows number_of_clusters number_of_categorical_columns
+             number_of_iterations    within_cluster_sum_of_squares
+             total_sum_of_squares    between_cluster_sum_of_squares
+17 -- ---------------- -------------------- -------------------------------
+         ----------------------  -------------------------------
+         ----------------------  --------------------------------
+18150 3 0
+             4                       190.757                          596
+                                 405.243
+19 20
+21 ModelMetricsClustering: kmeans
+22 ** Reported on train data. **
+23
+24 MSE: NaN
+25 Total Within Cluster Sum of Square Error: 190.756926265
+26 Total Sum of Square Error to Grand Mean: 596.0
+27 Between Cluster Sum of Square Error: 405.243073735
+28
+29 Centroid Statistics:
+30
+31 --
+32
+33
+34
+35
+36 Scoring History:
+centroid    size
+----------  ------
+1           96
+2           32
+3           22
+within_cluster_sum_of_squares
+-------------------------------
+149.733
+17.292
+23.7318
+37
+38 -- 39
+40
+41
+42
+timestamp
+         within_cluster_sum_of_squares
+avg_change_of_std_centroids
+duration
+iteration
+-------------------  ----------  -----------
+ -----------------------------  -------------------------------
+2015-10-30 08:54:39  0.011 sec   0
+                                401.733
+2015-10-30 08:54:39  0.047 sec   1
+                            191.282
+2015-10-30 08:54:39  0.049 sec   2
+                         190.82
+2015-10-30 08:54:39  0.050 sec   3
+                        190.757
+nan
+2.09788
+0.00316006
+0.000846952
+
+5.2.4 Principal Components Analysis (PCA)
+
+To map a set of variables onto a subspace using linear transformations, use h2o.transforms.decomposition.H2OPCA. This is the first step in Principal Components Regression.
+
+1 In [25]: from h2o.transforms.decomposition import H2OPCA
+2
+3 In [26]: pca_decomp = H2OPCA(k=2, transform="NONE", pca_method="Power") 4
+5 In [27]: pca_decomp.train(x=range(0,4), training_frame=iris_df)
+6
+7 pca Model Build Progress: [#
+         #################################################] 100%
+8
+9 In [28]: pca_decomp
+10 Out[28]: Model Details
+11 =============
+12 H2OPCA : Principal Component Analysis
+13 Model Key: PCA_model_python_1446220160417_10
+14
+15 Importance of components:
+16
+17 ----------------------
+18 Standard deviation
+19 Proportion of Variance
+20 Cumulative Proportion
+21 22
+23 ModelMetricsPCA: pca
+24 ** Reported on train data. **
+25
+26 MSE: NaN 27
+28 In [29]: 29
+30 In [30]:
+31 Out[30]:
+32 PC1
+33 -------
+34 5.9122
+35 5.57208
+36 5.44648
+37 5.43602
+38 5.87507
+39 6.47699
+40 5.51543
+41 5.85042
+42 5.15851
+43 5.64458
+pc1      pc2
+-------  --------
+7.86058  1.45192
+0.96543  0.032938
+0.96543  0.998368
+pred = pca_decomp.predict(iris_df) pred.head() # Projection results
+    PC2
+-------
+2.30344
+1.97383
+2.09653
+1.87168
+2.32935
+2.32553
+2.07156
+2.14948
+1.77643
+1.99191
+
+5.3 Grid Search
+
+H2O supports grid search across hyperparameters:
+
+1 In [32]: ntrees_opt = [5, 10, 15] 2
+3 In [33]: max_depth_opt = [2, 3, 4] 4
+5 In [34]: learn_rate_opt = [0.1, 0.2]
+6
+7 In [35]: hyper_parameters = {"ntrees": ntrees_opt, "max_depth":max_depth_opt,
+          "learn_rate":learn_rate_opt}
+8
+9 In [36]: from h2o.grid.grid_search import H2OGridSearch 10
+11 In [37]: gs = H2OGridSearch(H2OGradientBoostingEstimator(distribution=" multinomial"), hyper_params=hyper_parameters)
+12
+13 In [38]: gs.train(x=range(0,iris_df.ncol-1), y=iris_df.ncol-1, training_frame
+=iris_df, nfold=10)
+15 gbm Grid Build Progress: [##################################################]
+100%
+16
+17 In [39]: print gs.sort_by(’logloss’, increasing=True) 18
+19 Grid Search Results:
+20 Model Id Hyperparameters: [’learn_rate’, ’ntrees’, ’
+         max_depth’]    logloss
+21 --------------------------
+         --------------------------------------------------------  ---------
+22 GBM_model_1446220160417_30 [’0.2, 15, 4’]
+
+14
+23 GBM_model_1446220160417_27 [’0.2, 15, 3’]
+24 GBM_model_1446220160417_24 [’0.2, 15, 2’]
+25 GBM_model_1446220160417_29 [’0.2, 10, 4’]
+26 GBM_model_1446220160417_26 [’0.2, 10, 3’]
+27 GBM_model_1446220160417_23 [’0.2, 10, 2’]
+28 GBM_model_1446220160417_21 [’0.1, 15, 4’]
+29 GBM_model_1446220160417_18 [’0.1, 15, 3’]
+30 GBM_model_1446220160417_15 [’0.1, 15, 2’]
+31 GBM_model_1446220160417_28 [’0.2, 5, 4’]
+32 GBM_model_1446220160417_25 [’0.2, 5, 3’]
+33 GBM_model_1446220160417_22 [’0.2, 5, 2’]
+34 GBM_model_1446220160417_20 [’0.1, 10, 4’]
+35 GBM_model_1446220160417_17 [’0.1, 10, 3’]
+36 GBM_model_1446220160417_14 [’0.1, 10, 2’]
+0.05105
+0.0551088
+0.0697714
+0.103064
+0.106232
+0.120161
+0.170086
+0.171218
+0.181186
+ 0.275788
+ 0.27708
+ 0.280413
+0.28759
+0.288293
+0.292993
+
+37   GBM_model_1446220160417_16 [’0.1, 5, 3’]
+38   GBM_model_1446220160417_19 [’0.1, 5, 4’]
+39   GBM_model_1446220160417_13 [’0.1, 5, 2’]
+0.520591
+0.520697
+0.524777
+
+5.4 Integration with scikit-learn
+
+The H2O Python client can be used within scikit-learn pipelines and cross- validation searches. This extends the capabilities of both H2O and scikit-learn.
+
+5.4.1 Pipelines
+
+To create a scikit-learn style pipeline using H2O transformers and estimators:
+
+1 In 2
+3 In 4
+5 In 6
+7 In 8
+9 In 10
+11 In
+12
+13 In 14
+15
+16
+17 In
+18 Out[48]: Model Details
+19 =============
+20 H2OPCA : Principal Component Analysis
+21 Model Key: PCA_model_python_1446220160417_32
+22
+23 Importance of components:
+[41]: from h2o.transforms.preprocessing import H2OScaler [42]: from sklearn.pipeline import Pipeline
+[43]: # Turn off h2o progress bars
+[44]: h2o.__PROGRESS_BAR__=False
+[45]: h2o.no_progress()
+[46]: # build transformation pipeline using sklearn’s Pipeline and H2O
+transforms
+[47]: pipeline = Pipeline([("standardize", H2OScaler()),
+....:                  ("pca", H2OPCA(k=2)),
+....:                  ("gbm", H2OGradientBoostingEstimator(distribution="
+     multinomial"))])
+[48]: pipeline.fit(iris_df[:4],iris_df[4])
+24
+25 ----------------------
+26 Standard deviation
+27 Proportion of Variance
+28 Cumulative Proportion
+29 30
+31 ModelMetricsPCA: pca
+32 ** Reported on train data. **
+33
+34 MSE: NaN
+35 Model Details
+36 =============
+37 H2OGradientBoostingEstimator : Gradient Boosting Machine
+pc1
+--------
+3.22082
+0.984534
+0.984534
+pc2
+---------
+0.34891
+0.0115538
+0.996088
+
+38 Model Key: GBM_model_python_1446220160417_34 39
+40 Model Summary:
+41 number_of_trees model_size_in_bytes min_depth max_depth
+             mean_depth    min_leaves    max_leaves    mean_leaves
+42 -- ----------------- --------------------- ----------- -----------
+         ------------  ------------  ------------  -------------
+43 150
+27014
+1
+13 9.99333
+5
+4.84
+2
+44 45
+46 ModelMetricsMultinomial: gbm
+47 ** Reported on train data. **
+48
+49 MSE: 0.00162796438754
+50 Rˆ2: 0.997558053419
+51 LogLoss: 0.0152718654494
+52
+53 Confusion Matrix: vertical: actual; across: predicted 54
+55 Iris-setosa Iris-versicolor Iris-virginica
+56 ------------- ----------------- ----------------
+Error
+------- ------- 0 0/50 00/50 00/50 0 0/150
+Rate
+5750 0 580 50 590 0 6050 50 61
+62 Top-3 Hit Ratios:
+63 k hit_ratio
+64 --- -----------
+65 1 1
+66 2 1
+67 3 1
+68
+69 Scoring History:
+70 timestamp
+              training_logloss
+71 --- -------------------
+0 0 50 50
+duration
+    training_classification_error
+number_of_trees
+training_MSE
+----------------
+0.36363226261
+0.297174376838
+0.242952566898
+0.199051390695
+0.163730865044
+---
+0.00239417625265
+0.00214164838414
+0.00197748500569
+0.00179303578037
+0.00162796438754
+                     ----------  -----------------
+------------------  -------------------------------
+72
+73
+74
+75
+76
+77 --- 78
+79 80 81 82 83
+2015-10-30 09:00:31
+     0.924249463924
+2015-10-30 09:00:31
+     0.788619346614
+2015-10-30 09:00:31
+     0.679995475248
+2015-10-30 09:00:31
+     0.591313594921
+2015-10-30 09:00:31
+     0.517916553872
+---
+---
+2015-10-30 09:00:31
+ 0.007 sec
+     0.04
+ 0.011 sec
+     0.04
+ 0.014 sec
+     0.04
+ 0.017 sec
+     0.04
+ 0.021 sec
+     0.04
+--- ---
+1.0
+2.0
+3.0
+4.0
+5.0
+---
+46.0
+47.0
+48.0
+49.0
+50.0
+     0.0192767794713
+2015-10-30 09:00:31
+     0.0180720391174
+2015-10-30 09:00:31
+     0.0171428309311
+2015-10-30 09:00:31
+     0.0161938228014
+2015-10-30 09:00:31
+     0.0152718654494
+0.191 sec 0.0
+0.195 sec 0.0
+0.198 sec 0.0
+0.202 sec 0.0
+0.205 sec 0.0
+
+84   Variable Importances:
+85   variable relative_importance scaled_importance percentage
+86   ---------- --------------------- ------------------- ------------
+87   PC1 448.958 1 0.982184
+88   PC2 8.1438 0.0181393 0.0178162
+89   Pipeline(steps=[(’standardize’, <h2o.transforms.preprocessing.H2OScaler
+         object at 0x1085cec90>), (’pca’, ), (’gbm’, )])
+
+5.4.2 Randomized Grid Search
+
+To create a scikit-learn style hyperparameter grid search using k-fold cross validation:
+
+1 In 2
+3 In 4
+5 In 6
+7 In 8
+9 In 10
+11 In 12
+13
+14
+15
+16
+17
+18 In 19
+20 In 21
+22
+23
+24 In 25
+26
+[57]: from sklearn.grid_search import RandomizedSearchCV
+[58]: from h2o.cross_validation import H2OKFold
+[59]: from h2o.model.regression import h2o_r2_score
+[60]: from sklearn.metrics.scorer import make_scorer
+[61]: from sklearn.metrics.scorer import make_scorer
+[62]: params = {"standardize__center":
+  Parameters to test
+[True, False], # [True, False],
+[2,3],
+[10,20],
+[1,2,3],
+[0.1,0.2]}
+....:
+....:
+....:
+....:
+....:
+[63]: custom_cv
+"standardize__scale":
+"pca__k":
+"gbm__ntrees":
+"gbm__max_depth":
+"gbm__learn_rate":
+= H2OKFold(iris_df, n_folds=5, seed=42)
+[64]: pipeline = Pipeline([("standardize", H2OScaler()),
+....:                      ("pca", H2OPCA(k=2)),
+....:                      ("gbm", H2OGradientBoostingEstimator(
+     distribution="gaussian"))])
+[65]: random_search = RandomizedSearchCV(pipeline, params,
+....:                                    n_iter=5,
+....:                                    scoring=make_scorer(h2o_r2_score)
+,
+....:                                    cv=custom_cv,
+....:                                    random_state=42,
+....:                                    n_jobs=1)
+[66]: random_search.fit(iris_df[1:], iris_df[0])
+27 28 29
+30 In
+31 Out[66]:
+32 RandomizedSearchCV(cv=<h2o.cross_validation.H2OKFold instance at 0x108d59200
+>,
+33 34
+35 36
+error_score=’raise’,
+estimator=Pipeline(steps=[(’standardize’, <h2o.transforms.
+     preprocessing.H2OScaler object at 0x108d50150>), (’pca’, ), (’
+     gbm’, )]),
+fit_params={}, iid=True, n_iter=5, n_jobs=1,
+param_distributions={’pca__k’: [2, 3], ’gbm__ntrees’: [10, 20], ’
+     standardize__scale’: [True, False], ’gbm__max_depth’: [1, 2,
+     3], ’standardize__center’: [True, False], ’gbm__learn_rate’:
+     [0.1, 0.2]},
+
+37 pre_dispatch=’2*n_jobs’, random_state=42, refit=True,
+38 scoring=make_scorer(h2o_r2_score), verbose=0)
+39
+40 In [67]: print random_search.best_estimator_
+41 Model Details
+42 =============
+43 H2OPCA : Principal Component Analysis
+44 Model Key: PCA_model_python_1446220160417_136
+45
+46 Importance of components:
+47
+48 ----------------------
+49 Standard deviation
+50 Proportion of Variance
+51 Cumulative Proportion
+52 53
+54 ModelMetricsPCA: pca
+55 ** Reported on train data. **
+56
+57 MSE: NaN
+58 Model Details
+59 =============
+60 H2OGradientBoostingEstimator : Gradient Boosting Machine
+61 Model Key: GBM_model_python_1446220160417_138
+62
+63 Model Summary:
+64 number_of_trees model_size_in_bytes min_depth max_depth
+             mean_depth    min_leaves    max_leaves    mean_leaves
+65 -- ----------------- --------------------- ----------- -----------
+         ------------  ------------  ------------  -------------
+66 20 2743 3 3 3
+pc1
+--------
+3.16438
+0.994721
+0.994721
+pc2
+----------
+0.180179
+0.00322501
+0.997946
+pc3
+----------
+0.143787
+0.00205383
+1
+4 8 6.35
+67 68
+69 ModelMetricsRegression: gbm
+70 ** Reported on train data. **
+71
+72 MSE: 0.0566740346323
+73 Rˆ2: 0.916793146878
+74 Mean Residual Deviance: 0.0566740346323
+75
+76 Scoring History:
+77
+78 -- 79
+80
+81
+82
+83
+84
+85
+timestamp            duration    number_of_trees
+     training_deviance
+-------------------  ----------  -----------------
+ -------------------
+2015-10-30 09:04:46  0.001 sec   1
+     0.477453
+2015-10-30 09:04:46  0.002 sec   2
+     0.344635
+2015-10-30 09:04:46  0.003 sec   3
+     0.259176
+2015-10-30 09:04:46  0.004 sec   4
+     0.200125
+2015-10-30 09:04:46  0.005 sec   5
+     0.160051
+2015-10-30 09:04:46  0.006 sec   6
+     0.132315
+2015-10-30 09:04:46  0.006 sec   7
+     0.114554
+training_MSE
+--------------
+0.477453
+0.344635
+0.259176
+0.200125
+0.160051
+0.132315
+0.114554
+
+86 2015-10-30 09:04:46 0.007 sec 0.100317
+87 2015-10-30 09:04:46 0.008 sec 0.0890903
+88 2015-10-30 09:04:46 0.009 sec 0.0810115
+89 2015-10-30 09:04:46 0.009 sec 0.0760616
+90 2015-10-30 09:04:46 0.010 sec 0.0725191
+91 2015-10-30 09:04:46 0.011 sec 0.0694355
+92 2015-10-30 09:04:46 0.012 sec 0.06741
+93 2015-10-30 09:04:46 0.012 sec 0.0655487
+94 2015-10-30 09:04:46 0.013 sec 0.0624041
+95 2015-10-30 09:04:46 0.014 sec 0.0615533
+96 2015-10-30 09:04:46 0.015 sec 0.058708
+97 2015-10-30 09:04:46 0.015 sec 0.0579205
+98 2015-10-30 09:04:46 0.016 sec 0.056674
+99
+100 Variable Importances:
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+0.100317
+0.0890903
+0.0810115
+0.0760616
+0.0725191
+0.0694355
+0.06741
+0.0655487
+0.0624041
+0.0615533
+0.058708
+0.0579205
+0.056674
+101 variable
+102 ----------
+103 PC1
+104 PC3
+105 PC2
+106 Pipeline(steps=[(’standardize’, <h2o.transforms.preprocessing.H2OScaler
+relative_importance
+---------------------
+237.674
+12.8597
+scaled_importance
+-------------------
+1
+0.0541066
+0.0406157
+percentage
+------------
+0.913474
+0.0494249
+0.0371014
+       9.65329
+object at 0x104f2a490>), (’pca’, ), (’gbm’, )])
+
+6 References
+
+H2O.ai Team. H2O website, 2016. URL http://h2o.ai
+
+H2O.ai Team. H2O documentation, 2016. URL http://docs.h2o.ai
+
+H2O.ai Team. H2O Python Documentation, 2015. URL http://h2o-release. s3.amazonaws.com/h2o/latest_stable_Pydoc.html
+
+H2O.ai Team. H2O GitHub Repository, 2016. URL https://github. com/h2oai
+
+H2O.ai Team. H2O Datasets, 2016. URL http://data.h2o.ai H2O.ai Team. H2O JIRA, 2016. URL https://jira.h2o.ai
+
+H2O.ai Team. H2Ostream, 2016. URL https://groups.google.com/ d/forum/h2ostream
