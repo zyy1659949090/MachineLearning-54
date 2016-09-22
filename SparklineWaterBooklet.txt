@@ -74,9 +74,9 @@ H2O is fast, scalable, open-source machine learning and deep learning for smarte
 
 Using in-memory compression, H2O handles billions of data rows in-memory, even with a small cluster. To make it easier for non-engineers to create complete analytic workflows, H2O’s platform includes interfaces for R, Python, Scala, Java, JSON, and CoffeeScript/JavaScript, as well as a built-in web interface, Flow. H2O is designed to run in standalone mode, on Hadoop, or within a Spark Cluster, and typically deploys within minutes.
 
-H2O includes many common machine learning algorithms, such as generalized linear modeling (linear regression, logistic regression, etc.), Na ̈ıve Bayes, principal components analysis, k-means clustering, and others. H2O also implements best-in-class algorithms at scale, such as distributed random forest, gradient boosting, and deep learning. Customers can build thousands of models and compare the results to get the best predictions.
+H2O includes many common machine learning algorithms, such as generalized linear modeling (linear regression, logistic regression, etc.), Naive Bayes, principal components analysis, k-means clustering, and others. H2O also implements best-in-class algorithms at scale, such as distributed random forest, gradient boosting, and deep learning. Customers can build thousands of models and compare the results to get the best predictions.
 
-H2O is nurturing a grassroots movement of physicists, mathematicians, and computer scientists to herald the new wave of discovery with data science by collaborating closely with academic researchers and industrial data scientists. Stanford university giants Stephen Boyd, Trevor Hastie, Rob Tibshirani advise the H2O team on building scalable machine learning algorithms. With hundreds of meetups over the past three years, H2O has become a word-of-mouth phenomenon, growing amongst the data community by a hundred-fold, and is now used by 30,000+ users and is deployed using R, Python, Hadoop, and Spark in 2000+ corporations.
+H2O is nurturing a grassroots movement of physicists, mathematicians, and computer scientists to herald the new wave of discovery with data science by collaborating closely with academic researchers and industrial data scientists. Stanford university giants Stephen Boyd, Trevor Hastie, Rob Tibshirani advise the H2O team on building scalable machine learning algorithms. With hundreds of meet-ups over the past three years, H2O has become a word-of-mouth phenomenon, growing amongst the data community by a hundred-fold, and is now used by 30,000+ users and is deployed using R, Python, Hadoop, and Spark in 2000+ corporations.
 
 Try it out
 
@@ -85,13 +85,13 @@ Try it out
 - Install H2O’s R package from CRAN at https://cran.r-project.
 org/web/packages/h2o/.
 
-- Install the Python package from PyPI at https://pypi.python. org/pypi/h2o/.
+- Install the Python package from PyPI at https://pypi.python.org/pypi/h2o/.
 
 Join the community
 
-- To learn about our meetups, training sessions, hackathons, and product updates, visit http://h2o.ai.
+- To learn about our meet-ups, training sessions, hackathons, and product updates, visit http://h2o.ai.
 
-- Visit the open source community forum at https://groups.google. com/d/forum/h2ostream.
+- Visit the open source community forum at https://groups.google.com/d/forum/h2ostream.
 
 - Join the chat at https://gitter.im/h2oai/h2o-3. 
 
@@ -103,9 +103,7 @@ Spark is an elegant and powerful general-purpose, open-source, in-memory platfor
 
 Integrating these two open-source environments provides a seamless experience for users who want to make a query using Spark SQL, feed the results into H2O to build a model and make predictions, and then use the results again in Spark. For any given problem, better interoperability between tools provides a better experience.
 
-For additional examples, please visit the Sparkling Water GitHub repository at
-
-https://github.com/h2oai/sparkling-water/tree/master/examples.
+For additional examples, please visit the Sparkling Water GitHub repository at https://github.com/h2oai/sparkling-water/tree/master/examples.
 
 2.1 Typical Use Cases
 
@@ -119,7 +117,7 @@ Figure 1: Sparkling Water extends existing Spark data pipeline with advanced mac
 
 2.1.2 Data Munging
 
-Another use-case includes Sparkling Water as a provider of ad-hoc data trans- formations. Figure 2 shows a data pipeline benefiting from H2O’s parallel data load and parse capabilities, while Spark API is used as another provider of data transformations. Furthermore, H2O can be used as in-place data transformer.
+Another use-case includes Sparkling Water as a provider of ad-hoc data transformations. Figure 2 shows a data pipeline benefiting from H2O’s parallel data load and parse capabilities, while Spark API is used as another provider of data transformations. Furthermore, H2O can be used as in-place data transformer.
 
 2.1.3 Stream Processing
 
@@ -148,14 +146,12 @@ Currently, Sparkling Water can use the following data source types:
 - Standard Resilient Distributed Dataset (RDD) API for loading data and transforming it into H2OFrames
 
 - H2O API for loading data directly into H2OFrame from file(s) stored on: 
-
-– local filesystems
-
-– HDFS – S3
+    + local filesystems
+    + HDFS
+    + S3
+    + HTTP/HTTPS
 
 Figure 3: Sparkling Water used as an off-line model producer feeding models into a stream-based data pipeline.
-
-– HTTP/HTTPS
 
 For more details, please refer to the H2O documentation at http://docs.h2o.ai.
 
@@ -208,68 +204,78 @@ The H2OContext contains the necessary information for running H2O services and e
 When H2OContext is running, H2O data structures and algorithms can be manipulated. The key data structure is H2OFrame, which represents a distributed table composed of vectors. A new H2OFrame can be created using one of the following methods:
 
 - loading a cluster local file (a file located on each node of the cluster):
-1
-1
-val h2oFrame = new H2OFrame(new File("/data/iris.
-   csv"))
+
+val h2oFrame = new H2OFrame(new File("/data/iris.csv"))
+
 - loading a file from HDFS/S3/S3N/S3A:
-val h2oFrame = new H2OFrame(URI.create("hdfs:// data/iris.csv"))
+
+val h2oFrame = new H2OFrame(URI.create("hdfs://data/iris.csv"))
 
 - loading multiple files from HDFS/S3/S3N/S3A:
 
-val h2oFrame = new H2OFrame(URI.create("hdfs:// data/iris/01.csv"), URI.create("hdfs://data/ iris/02.csv"))
-1
-1
+val h2oFrame = new H2OFrame(URI.create("hdfs://data/iris/01.csv"), URI.create("hdfs://data/ iris/02.csv"))
+
 - transforming Spark RDD or DataFrame:
-  val h2oFrame = h2oContext.asH2OFrame(rdd)
+
+val h2oFrame = h2oContext.asH2OFrame(rdd)
 
 - referencing existing H2OFrame by its key
-  val h2oFrame = new H2OFrame("iris.hex")
-1
 
-Concept H2O Context
-H2O Entry Point
-H2O Frame
-H2O Algorithm
-API Representation
+val h2oFrame = new H2OFrame("iris.hex")
+
+Concept API Representation Description
+
+H2O Context
 H2OContext
+Contains the H2O state and provides primitives to publish RDD as H2OFrame and vice versa. Follows design principles of Spark primitives such as SparkContext or SQLContext.
+
+H2O Entry Point
 water.H2O
+Represents the entry point for accessing H2O services. Contains information about running H2O services, including a list of nodes and the status of the distributed K/V datastore.
+
+H2O Frame
 water.fvec.H2OFrame
+A data structure representing a table of values. The table is column-based and provides column and row accessors.
+
+H2O Algorithm
 package hex
-Description
-
-Contains the H2O state and pro- vides primitives to publish RDD as H2OFrame and vice versa. Fol- lows design principles of Spark prim- itives such as SparkContext or SQLContext.
-
-Represents the entry point for ac- cessing H2O services. Contains in- formation about running H2O ser- vices, including a list of nodes and the status of the distributed K/V datastore.
-
-A data structure representing a table of values. The table is column-based and provides column and row acces- sors.
-
-Represents the H2O machine learn- ing algorithms library, including DeepLearning, GBM, GLM, DRF, and other algorithms.
+Represents the H2O machine learning algorithms library, including DeepLearning, GBM, GLM, DRF, and other algorithms.
 
 Table 1: Sparkling Water primitives
 
 When the H2OContext is running, any H2O algorithm can be called. Most of provided algorithms are located in the hex package. Calling an algorithm is composed of two steps:
 
 - Specifying parameters:
-1
-2 3 4 5
-val train: H2OFrame = new H2OFrame(new File("
-   prostate.csv"))
+
+val train: H2OFrame = new H2OFrame(new File("prostate.csv"))
 val gbmParams = new GBMParameters()
 gbmParams._train = train
 gbmParams._response_column = ’CAPSULE
 gbmParams._ntrees = 10
 
 - Creating the model builder and launching computations. The trainModel method is non-blocking and returns a job representing the computation.
-1
+
 val gbmModel = new GBM(gbmParams).trainModel.get
 
-4 4.1
+4 Programming API 
+
+4.1 Starting H2O Services
+
+val sc: SparkContext = ...
+val hc = H2OContext.getOrCreate(sc)
+
 or:
-1 2
-1   val hc = H2OContext.getOrCreate(sc, numOfSparkNodes)
+
+val sc: SparkContext = ...
+val hc = new H2OContext(sc).start()
+
+When the number of Spark nodes is known, it can be specified in the getOrCreate call:
+
+val hc = H2OContext.getOrCreate(sc, numOfSparkNodes)
+
 or, in start method of H2OContext:
-1   val hc = new H2OContext(sc).start(numOfSparkNodes)
+
+val hc = new H2OContext(sc).start(numOfSparkNodes)
 
 The former variant is preferred, because it initiates and starts H2OContext in one call and can be used to obtain already existing H2OContext. It is semantically the same as the latter variant though.
 
@@ -279,43 +285,28 @@ H2O resides in the same executor JVM as Spark. The memory provided for H2O is co
 
 Generic configuration
 
-- Configure the Executor memory (i.e., memory available for H2O) via the Spark configuration property spark.executor.memory. For example, bin/sparkling-shell --conf spark.executor.memory=5g
-or configure the property in $SPARK_HOME/conf/spark-defaults .conf
+- Configure the Executor memory (i.e., memory available for H2O) via the Spark configuration property spark.executor.memory. For example, bin/sparkling-shell --conf spark.executor.memory=5g or configure the property in $SPARK_HOME/conf/spark-defaults.conf
 
 - Configure the Driver memory (i.e., memory available for H2O client running inside the Spark driver) via the Spark configuration property spark.driver.memory. For example, bin/sparkling-shell --conf spark.driver.memory=4g or configure the property in $SPARK_HOME/conf/spark-defaults.conf.
 
-Programming API Starting H2O Services
-val sc: SparkContext = ...
-val hc = H2OContext.getOrCreate(sc)
-1 2
-val sc: SparkContext = ...
-val hc = new H2OContext(sc).start()
-When the number of Spark nodes is known, it can be specified in the getOrCreate call:
+Yarn specific configuration
 
-1
+- Refer to the Spark documentation https://spark.apache.org/docs/latest/running-on-yarn.html
 
-4.3
+- For JVMs that require a large amount of memory, we strongly recommend configuring the maximum amount of memory available for individual mappers.
 
-Refer to the Spark documentation https://spark.apache.org/ docs/latest/running-on-yarn.html
-
-For JVMs that require a large amount of memory, we strongly recommend configuring the maximum amount of memory available for individual mappers.
-
-Converting H2OFrame into RDD[T]
+4.3 Converting H2OFrame into RDD[T]
 
 The H2OContext class provides the explicit conversion, asRDD, which creates an RDD-like wrapper around the provided H2OFrame:
 
-1
+def asRDD[A <: Product: TypeTag: ClassTag](fr:H2OFrame): RDD[A]
 
 The call expects the type A to create a correctly-typed RDD. The conversion requires type A to be bound by Product interface. The relationship between the columns of H2OFrame and the attributes of class A is based on name matching.
 
 Example
 
-Yarn specific configuration
-def asRDD[A <: Product: TypeTag: ClassTag](fr:
-   H2OFrame): RDD[A]
 val df: H2OFrame = ...
 val rdd = asRDD[Weather](df)
-1 2
 
 4.4 Converting H2OFrame into DataFrame
 
@@ -332,11 +323,11 @@ Example
 
 Using an explicit parameter in the call to pass sqlContext:
 
-1 2
-1 2
 val sqlContext = new SQLContext(sc)
 val schemaRDD = asDataFrame(h2oFrame)(sqlContext)
+
 or as implicit variable provided by actual environment:
+
 implicit val sqlContext = new SQLContext(sc)
 val schemaRDD = asDataFrame(h2oFrame)
 
@@ -344,90 +335,65 @@ val schemaRDD = asDataFrame(h2oFrame)
 
 The H2OContext provides implicit conversion from the specified RDD[A] to H2OFrame. As with conversion in the opposite direction, the type A has to satisfy the upper bound expressed by the type Product. The conversion will create a new H2OFrame, transfer data from the specified RDD, and save it to the H2O K/V data store.
 
-implicit def asH2OFrame[A <: Product: TypeTag](rdd:
-   RDD[A]): H2OFrame
-1
-1
-1 2 3
-4 5
-6
+implicit def asH2OFrame[A <: Product: TypeTag](rdd:RDD[A]): H2OFrame
 
 The API also provides explicit version which allows for specifying name for resulting H2OFrame.
 
-def asH2OFrame[A <: Product: TypeTag](rdd: RDD[A],
-   frameName: String): H2OFrame
+def asH2OFrame[A <: Product: TypeTag](rdd: RDD[A], frameName: String): H2OFrame
+
 Example
+
 val rdd: RDD[Weather] = ...
 import h2oContext._
-// Implicit call of H2OContext.asH2OFrame[Weather](rdd
-   ) is used
+// Implicit call of H2OContext.asH2OFrame[Weather](rdd) is used
 val hf: H2OFrame = rdd
-// Explicit call of of H2OContext API with name for
-   resulting H2OFrame
-val hfNamed: H2OFrame = h2oContext.asH2OFrame(rdd, "
-   hfNamed")
+// Explicit call of of H2OContext API with name for resulting H2OFrame
+val hfNamed: H2OFrame = h2oContext.asH2OFrame(rdd, "hfNamed")
 
 4.6 Converting DataFrame into H2OFrame
 
 The H2OContext provides implicit conversion from the specified DataFrame to H2OFrame. The conversion will create a new H2OFrame, transfer data from the specified DataFrame, and save it to the H2O K/V data store.
 
-1   implicit def asH2OFrame(rdd: DataFrame): H2OFrame
+implicit def asH2OFrame(rdd: DataFrame): H2OFrame
 
 The API also provides explicit version which allows for specifying name for resulting H2OFrame.
-1
-1 2 3
-4 5
-6
 
-def asH2OFrame(rdd: DataFrame, frameName: String):
-   H2OFrame
+def asH2OFrame(rdd: DataFrame, frameName: String):H2OFrame
 
 Example
 
 val df: DataFrame = ...
 import h2oContext._
-// Implicit call of H2OContext.asH2OFrame(srdd) is
-used
+// Implicit call of H2OContext.asH2OFrame(srdd) is used
 val hf: H2OFrame = df
-// Explicit call of H2Context API with name for
-   resulting H2OFrame
-val hfNamed: H2OFrame = h2oContext.asH2OFrame(df, "
-   hfNamed")
+// Explicit call of H2Context API with name for resulting H2OFrame
+val hfNamed: H2OFrame = h2oContext.asH2OFrame(df, "hfNamed")
 
 4.7 Creating H2OFrame from an Existing Key
 
 If the H2O cluster already contains a loaded H2OFrame referenced by the key train.hex, it is possible to reference it from Sparkling Water by creating a proxy H2OFrame instance using the key as the input:
 
-1   val trainHF = new H2OFrame("train.hex")
+val trainHF = new H2OFrame("train.hex")
 
 4.8 Type Map Between H2OFrame and Spark DataFrame Types
 
 For all primitive Scala types or Spark SQL types (see org.apache.spark.sql.types) which can be part of Spark RDD/DataFrame, we provide mapping into H2O vector types (numeric, categorical, string, time, UUID - see water.fvec.Vec):
 
-Scala type
-NA
-Byte
-Short
-Integer
-Long
-Float
-Double
-String
-Boolean java.sql.TimeStamp
-SQL type
-BinaryType ByteType ShortType IntegerType LongType FloatType DoubleType StringType BooleanType TimestampType
-H2O type
-Numeric Numeric Numeric Numeric Numeric Numeric Numeric String Numeric Time
-4.9
-1.
-1 2 3 4 5 6 7 8 9
-2.
-1
-3.
-1
-Calling H2O Algorithms
+Scala type         SQL type      H2O type
+NA                 BinaryType    Numeric 
+Byte               ByteType      Numeric 
+Short              ShortType     Numeric 
+Integer            IntegerType   Numeric 
+Long               LongType      Numeric 
+Float              FloatType     Numeric 
+Double             DoubleType    Numeric 
+String             StringType    String 
+Boolean            BooleanType   Numeric 
+java.sql.TimeStamp TimestampType Time
 
-Create the parameters object that holds references to input data and parameters specific for the algorithm:
+4.9 Calling H2O Algorithms
+
+1. Create the parameters object that holds references to input data and parameters specific for the algorithm:
 
 val train: RDD = ...
 val valid: H2OFrame = ...
@@ -437,11 +403,14 @@ gbmParams._valid = valid
 gbmParams._response_column = ’bikes
 gbmParams._ntrees = 500
 gbmParams._max_depth = 6
-Create a model builder:
- val gbm = new GBM(gbmParams)
 
-Invoke the model build job and block until the end of computation (trainModel is an asynchronous call by default):
- val gbmModel = gbm.trainModel.get
+2. Create a model builder:
+
+val gbm = new GBM(gbmParams)
+
+3. Invoke the model build job and block until the end of computation (trainModel is an asynchronous call by default):
+ 
+val gbmModel = gbm.trainModel.get
 
 4.10 Using Spark Data Sources with H2OFrame
 
@@ -449,32 +418,31 @@ Spark SQL provides configurable data source for SQL tables. Sparkling Water enab
 
 4.10.1 Reading from H2OFrame
 
-Let’s suppose we have a H2OFrame. The shortest way to load a DataFrame
+Let’s suppose we have a H2OFrame. The shortest way to load a DataFrame from H2OFrame with default settings is:
 
-from H2OFrame with default settings is:
-1   val df = sqlContext.read.h2o(frame.key)
+val df = sqlContext.read.h2o(frame.key)
+
 There are two more ways to load a DataFrame from H2OFrame allowing us to specify additional options:
-1
+
+val df = sqlContext.read.format("h2o").option("key", frame.key.toString).load()
+
 or
-1
-val df = sqlContext.read.format("h2o").option("key",
-   frame.key.toString).load()
-val df = sqlContext.read.format("h2o").load(frame.key.
-   toString)
+
+val df = sqlContext.read.format("h2o").load(frame.key.toString)
 
 4.10.2 Saving to H2OFrame
 
 Let’s suppose we have DataFrame df. The shortest way to save the DataFrame as H2OFrame with default settings is:
 
-1   df.write.h2o("new_key")
+df.write.h2o("new_key")
 
 There are two more ways to save the DataFrame as H2OFrame allowing us to specify additional options:
 
-1   df.write.format("h2o").option("key","new_key").save()
+df.write.format("h2o").option("key", "new_key").save()
 
 or
 
-1   df.write.format("h2o").save("new_key")
+df.write.format("h2o").save("new_key")
 
 All three variants save the DataFrame as H2OFrame with the key ”new key”. They won’t succeed if a H2OFrame with the same key already exists.
 
@@ -482,22 +450,17 @@ All three variants save the DataFrame as H2OFrame with the key ”new key”. Th
 
 If the key is specified as ’key’ option, and also in the load/save method, the option ’key’ is preferred:
 
-1
-or
-1
+val df = sqlContext.read.from("h2o").option("key", "key_one").load("key_two")
 
-val df = sqlContext.read.from("h2o").option("key","
-   key_one").load("key_two")
-val df = sqlContext.read.from("h2o").option("key","
-   key_one").save("key_two")
+or
+
+val df = sqlContext.read.from("h2o").option("key", "key_one").save("key_two")
 
 In both examples, ”key one” is used.
 
 4.10.4 Specifying Saving Mode
 
-There are four save modes available when saving data using Data Source API- see
-
-http://spark.apache.org/docs/latest/sql-programming-guide. html#save-modes
+There are four save modes available when saving data using Data Source API - see http://spark.apache.org/docs/latest/sql-programming-guide.html#save-modes
 
 - If ”append” mode is used, an existing H2OFrame with the same key is deleted, and a new one created with the same key. The new frame contains the union of all rows from the original H2OFrame and the appended DataFrame.
 
@@ -513,11 +476,10 @@ Since Sparkling Water is designed as a regular Spark application, its deployment
 
 ./bin/spark-submit \
   --class <main-class> \
---master <master-url> \
---conf <key>=<value> \
-... # other options \
-<application-jar> [application-arguments]
-1 2 3 4 5 6
+  --master <master-url> \
+  --conf <key>=<value> \
+  ... # other options \
+  <application-jar> [application-arguments]
 
 - --class: Name of main class with main method to be executed. For example, the water.SparklingWaterDriver application launches H2O services.
 
@@ -533,7 +495,7 @@ Since Sparkling Water is designed as a regular Spark application, its deployment
 
 5.1.1 Using Fatjar
 
-The Sparkling Water archive provided at http://h2o.ai/download con- tains a Fatjar with all classes required for Sparkling Water run.
+The Sparkling Water archive provided at http://h2o.ai/download contains a Fatjar with all classes required for Sparkling Water run.
 
 An application submission with Sparkling Water Fatjar is using the --jars option which references included fatjar.
 
@@ -542,9 +504,7 @@ $SPARK_HOME/bin/spark-submit \
      -1.6.1-all.jar \
   --class org.apache.spark.examples.h2o.
      CraigslistJobTitlesStreamingApp \
-/dev/null
-1 2
-3 4
+  /dev/null
 
 5.1.2 Using Spark Package
 
@@ -557,12 +517,7 @@ $SPARK_HOME/bin/spark-submit \
      .h2o:sparkling-water-examples_2.10:1.6.1 \
   --class org.apache.spark.examples.h2o.
      CraigslistJobTitlesStreamingApp \
-/dev/null
-1 2
-3 4
-1 2
-1 2
-3
+  /dev/null
 
 The Spark option --packages points to coordinate of published Sparkling Water package in Maven repository.
 
@@ -597,17 +552,15 @@ The local cluster is identified by the following master URLs - local, local[K], 
 
 For example, the following command will run the ChicagoCrimeApp application inside a single JVM with a heap size of 5g:
 
-1 2 3 4 5
-6 7
 $SPARK_HOME/bin/spark-submit \
   --conf spark.executor.memory=5g \
   --conf spark.driver.memory=5g \
   --master local[*] \
   --packages ai.h2o:sparkling-water-examples_2
    .10:1.6.1 \
---class org.apache.spark.examples.h2o.
-   ChicagoCrimeApp \
-/dev/null
+  --class org.apache.spark.examples.h2o.
+     ChicagoCrimeApp \
+  /dev/null
 
 5.2.2 On Standalone Cluster
 
@@ -615,18 +568,15 @@ For AWS deployments or local private clusters, the standalone cluster deployment
 
 The following command deploys the ChicagoCrimeApp on a standalone cluster where the master node is exposed on IP machine-foo.bar.com and port 7077:
 
-1 2 3 4 5
-6 7
-
 $SPARK_HOME/bin/spark-submit \
   --conf spark.executor.memory=5g \
   --conf spark.driver.memory=5g \
   --master spark://machine-foo.bar.com:7077 \
   --packages ai.h2o:sparkling-water-examples_2
    .10:1.6.1 \
---class org.apache.spark.examples.h2o.
-   ChicagoCrimeApp \
-/dev/null
+  --class org.apache.spark.examples.h2o.
+     ChicagoCrimeApp \
+  /dev/null
 
 In this case, the standalone Spark cluster must be configured to provide the requested 5g of memory per executor node.
 
@@ -639,76 +589,89 @@ $SPARK_HOME/bin/spark-submit \
   --conf spark.driver.memory=5g \
   --num-executors 5 \
   --master yarn-client \
---packages ai.h2o:sparkling-water-examples_2
-   .10:1.6.1 \
---class org.apache.spark.examples.h2o.
-   ChicagoCrimeApp \
-/dev/null
-1 2 3 4 5 6
-7 8
+  --packages ai.h2o:sparkling-water-examples_2
+     .10:1.6.1 \
+  --class org.apache.spark.examples.h2o.
+     ChicagoCrimeApp \
+  /dev/null
 
 The command in the example above creates a YARN job and requests for 5 nodes, each with 5G of memory. The yarn-client option forces driver to run in the client process.
-
-Generic parameters
-Property name spark.ext.h2o.flatfile
-spark.ext.h2o.cluster.size
-spark.ext.h2o.port.base spark.ext.h2o.port.incr
-spark.ext.h2o.cloud.timeout spark.ext.h2o.spreadrdd.retries
-spark.ext.h2o.cloud.name spark.ext.h2o.network.mask
-spark.ext.h2o.nthreads
-spark.ext.h2o.disable.ga
-Default value true
--1
-54321 2
-60*1000 10
-sparkling-water- –
--1
-false
-Description
-
-Use flatfile (instead of multi- cast) for creating H2O cloud.
-
-Expected number of workers of H2O cloud. -1 automati- cally detects the cluster size. This number must be equal to number of Spark workers.
-
-Base port used for individual H2O node configuration.
-
-Increment added to base port to find the next available port.
-
-Timeout (in msec) for cloud.
-
-Number of retries for creation of an RDD covering all exist- ing Spark executors.
-
-Name of H2O cloud.
-
-Subnet selector for H2O if IP detection fails. Use- ful for detecting correct IP if ’spark.ext.h2o.flatfile’ is false.*
-
-Limit for number of threads used by H2O. -1 means unlim- ited.
-
-Disable Google Analytics tracking for embedded H2O.
 
 5.3 Sparkling Water Configuration Properties
 
 The following configuration properties can be passed to Spark to configure Sparking Water:
 
+Generic parameters Default value Description
+
+Property name 
+
+spark.ext.h2o.flatfile
+true
+Use flatfile (instead of multi- cast) for creating H2O cloud.
+
+spark.ext.h2o.cluster.size
+-1
+Expected number of workers of H2O cloud. -1 automatically detects the cluster size. This number must be equal to number of Spark workers.
+
+spark.ext.h2o.port.base 
+54321 
+Base port used for individual H2O node configuration.
+
+spark.ext.h2o.port.incr
+2
+Increment added to base port to find the next available port.
+
+spark.ext.h2o.cloud.timeout 
+60*1000 
+Timeout (in msec) for cloud.
+
+spark.ext.h2o.spreadrdd.retries
+10
+Number of retries for creation of an RDD covering all existing Spark executors.
+
+spark.ext.h2o.cloud.name 
+sparkling-water-
+Name of H2O cloud.
+
+spark.ext.h2o.network.mask
+–
+Subnet selector for H2O if IP detection fails. Useful for detecting correct IP if ’spark.ext.h2o.flatfile’ is false.*
+
+spark.ext.h2o.nthreads
+-1
+Limit for number of threads used by H2O. -1 means unlimited.
+
+spark.ext.h2o.disable.ga
+false
+Disable Google Analytics tracking for embedded H2O.
+
 H2O server node parameters
-Property name spark.ext.h2o.node.log.level
-spark.ext.h2o.node.log.dir
-H2O client parameters
-Property name spark.ext.h2o.client.log.level
-spark.ext.h2o.client.log.dir
-Default value INFO
-System.getProperty (”user.dir”) + File.separator +
-”h2ologs” or YARN container dir
-Default value INFO
-System.getProperty (”user.dir”) + File.separator +
-Description
+
+Property name Default value Description
+
+spark.ext.h2o.node.log.level
+INFO
 Set H2O node internal logging level.
+
+spark.ext.h2o.node.log.dir
+System.getProperty (”user.dir”) + File.separator + ”h2ologs” or YARN container dir
 Location of h2o logs on executor machine.
-Description
+
+H2O client parameters
+
+Property name Default value Description
+
+spark.ext.h2o.client.log.level
+INFO
 Set H2O client internal logging level (running inside Spark driver).
+
+spark.ext.h2o.client.log.dir
+System.getProperty (”user.dir”) + File.separator + ”h2ologs” 
 Location of h2o logs on driver machine.
-Exact client port to access web UI. -1 trig- gers automatic search for free port starting at spark.ext.h2o.port.base.
-”h2ologs” spark.ext.h2o.client.web.port -1
+
+spark.ext.h2o.client.web.port 
+-1
+Exact client port to access web UI. -1 triggers automatic search for free port starting at spark.ext.h2o.port.base.
 
 6 Building a Standalone Application
 
@@ -724,20 +687,34 @@ This droplet uses Sparkling Water 1.6 which integrates:
 
 - H2O 3.8 Tukey
 
-For more details see build.gradle. Project structure
+For more details see build.gradle. 
+
+Project structure
+
 gradle/ ........ Gradle definition files
+
 src/ .............. Source code
-main/ ....... Main implementation code
-scala/
-test/ ....... Test code scala/
+  main/ ....... Main implementation code
+    scala/
+  test/ ....... Test code 
+    scala/
+
 build.gradle ... Build file for this project
+
 gradlew ........ Gradle wrapper
+
 Project building
+
 For building, please, use provided gradlew command:
-1   ./gradlew build
+
+./gradlew build
+
 Run demo
+
 For running a simple application:
-1   ./gradlew run
+
+./gradlew run
+
 Starting with IDEA
 
 There are two ways to open this project in IntelliJ IDEA
@@ -745,37 +722,43 @@ There are two ways to open this project in IntelliJ IDEA
 Using Gradle build file directly:
 
 Open the project’s build.gradle in IDEA via File → Open
+
 or using Gradle generated project files:
 
-1. Generate Idea configuration files via ./gradlew idea 2. Open project in Idea via File → Open
+1. Generate Idea configuration files via ./gradlew idea 
 
-Note: To clean up Idea project files please launch ./gradlew cleanIdea Starting with Eclipse
+2. Open project in Idea via File → Open
+
+Note: To clean up Idea project files please launch ./gradlew cleanIdea 
+
+Starting with Eclipse
 
 1. Generate Eclipse project files via ./gradlew eclipse
 
-2. Open project in Eclipse via File → Import → Existing Projects into
-Workspace
+2. Open project in Eclipse via File → Import → Existing Projects into Workspace
+
 Running tests
+
 To run tests, please, run:
-1
-1
-1
-1 2
+
+./gradlew test
+
 Checking code style
 
 To check codestyle:
+
+./gradlew scalaStyle
 
 Creating and Running Spark Application
 
 Create application assembly which can be directly submitted to Spark cluster:
 
+./gradlew shadowJar
+
 The command creates jar file build/libs/sparkling-water-droplet-app.ja containing all necessary classes to run application on top of Spark cluster.
 
 Submit application to Spark cluster (in this case, local cluster is used):
 
-./gradlew test
-./gradlew scalaStyle
-./gradlew shadowJar
 export MASTER=’local-cluster[3,2,1024]’
 $SPARK_HOME/bin/spark-submit --class water.droplets.
    SparklingWaterDroplet build/libs/sparkling-water-
@@ -792,47 +775,43 @@ PySparkling Water programs can be launched as an application, or in an interacti
 7.1 Getting Started:
 
 1. Download Spark (if not already installed) from the Spark Downloads Page.
+
 Choose Spark release : 1.6.0
+
 Choose a package type: Pre-built for Hadoop 2.4 and later
 
 2. Point SPARK HOME to the existing installation of Spark and export variable MASTER.
-1 export SPARK_HOME="/path/to/spark/installation"
+
+export SPARK_HOME="/path/to/spark/installation"
+
 Launch a local Spark cluster with 3 worker nodes with 2 cores and 1g per node.
-1 export MASTER="local-cluster[3,2,1024]"
+
+export MASTER="local-cluster[3,2,1024]"
 
 3. From your terminal, run:
-1 2 3
 
 cd  ̃/Downloads
 unzip sparkling-water-1.6.1.zip
 cd sparkling-water-1.6.1
+
 Start an interactive Python terminal:
-1 bin/pysparkling
+
+bin/pysparkling
 
 Or start a notebook:
-1
+
+IPYTHON_OPTS="notebook" bin/pysparkling
 
 4. Create an H2O cloud inside the Spark cluster and import H2O-Python package:
-1 2 3
+
+from pysparkling import *
+hc = H2OContext(sc).start()
+import h2o
 
 5. Follow this demo (https://github.com/h2oai/h2o-world-2015-trai blob/master/tutorials/pysparkling/Chicago_Crime_Demo.ipynb), which imports Chicago crime, census and weather data and predicts the probability of arrest.
 
 Alternatively, to launch on YARN:
-1
-2 3 4 5 6
-7
-1 2 3
-1
-2
 
-Then create an H2O cloud inside the Spark cluster and import H2O-Python package:
-
-Or to launch as a Spark Package application:
-
-IPYTHON_OPTS="notebook" bin/pysparkling
-from pysparkling import *
-hc= H2OContext(sc).start()
-import h2o
 wget http://h2o-release.s3.amazonaws.com/sparkling-
    water/rel-1.6/1/sparkling-water-1.6.1.zip
 unzip sparkling-water-1.6.1.zip
@@ -842,10 +821,16 @@ export SPARKLING_HOME="/path/to/SparklingWater/
    installation"
 $SPARKLING_HOME/bin/pysparkling --num-executors 3 --
    executor-memory 20g --executor-cores 10 --driver-
-memory 20g --master yarn-client
+   memory 20g --master yarn-client
+
+Then create an H2O cloud inside the Spark cluster and import H2O-Python package:
+
 from pysparkling import *
-hc= H2OContext(sc).start()
+hc = H2OContext(sc).start()
 import h2o
+
+Or to launch as a Spark Package application:
+
 $SPARK_HOME/bin/spark-submit --packages ai.h2o:
    sparkling-water-core_2.10:1.6.1 --py-files
    $SPARKLING_HOME/py/dist/pySparkling-1.6.1-py2.7.
@@ -859,22 +844,22 @@ The way that a H2OFrame can be used as Spark’s data source differs a little bi
 7.2.1 Reading from H2OFrame
 
 Let’s suppose we have an H2OFrame. There are two ways how the DataFrame can be loaded from H2OFrame in pySparkling:
-1
-or
-1
 
-df = sqlContext.read.format("h2o").option("key",frame.
-   frame_id).load()
-df = sqlContext.read.format("h2o").load(frame.frame_id
-   )
+df = sqlContext.read.format("h2o").option("key",frame.frame_id).load()
+
+or
+
+df = sqlContext.read.format("h2o").load(frame.frame_id)
 
 7.2.2 Saving to H2OFrame
 
 Let’s suppose we have a DataFrame df. There are two ways how DataFrame can be saved as H2OFrame in pySparkling:
 
-1   df.write.format("h2o").option("key","new_key").save()
+df.write.format("h2o").option("key","new_key").save()
+
 or
-1   df.write.format("h2o").save("new_key")
+
+df.write.format("h2o").save("new_key")
 
 Both variants save DataFrame as a H2OFrame with key new key. They won’t succeed if a H2OFrame with the same key already exists.
 
@@ -882,17 +867,13 @@ Both variants save DataFrame as a H2OFrame with key new key. They won’t succee
 
 If the key is specified as ’key’ option, and also in the load/save method, the option ’key’ is preferred:
 
-df = sqlContext.read.from("h2o").option("key","key_one
-   ").load("key_two")
-1
+df = sqlContext.read.from("h2o").option("key", "key_one").load("key_two")
 
 or
-1
 
-df = sqlContext.read.from("h2o").option("key","key_one
-   ").save("key_two")
+df = sqlContext.read.from("h2o").option("key", "key_one").save("key_two")
 
-In both examples, key one is used.
+In both examples, key_one is used.
 
 8 A Use Case Example
 
@@ -904,7 +885,7 @@ As Chief Air Traffic Controller, your job is come up with a prediction engine th
 
 Spark SQL
 
-One of the many cool features about the Spark project is the ability to initiate a SQL context within our application that enables us to write SQL-like queries against an existing DataFrame. Given the ubiquitous nature of SQL, this is very appealing to data scientists who may not be comfortable yet with Scala / Java / Python, but want to perform complex manipulations of their data.
+One of the many cool features about the Spark project is the ability to initiate a SQL context within our application that enables us to write SQL-like queries against an existing DataFrame. Given the ubiquitous nature of SQL, this is very appealing to data scientists who may not be comfortable yet with Scala/Java/Python, but want to perform complex manipulations of their data.
 
 Within the context of this example, we are going to first read in the airlines dataset and then process a weather file which contains the weather data at the arriving city. Joining the two tables will require a SQL context such that we can write an INNER JOIN against the two independent DataFrames. Let’s get started!
 
@@ -912,56 +893,38 @@ Data Ingest
 
 Our first order of business is to process both files, the flight data and the weather data:
 
-1
-2 3 4 5
-6 7
-
 object AirlinesWithWeatherDemo extends
-   SparkContextSupport {
-  def main(args: Array[String]): Unit = {
-// Configure this application
-val conf: SparkConf = configure("Sparkling Water:
-   Join of Airlines with Weather Data")
-// Create SparkContext to execute application on
-   Spark cluster
-val sc = new SparkContext(conf)
-8
+    SparkContextSupport {
 
-val h2oContext = H2OContext.getOrCreate(sc) import h2oContext._
-// Setup environment
-addFiles(sc,
-        absPath("examples/smalldata/
-            Chicago_Ohare_International_Airport.csv"),
-        absPath("examples/smalldata/allyears2k_headers.
-            csv.gz"))
-      val wrawdata = sc.textFile(SparkFiles.get("
-          Chicago_Ohare_International_Airport.csv"),3).
-          cache()
-      val weatherTable = wrawdata.map(_.split(",")).map(
-          row => WeatherParse(row)).filter(!_.isWrongRow
-          ())
-      // Load H2O from CSV file (i.e., access directly
-          H2O cloud)
-      val airlinesData = new H2OFrame(new File(
-          SparkFiles.get("allyears2k_headers.csv.gz")))
-      val airlinesTable: RDD[Airlines] = asRDD[Airlines
-          ](airlinesData)
+def main(args: Array[String]): Unit = {
+    // Configure this application
+    val conf: SparkConf = configure("Sparkling Water:
+        Join of Airlines with Weather Data")
+
+    // Create SparkContext to execute application on Spark cluster
+    val sc = new SparkContext(conf)
+    val h2oContext = H2OContext.getOrCreate(sc) import h2oContext._
+    // Setup environment
+    addFiles(sc,
+        absPath("examples/smalldata/Chicago_Ohare_International_Airport.csv"),
+        absPath("examples/smalldata/allyears2k_headers.csv.gz"))
+
+    val wrawdata = sc.textFile(SparkFiles.get(
+        "Chicago_Ohare_International_Airport.csv"), 3).
+        cache()
+    val weatherTable = wrawdata.map(_.split(",")).map(
+        row => WeatherParse(row)).filter(!_.isWrongRow())
+    // Load H2O from CSV file (i.e., access directly H2O cloud)
+    val airlinesData = new H2OFrame(new File(
+        SparkFiles.get("allyears2k_headers.csv.gz")))
+    val airlinesTable: RDD[Airlines] = asRDD[Airlines](airlinesData)
 
 The flight data file is imported directly into H2O already as an H2OFrame. The weather table, however, is first processed in Spark where we do some parsing of the data and data scrubbing.
 
 After both files have been processed, we then take the airlines data that currently sits in H2O and it pass back into Spark whereby we filter for those flights ONLY arriving at Chicago’s O’Hare International Airport:
 
-1
-2 3 4
-9 10 11 12 13
-14
-15 16
-17
-18 19
-20
-21 22
-val flightsToORD = airlinesTable.filter(f => f.Dest ==
-    Some("ORD"))
+val flightsToORD = airlinesTable.filter(f => f.Dest == Some("ORD"))
+
 flightsToORD.count
 println(s"\nFlights to ORD: ${flightsToORD.count}\n")
 
@@ -972,47 +935,31 @@ At this point, we are ready to join these two tables which are currently Spark R
 val sqlContext = new SQLContext(sc)
 // Import implicit conversions
 import sqlContext.implicits._
-flightsToORD.toDF.registerTempTable("FlightsToORD
-")
+flightsToORD.toDF.registerTempTable("FlightsToORD")
 weatherTable.toDF.registerTempTable("WeatherORD")
-1 2 3 4
-5
-1 2 3 4 5 6 7
-8
-9 10 11
-12
-1
 
 - Join the two temp tables using Spark SQL
+
 val bigTable = sqlContext.sql(
    """SELECT
      |f.Year,f.Month,f.DayofMonth,
      |f.CRSDepTime,f.CRSArrTime,f.CRSElapsedTime,
      |f.UniqueCarrier,f.FlightNum,f.TailNum,
      |f.Origin,f.Distance,
-|w.TmaxF,w.TminF,w.TmeanF,w.PrcpIn,w.SnowIn,w
-   .CDD,w.HDD,w.GDD,
-|f.ArrDelay
-|FROM FlightsToORD f
-|JOIN WeatherORD w
-|ON f.Year=w.Year AND f.Month=w.Month AND f.
-   DayofMonth=w.Day
-|WHERE f.ArrDelay IS NOT NULL""".stripMargin)
+     |w.TmaxF,w.TminF,w.TmeanF,w.PrcpIn,w.SnowIn,w.CDD,w.HDD,w.GDD,
+     |f.ArrDelay
+     |FROM FlightsToORD f
+     |JOIN WeatherORD w
+     |ON f.Year=w.Year AND f.Month=w.Month AND f.DayofMonth=w.Day
+     |WHERE f.ArrDelay IS NOT NULL""".stripMargin)
 
 - Transfer the joined table from Spark back to H2O to run an algorithm against
-  val train: H2OFrame = bigTable
+
+val train: H2OFrame = bigTable
 
 H2O Deep Learning
 
-Now we have our dataset loaded into H2O. Recall this dataset has been filtered to only include the flights and weather data on Chicago Ohare. It’s now time to run a machine learning algorithm to predict flight delay in minutes. As always, we start off with the necessary imports we need followed by declaring the parameters that we wish to control:
-
-1 2 3 4 5 6 7 8 9
-1 2
-3
-
-More parameters for Deep Learning and all other algorithms can be found in H2O documentation at http://docs.h2o.ai.
-
-Now we can run this model on our test dataset to score the model against our holdout dataset:
+Now we have our dataset loaded into H2O. Recall this dataset has been filtered to only include the flights and weather data on Chicago O’Hare. It’s now time to run a machine learning algorithm to predict flight delay in minutes. As always, we start off with the necessary imports we need followed by declaring the parameters that we wish to control:
 
 val dlParams = new DeepLearningParameters()
 dlParams._train = train
@@ -1020,10 +967,15 @@ dlParams._response_column = ’ArrDelay
 dlParams._epochs = 5
 dlParams._activation = Activation.RectifierWithDropout
 dlParams._hidden = Array[Int](100, 100)
+
 val dl = new DeepLearning(dlParams)
 val dlModel = dl.trainModel.get
-val predictionH2OFrame = dlModel.score(bigTable)(’
-   predict)
+
+More parameters for Deep Learning and all other algorithms can be found in H2O documentation at http://docs.h2o.ai.
+
+Now we can run this model on our test dataset to score the model against our holdout dataset:
+
+val predictionH2OFrame = dlModel.score(bigTable)(’predict)
 val predictionsFromModel = asRDD[DoubleHolder](
    predictionH2OFrame).collect.map(_.result.getOrElse
    (Double.NaN))
@@ -1042,7 +994,7 @@ Spark is very slow during initialization, or H2O does not form a cluster. What s
 
 Configure the Spark variable SPARK LOCAL IP. For example:
 
-1   export SPARK_LOCAL_IP=’127.0.0.1’
+export SPARK_LOCAL_IP=’127.0.0.1’
 
 How do I increase the amount of memory assigned to the Spark executors in Sparkling Shell?
 
@@ -1064,8 +1016,6 @@ How do I add Apache Spark classes to Python path?
 
 Configure the Python path variable PYTHONPATH:
 
-1 2
-
 export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/
    python/build:$PYTHONPATH
 export PYTHONPATH=$SPARK_HOME/python/lib/py4j-0.8.2.1-
@@ -1073,13 +1023,13 @@ export PYTHONPATH=$SPARK_HOME/python/lib/py4j-0.8.2.1-
 
 Trying to import a class from the hex package in Sparkling Shell but getting weird error:
 
-1
-1   import _root_.hex.tree.gbm.GBM
 error: missing arguments for method hex in object
    functions; follow this method with ’_’ if you want
     to treat it as a partially applied
 
 In this case you are probably using Spark 1.5 which is importing SQL functions into Spark Shell environment. Please use the following syntax to import a class from the hex package:
+
+import _root_.hex.tree.gbm.GBM
 
 10 References
 
@@ -1087,23 +1037,23 @@ H2O.ai Team. H2O website, 2016. URL http://h2o.ai
 
 H2O.ai Team. H2O documentation, 2016. URL http://docs.h2o.ai
 
-H2O.ai Team. H2O GitHub Repository, 2016. URL https://github. com/h2oai
+H2O.ai Team. H2O GitHub Repository, 2016. URL https://github.com/h2oai
 
 H2O.ai Team. H2O Datasets, 2016. URL http://data.h2o.ai 
 
 H2O.ai Team. H2O JIRA, 2016. URL https://jira.h2o.ai
 
-H2O.ai Team. H2Ostream, 2016. URL https://groups.google.com/ d/forum/h2ostream
+H2O.ai Team. H2Ostream, 2016. URL https://groups.google.com/d/forum/h2ostream
 
 H2O.ai Team. H2O R Package Documentation, 2016. URL http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Rdoc.html
 
 [1] Refer to the Spark standalone documentation http://spark.apache.org/docs/latest/spark-standalone.html
 
-[2] Refer to the Spark YARN documentation http://spark.apache.org/docs/ latest/running-on-yarn.html
+[2] Refer to the Spark YARN documentation http://spark.apache.org/docs/latest/running-on-yarn.html
 
-[3] Spark deployment guide http://spark.apache.org/docs/ latest/cluster-overview.html
+[3] Spark deployment guide http://spark.apache.org/docs/latest/cluster-overview.html
 
-[4] Submitting Spark applications http://spark.apache.org/docs/ latest/submitting-applications.html
+[4] Submitting Spark applications http://spark.apache.org/docs/latest/submitting-applications.html
 
 [5] Refer to Spark documentation http://spark.apache.org/docs/latest/spark-standalone.html
 
