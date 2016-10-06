@@ -65,7 +65,7 @@ July 2016: Fifth Edition
 6.6 Achieving World-Record Performance  
 6.7 Computational Performance
 
-7 Deep Autoencoders 
+7 Deep Autoencoders  
 7.1 Nonlinear Dimensionality Reduction  
 7.2 UseCase: Anomaly Detection  
 7.2.1 Stacked Autoencoder  
@@ -133,7 +133,9 @@ The easiest way to directly install H2O is via an R or Python package.
 
 To load a recent H2O package from CRAN, run:
 
+```
 install.packages("h2o")
+```
 
 Note: The version of H2O in CRAN may be one release behind the current version.
 
@@ -149,6 +151,7 @@ For the latest recommended version, download the latest stable H2O-3 build from 
 
 After H2O is installed on your system, verify the installation:
 
+```
 library(h2o)
 
 # Start H2O on your local machine using all available cores.
@@ -164,26 +167,31 @@ h2o.init(nthreads = -1)
 demo(h2o.glm)
 demo(h2o.gbm)
 demo(h2o.deeplearning)
+```
 
 ## 3.2 Installation in Python
 
 To load a recent H2O package from PyPI, run:
 
+```
 pip install h2o
+```
 
 To download the latest stable H2O-3 build from the H2O download page:
 
-1. Go to http://h2o.ai/download.
+1. Go to http://h2o.ai/download
 
-2. Choose the latest stable H2O-3 build.
+2. Choose the latest stable H2O-3 build
 
-3. Click the “Install in Python” tab.
+3. Click the “Install in Python” tab
 
-4. Copy and paste the commands into your Python session.
+4. Copy and paste the commands into your Python session
 
 After H2O is installed, verify the installation:
 
-import h2o 2
+```
+import h2o
+
 # Start H2O on your local machine
 h2o.init()
 
@@ -196,6 +204,7 @@ help(h2o.estimators.deeplearning.H2ODeepLearningEstimator)
 h2o.demo("glm")
 h2o.demo("gbm")
 h2o.demo("deeplearning")
+```
 
 ## 3.3 Pointing to a Different H2O Cluster
 
@@ -203,23 +212,25 @@ The instructions in the previous sections create a one-node H2O cluster on your 
 
 To connect to an established H2O cluster (in a multi-node Hadoop environment, for example) specify the IP address and port number for the established cluster using the ip and port parameters in the h2o.init() command. The syntax for this function is identical for R and Python:
 
+```
 h2o.init(ip = "123.45.67.89", port = 54321)
+```
 
 ## 3.4 Example Code
 
 R and Python code for the examples in this document can be found here:
 
-https://github.com/h2oai/h2o-3/tree/master/h2o-docs/src/ booklets/v2_2015/source/DeepLearning_Vignette_code_examples
+https://github.com/h2oai/h2o-3/tree/master/h2o-docs/src/booklets/v2_2015/source/DeepLearning_Vignette_code_examples
 
 The document source itself can be found here:
 
-https://github.com/h2oai/h2o-3/blob/master/h2o-docs/src/ booklets/v2_2015/source/DeepLearning_Vignette.tex
+https://github.com/h2oai/h2o-3/blob/master/h2o-docs/src/booklets/v2_2015/source/DeepLearning_Vignette.tex
 
 ## 3.5 Citation
 
 To cite this booklet, use the following:
 
-Candel, A., Parmar, V., LeDell, E., and Arora, A. (Jul 2016). Deep Learning with H2O. http://h2o.ai/resources.
+Candel, A., Parmar, V., LeDell, E., and Arora, A. (Jul 2016). *Deep Learning with H2O*. http://h2o.ai/resources.
 
 # 4 Deep Learning Overview
 
@@ -301,11 +312,11 @@ The choices for the nonlinear activation function f described in the introductio
 
 Table 1: Activation Functions - Function, Formula, and Range
 
-Tanh: f(α) = (exp(α) − exp(−α))/(exp(α) + exp(−α)), f(·) ∈ [−1, 1] 
+    Tanh: f(α) = (exp(α) − exp(−α))/(exp(α) + exp(−α)), f(·) ∈ [−1, 1] 
 
-Rectified Linear: f(α) = max(0, α),  f(·) ∈ R+ 
+    Rectified Linear: f(α) = max(0, α),  f(·) ∈ R+ 
 
-Maxout: f(α1, α2) = max(α1, α2), f(·) ∈ R
+    Maxout: f(α1, α2) = max(α1, α2), f(·) ∈ R
 
 The tanh function is a rescaled and shifted logistic function; its symmetry around 0 allows the training algorithm to converge faster. The rectified linear activation function has demonstrated high performance on image recognition tasks and is a more biologically accurate model of neuron activations (LeCun et al, 1998).
 
@@ -321,27 +332,28 @@ The system default enforces the table’s typical use rule based on whether regr
 
 Table 2: Loss functions - Function, Formula and Typical use
 
-Mean Squared Error
-L(W, B|j) = (1/2)*∥t^(j) − o^(j)∥2^2
-Regression 
+    Mean Squared Error
+    L(W, B|j) = (1/2)*∥t^(j) − o^(j)∥2^2
+    Regression 
+    
+    Absolute
+    L(W, B|j) = ∥t^(j) − o^(j)∥1
+    Regression
+    
+    Huber 
+    L(W, B|j) = (1/2)*∥t^(j) − o^(j)∥2^2 for ∥t^(j) − o^(j)∥1 ≤ 1
+    L(W, B|j) = ∥t^(j) − o^(j)∥1 - 1/2 otherwise
+    Regression 
 
-Absolute
-L(W, B|j) = ∥t^(j) − o^(j)∥1
-Regression
-
-Huber 
-L(W, B|j) = (1/2)*∥t^(j) − o^(j)∥2^2 for ∥t^(j) − o^(j)∥1 ≤ 1
-L(W, B|j) = ∥t^(j) − o^(j)∥1 - 1/2 otherwise
-Regression 
-
-Cross Entropy
-L(W, B|j) = −sum(ln(o[y]^(j) )·t[y]^(j) + ln(1 − o[y]^(j))·(1 − t[y]^(j)), y ∈ O)
-Classification
+    Cross Entropy
+    L(W, B|j) = −sum(ln(o[y]^(j) )·t[y]^(j) + ln(1 − o[y]^(j))·(1 − t[y]^(j)), y ∈ O)
+    Classification
 
 To predict the 80-th percentile of the petal length of the Iris dataset in R, use the following:
 
-Example in R
+**Example in R**
 
+```
 library(h2o)
 h2o.init(nthreads = -1)
 train.hex <- h2o.importFile("https://h2o-public-test-data.s3.amazonaws.com/smalldata/iris/iris_wheader.csv")
@@ -353,11 +365,13 @@ dl <- h2o.deeplearning(
   distribution = "quantile", 
   quantile_alpha = 0.8)
 h2o.predict(dl, splits[[2]])
+```
 
 To predict the 80-th percentile of the petal length of the Iris dataset in Python, use the following:
 
-Example in Python
+**Example in Python**
 
+```
 import h2o
 from h2o.estimators.deeplearning import H2ODeepLearningEstimator
 h2o.init()
@@ -366,6 +380,7 @@ splits = train.split_frame(ratios = [0.75], seed = 1234)
 dl = H2ODeepLearningEstimator(distribution = "quantile", quantile_alpha = 0.8)
 dl.train(x = range(0, 2), y = "petal_len", training_frame = splits[0])
 print(dl.predict(splits[1]))
+```
 
 ### 5.2.3 Parallel Distributed Network Training
 
@@ -381,9 +396,9 @@ a. Get training example i
 
 b. Update all weights w[jk] ∈ W, biases b[jk] ∈ B
 
-w[jk] := w[jk] − α*∂L(W,B|j)/∂w[jk]
+    w[jk] := w[jk] − α*∂L(W,B|j)/∂w[jk]
 
-b[jk] := b[jk] − α*∂L(W,B|j)/∂b[jk]
+    b[jk] := b[jk] − α*∂L(W,B|j)/∂b[jk]
 
 Stochastic gradient descent is fast and memory-efficient but not easily parallelizable without becoming slow. We utilize Hogwild!, the recently developed lock-free parallelization scheme from Niu, et al, 2011, to address this issue.
 
@@ -393,11 +408,13 @@ In a multi-node system, this parallelization scheme works on top of H2O’s dist
 
 Parallel distributed and multi-threaded training with SGD in H2O Deep Learning
 
-1. Initialize global model parameters W, B
+1.0 Initialize global model parameters W, B
 
-2. Distribute training data T across nodes (can be disjoint or replicated) 3. Iterate until convergence criterion reached:
+2.0 Distribute training data T across nodes (can be disjoint or replicated) 
 
-3.1. For nodes n with training subset Tn, do in parallel:
+3.0 Iterate until convergence criterion reached:
+
+3.1 For nodes n with training subset T[n], do in parallel:
 
 a. Obtain copy of the global model parameters W[n], B[n] 
 
@@ -411,14 +428,13 @@ i. Get training example i ∈ T[nac]
 
 ii. Update all weights w[jk] ∈ W[n], biases b[jk] ∈ B[n]
 
-w[jk] := w[jk] − α*∂L(W,B|j)/∂w[jk]
+    w[jk] := w[jk] − α*∂L(W,B|j)/∂w[jk]
 
-b[jk] := b[jk] − α*∂L(W,B|j)/∂b[jk]
+    b[jk] := b[jk] − α*∂L(W,B|j)/∂b[jk]
 
-3.2. Set W, B := Avg[n] W[n], Avg[n] B[n]
+3.2 Set W, B := Avg[n] W[n], Avg[n] B[n]
 
-3.3. Optionally score the model on (potentially sampled)
-train/validation scoring sets
+3.3 Optionally score the model on (potentially sampled) train/validation scoring sets
 
 Here, the weights and bias updates follow the asynchronous Hogwild! procedure to incrementally adjust each node’s parameters W[n], B[n] after seeing the example i. The Avg[n] notation represents the final averaging of these local parameters across all nodes to obtain the global model parameters and complete training.
 
@@ -428,9 +444,9 @@ H2O Deep Learning is scalable and can take advantage of large clusters of comput
 
 For datasets that don’t fit into each node’s memory (depending on the amount of heap memory specified by the -Xmx Java option), it might not be possible to replicate the data, so each compute node can be specified to train only with local data. An experimental single node mode is available for cases where final convergence is slow due to the presence of too many nodes, but this has not been necessary in our testing.
 
-To specify the global number of training examples shared with the distributed SGD worker nodes between model averaging, use the train_samples_per_iteration parameter. If the specified value is -1, all nodes process all their local training data on each iteration.
+To specify the global number of training examples shared with the distributed SGD worker nodes between model averaging, use the train\_samples\_per\_iteration parameter. If the specified value is -1, all nodes process all their local training data on each iteration.
 
-If replicate_training_data is enabled, which is the default setting, this will result in training N epochs (passes over the data) per iteration on N nodes; otherwise, one epoch will be trained per iteration. Specifying 0 always results in one epoch per iteration regardless of the number of compute nodes. In general, this parameter supports any positive number. For large datasets, we recommend specifying a fraction of the dataset.
+If replicate\_training\_data is enabled, which is the default setting, this will result in training N epochs (passes over the data) per iteration on N nodes; otherwise, one epoch will be trained per iteration. Specifying 0 always results in one epoch per iteration regardless of the number of compute nodes. In general, this parameter supports any positive number. For large datasets, we recommend specifying a fraction of the dataset.
 
 A value of -2, which is the default value, enables auto-tuning for this parameter based on the computational performance of the processors and the network of the system and attempts to find a good balance between computation and communication. This parameter can affect the convergence rate during training.
 
@@ -450,7 +466,7 @@ The second type of regularization available for Deep Learning is a modern innova
 
 There are two effects: as with l2 regularization, the network weight values are scaled toward 0. Although they share the same global parameters, each training example trains a different model. As a result, dropout allows an exponentially large number of models to be averaged as an ensemble to help prevent overfitting and improve generalization.
 
-If the feature space is large and noisy, specifying an input dropout using the input_dropout_ratio parameter can be especially useful. Note that input dropout can be specified independently of the dropout specification in the hidden layers (which requires activation to be TanhWithDropout, MaxoutWithDropout, or RectifierWithDropout). Specify the amount of hidden dropout per hidden layer using the hidden_dropout_ratios parameter, which is set to 0.5 by default.
+If the feature space is large and noisy, specifying an input dropout using the input\_dropout\_ratio parameter can be especially useful. Note that input dropout can be specified independently of the dropout specification in the hidden layers (which requires activation to be TanhWithDropout, MaxoutWithDropout, or RectifierWithDropout). Specify the amount of hidden dropout per hidden layer using the hidden\_dropout\_ratios parameter, which is set to 0.5 by default.
 
 ## 5.4 Advanced Optimization
 
@@ -464,15 +480,15 @@ Momentum modifies back-propagation by allowing prior iterations to influence the
 
 - μ represents the momentum coefficient 
 
-- α represents the learning rate
+- α represents the learning rate  
 
     v[t+1] = μ*v[t] − α*∇L(θ[t]) 
     
     θ[t+1] = θ[t] + v[t+1]
 
-Using the momentum parameter can aid in avoiding local minima and any associated instability (Sutskever et al, 2014). Too much momentum can lead to instability, so we recommend incrementing the momentum slowly. The parameters that control momentum are momentum_start, momentum_ramp, and momentum_stable.
+Using the momentum parameter can aid in avoiding local minima and any associated instability (Sutskever et al, 2014). Too much momentum can lead to instability, so we recommend incrementing the momentum slowly. The parameters that control momentum are momentum\_start, momentum\_ramp, and momentum_stable.
 
-When using momentum updates, we recommend using the Nesterov accelerated gradient method, which uses the nesterov_accelerated_gradient parameter. This method modifies the updates as follows:
+When using momentum updates, we recommend using the Nesterov accelerated gradient method, which uses the nesterov\_accelerated\_gradient parameter. This method modifies the updates as follows:
 
     v[t+1] = μ*v[t] − α*∇L(θ[t] + μ*v[t]) 
 
@@ -508,11 +524,11 @@ For autoencoding, the data is normalized (instead of standardized) to the compac
 
 Early stopping based on convergence of a user-specified metric is an especially helpful feature for finding the optimal number of epochs. By default, it uses the metrics on the validation dataset, if provided. Otherwise, training metrics are used.
 
-- To stop model building if misclassification improves (is reduced) by less than one percent between individual scoring epochs, specify stopping_rounds = 1, stopping_tolerance = 0.01 and stopping_metric = "misclassification".
+- To stop model building if misclassification improves (is reduced) by less than one percent between individual scoring epochs, specify stopping\_rounds = 1, stopping\_tolerance = 0.01 and stopping\_metric = "misclassification".
 
-- To stop model building if the simple moving average (window length 5) if the AUC improves (increases) by less than 0.1 percent for 5 consecutive scoring epochs, use stopping_rounds = 5, stopping_metric = "AUC", and stopping_tolerance = 0.001.
+- To stop model building if the simple moving average (window length 5) if the AUC improves (increases) by less than 0.1 percent for 5 consecutive scoring epochs, use stopping\_rounds = 5, stopping\_metric = "AUC", and stopping\_tolerance = 0.001.
 
-- To stop model building if the logloss on the validation set does not improve at all for 3 consecutive scoring epochs, specify a validation frame, stopping_rounds = 3, stopping_tolerance = 0 and stopping_metric = "logloss".
+- To stop model building if the logloss on the validation set does not improve at all for 3 consecutive scoring epochs, specify a validation frame, stopping\_rounds = 3, stopping\_tolerance = 0 and stopping\_metric = "logloss".
 
 - To continue model building even after metrics have converged, disable this feature using stopping_rounds = 0.
 
@@ -520,7 +536,7 @@ Early stopping based on convergence of a user-specified metric is an especially 
 
 ### 5.5.3 Time-based Early Stopping
 
-To stop model training after a given amount of seconds, specify max_runtime_secs > 0. This option is also available for grid searches and models with cross-validation. Note: The model(s) will likely end up with fewer epochs than specified by epochs.
+To stop model training after a given amount of seconds, specify max\_runtime\_secs > 0. This option is also available for grid searches and models with cross-validation. Note: The model(s) will likely end up with fewer epochs than specified by epochs.
 
 ## 5.6 Additional Parameters
 
@@ -542,10 +558,11 @@ Figure 1: Example MNIST digit images
 
 This example downloads and imports the training and testing datasets from a public Amazon S3 bucket (https://h2o-public-test-data.s3.amazonaws.com/bigdata/laptopt/mnist/train.csv.gz and same for test.csv.gz). The training file is 13MB and the testing file is 2.1MB. The data is downloaded directly, so the data import speed is dependent on download speed. Files can be imported from a variety of sources, including local file systems or shared file systems such as NFS, S3 and HDFS.
 
-Example in R
+**Example in R**
 
-To run the MNIST example in R, use the following:
+To run the MNIST Example in R, use the following:
 
+```
 library(h2o)
 
 # Sets number of threads to number of available cores
@@ -560,11 +577,13 @@ test <- h2o.importFile(test_file)
 # Get a brief summary of the data
 summary(train)
 summary(test)
+```
 
-Example in Python
+**Example in Python**
 
-To run the MNIST example in Python, use the following:
+To run the MNIST Example in Python, use the following:
 
+```
 import h2o
 
 # Start H2O cluster with all available cores (default)
@@ -576,6 +595,7 @@ test = h2o.import_file("https://h2o-public-test-data.s3.amazonaws.com/bigdata/la
 # Get a brief summary of the data
 train.describe()
 test.describe()
+```
 
 ## 6.2 Performing a Trial Run
 
@@ -585,8 +605,9 @@ Rectified linear activation is popular with image processing and has previously 
 
 To perform the trial run in R, use the following:
 
-Example in R
+**Example in R**
 
+```
 # Specify the response and predictor columns
 y <- "C785"
 x <- setdiff(names(train), y)
@@ -608,11 +629,13 @@ model <- h2o.deeplearning(
   sparse = TRUE,
   l1 = 1e-5,
   epochs = 10)
+```
 
 To perform the trial run in Python, use the following:
 
-Example in Python
+**Example in Python**
 
+```
 from h2o.estimators.deeplearning import H2ODeepLearningEstimator
 
 # Specify the response and predictor columns
@@ -637,6 +660,7 @@ model.train(
     y = y,
     training_frame = train,
     validation_frame = test)
+```
 
 The model runs for only 10 epochs since it is just meant as a trial run. In this trial run, we also specified the validation set as the test set. In addition to (or instead of) using a validation set, another option to estimate generalization error is N-fold cross-validation.
 
@@ -644,14 +668,15 @@ The model runs for only 10 epochs since it is just meant as a trial run. In this
 
 If the value specified for nfolds is a positive integer, N-fold cross-validation is performed on the training_frame and the cross-validation metrics are computed and stored as model output. To disable cross-validation, use nfolds = 0, which is the default value.
 
-To save the predicted values generated during cross-validation, set the keep_cross_validation_predictions parameter to true. This enables calculation of custom cross-validated performance metrics for the R or Python model.
+To save the predicted values generated during cross-validation, set the keep\_cross\_validation\_predictions parameter to true. This enables calculation of custom cross-validated performance metrics for the R or Python model.
 
-Advanced users can also specify a fold_column that specifies the holdout fold associated with each row. By default, the holdout fold_assignment is random, but other schemes such as round-robin assignment using the modulo operator are also supported.
+Advanced users can also specify a fold\_column that specifies the holdout fold associated with each row. By default, the holdout fold\_assignment is random, but other schemes such as round-robin assignment using the modulo operator are also supported.
 
-To run the cross-validation example in R, use the following:
+To run the cross-validation Example in R, use the following:
 
-Example in R
+**Example in R**
 
+```
 # Perform 5-fold cross-validation on training_frame 
 model_cv <- h2o.deeplearning(
   x = x,
@@ -665,11 +690,13 @@ model_cv <- h2o.deeplearning(
   l1 = 1e-5,
   epochs = 10,
   nfolds = 5)
+```
 
-To run the cross-validation example in Python, use the following:
+To run the cross-validation Example in Python, use the following:
 
-Example in Python
+**Example in Python**
 
+```
 # Perform 5-fold cross-validation on training_frame
 model_cv = H2ODeepLearningEstimator(
     distribution = "multinomial",
@@ -684,17 +711,19 @@ model_cv.train(
     x = x,
     y = y,
     training_frame = train)
+```
 
 ### 6.2.2 Extracting and Handling the Results
 
 We can now extract the parameters of our model, examine the scoring process, and make predictions on new data. The h2o.performance function in R returns all pre-computed performance metrics for the training/validation set or returns cross-validated metrics for the training set, depending on model configuration.
 
-An equivalent model_performance method is available in Python, as well as utility functions that return specific metrics, such as mean square error (MSE) or area under curve (AUC). Examples shown below use the previously-trained model and model_cv objects.
+An equivalent model\_performance method is available in Python, as well as utility functions that return specific metrics, such as mean square error (MSE) or area under curve (AUC). Examples shown below use the previously-trained model and model\_cv objects.
 
 To view the model results in R, use the following:
 
-Example in R
+**Example in R**
 
+```
 # View specified parameters of the deep learning model
 model@parameters
 
@@ -709,54 +738,62 @@ h2o.mse(model, valid = TRUE)
 
 # Cross-validated MSE
 h2o.mse(model_cv, xval = TRUE)
+```
 
 To view the model results in Python, use the following:
 
-Example in Python
+**Example in Python**
 
+```
 # View specified parameters of the Deep Learning model
 model.params
 
 # Examine the performance of the trained model
 model # display all performance metrics
 
-model.model_performance(train=True) # training metrics
-model.model_performance(valid=True) # validation metrics
+model.model_performance(train = True) # training metrics
+model.model_performance(valid = True) # validation metrics
 
 # Get MSE only
 model.mse(valid = True)
 
 # Cross-validated MSE
-model_cv.mse(xval=True)
+model_cv.mse(xval = True)
+```
 
-The training error value is based on the parameter score training samples, which specifies the number of randomly sampled training points used for scoring (the default value is 10,000 points). The validation error is based on the parameter score_validation_samples, which configures the same value on the validation set (by default, this is the entire validation set).
+The training error value is based on the parameter score training samples, which specifies the number of randomly sampled training points used for scoring (the default value is 10,000 points). The validation error is based on the parameter score\_validation\_samples, which configures the same value on the validation set (by default, this is the entire validation set).
 
-In general, choosing a greater number of sampled points leads to a better understanding of the model’s performance on your dataset; setting either of these parameters to 0 automatically uses the entire corresponding dataset for scoring. However, either method allows you to control the minimum and maximum time spent on scoring with the score_interval and score_duty_cycle parameters.
+In general, choosing a greater number of sampled points leads to a better understanding of the model’s performance on your dataset; setting either of these parameters to 0 automatically uses the entire corresponding dataset for scoring. However, either method allows you to control the minimum and maximum time spent on scoring with the score\_interval and score\_duty\_cycle parameters.
 
-If the parameter overwrite_with_best_model is enabled, these scoring parameters also affect the final model. This option selects the model that achieved the lowest validation error during training (based on the sampled points used for scoring) as the final model after training. If a dataset is not specified as the validation set, the training data is used by default; in this case, either the score_training_samples or score_validation_samples parameter will control the error computation during training and consequently, which model is selected as the best model.
+If the parameter overwrite\_with_best\_model is enabled, these scoring parameters also affect the final model. This option selects the model that achieved the lowest validation error during training (based on the sampled points used for scoring) as the final model after training. If a dataset is not specified as the validation set, the training data is used by default; in this case, either the score\_training\_samples or score\_validation\_samples parameter will control the error computation during training and consequently, which model is selected as the best model.
 
 Once we have a satisfactory model (as determined by the validation or cross-validation metrics), use the h2o.predict() command to compute and store predictions on new data for additional refinements in the interactive data science process.
 
 To view the predictions in R, use the following:
 
-Example in R
+**Example in R**
 
+```
 # Classify the test set (predict class labels)
-# This also returns the probability for each class pred <- h2o.predict(model, newdata = test)
+# This also returns the probability for each class 
+pred <- h2o.predict(model, newdata = test)
 
 # Take a look at the predictions
 head(pred)
+```
 
 To view the predictions in Python, use the following:
 
-Example in Python
+**Example in Python**
 
+```
 # Classify the test set (predict class labels)
 # This also returns the probability for each class
 pred = model.predict(test)
 
 # Take a look at the predictions
 pred.head()
+```
 
 ## 6.3 Web Interface
 
@@ -772,10 +809,11 @@ H2O’s Deep Learning uses the Gedeon method (Gedeon, 1997), which is disabled b
 
 The following code demonstrates training using the variable_importances option and extracting the variable importances from the trained model. From the web UI, you can also view a visualization of the variable importances.
 
-Example in R
+**Example in R**
 
 To generate variable importances in R, use the following:
 
+```
 # Train Deep Learning model and validate on test set
 # and save the variable importances
 model_vi <- h2o.deeplearning(
@@ -794,11 +832,13 @@ model_vi <- h2o.deeplearning(
 
 # Retrieve the variable importance
 h2o.varimp(model_vi)
+```
 
-Example in Python
+**Example in Python**
 
 To generate variable importances in Python, use the following:
 
+```
 # Train Deep Learning model and validate on test set
 # and save the variable importances
 model_vi = H2ODeepLearningEstimator(
@@ -819,6 +859,7 @@ model_vi.train(
 
 # Retrieve the variable importance
 model_vi.varimp()
+```
 
 ### 6.3.2 Java Model
 
@@ -840,7 +881,7 @@ https://github.com/h2oai/h2o-3/blob/master/h2o-docs/src/product/howto/POJO_Quick
 
 ## 6.4 Grid Search for Model Comparison
 
-H2O supports model tuning in grid search by allowing users to specify sets of values for parameter arguments and observe changes in model behavior. An example in R is provided below; the Python grid search API is currently in development.
+H2O supports model tuning in grid search by allowing users to specify sets of values for parameter arguments and observe changes in model behavior. An Example in R is provided below; the Python grid search API is currently in development.
 
 In this example, three different network topologies and two different l1 norm weights are specified. This grid search model trains six different models using all possible combinations of these parameters; other parameter combinations can be specified for a larger space of models. Note that the models will most likely converge before the default value of epochs, since early stopping is enabled.
 
@@ -850,10 +891,11 @@ Grid search provides more subtle insights into the model tuning and selection pr
 
 To run a Cartesian hyper-parameter grid search in R, use the following:
 
-Example in R
+**Example in R**
 
-hidden_opt <- list(c(32,32), c(32,16,8), c(100))
-l1_opt <- c(1e-4,1e-3)
+```
+hidden_opt <- list(c(32, 32), c(32, 16, 8), c(100))
+l1_opt <- c(1e-4, 1e-3)
 hyper_params <- list(hidden = hidden_opt, l1 = l1_opt)
 
 model_grid <- h2o.grid("deeplearning",
@@ -869,11 +911,13 @@ model_grid <- h2o.grid("deeplearning",
   stopping_rounds = 3,
   stopping_tolerance = 0.05,
   stopping_metric = "misclassification")
+```
 
 To run a Cartesian hyper-parameter grid search in Python, use the following:
 
-Example in Python
+**Example in Python**
 
+```
 hidden_opt = [[32, 32], [32, 16, 8], [100]]
 l1_opt = [1e-4, 1e-3]
 hyper_parameters = {"hidden":hidden_opt, "l1":l1_opt}
@@ -893,11 +937,13 @@ model_grid.train(
     stopping_rounds = 3,
     stopping_tolerance = 0.05,
     stopping_metric = "misclassification")
+```
 
 To view the results of the grid search, use the following:
 
-Example in R
+**Example in R**
 
+```
 # print out all prediction errors and run times of the models
 model_grid
 
@@ -906,21 +952,25 @@ for(model_id in model_grid@model_ids) {
   mse <- h2o.mse(h2o.getModel(model_id), valid = TRUE)
   print(sprintf("Test set MSE: %f", mse))
 }
+```
 
-Example in Python
+**Example in Python**
 
+```
 # print model grid search results
 model_grid
 
 for model in model_grid:
     print model.model_id + " mse: " + str(model.mse())
+```
 
 ### 6.4.2 Random Grid Search
 
 If the search space is too large (i.e., you don’t want to restrict the parameters too much), you can also let the Grid Search make random model selections for you. Just specify how many models (and/or how much training time) you want, and a seed to make the random selection deterministic:
 
-Example in R
+**Example in R**
 
+```
 hidden_opt = lapply(1:100, 
   function(x) 10 + sample(50, sample(4), replace = TRUE))
 l1_opt = seq(1e-6, 1e-3, 1e-6)
@@ -947,9 +997,11 @@ model_grid <- h2o.grid(
   stopping_rounds = 3,
   stopping_tolerance = 0.05,
   stopping_metric = "misclassification")
+```
 
-Example in Python
+**Example in Python**
 
+```
 hidden_opt = [[17, 32], [8, 19], [32, 16, 8], [100], [10, 10, 10, 10]]
 l1_opt = [s/1e6 for s in range(1, 1001)]
 hyper_parameters = {"hidden":hidden_opt, "l1":l1_opt}
@@ -975,31 +1027,33 @@ model_grid.train(
     stopping_rounds = 3,
     stopping_tolerance = 0.05,
     stopping_metric = "misclassification")
+```
 
 ## 6.5 Checkpoint Models
 
 To resume model training, use checkpoint model keys (model_id) to incrementally train a specific model using more iterations, more data, different data, and so forth. To further train the initial model, use it (or its key) as a checkpoint argument for a new model.
 
-To get the best possible model in a general multi-node setup, we recommend building a model with train_samples_per_iteration = -2 (default, autotuning) and saving it to disk so that youll have at least one saved model.
+To get the best possible model in a general multi-node setup, we recommend building a model with train\_samples\_per_iteration = -2 (default, autotuning) and saving it to disk so that youll have at least one saved model.
 
-To improve this initial model, start from the previous model and add iterations by building another model, specifying checkpoint = previous_model_id, and changing train_samples_per_iteration, target_ratio_comm_to_comp, or other parameters. Many parameters can be changed between checkpoints, especially those that affect regularization or performance tuning.
+To improve this initial model, start from the previous model and add iterations by building another model, specifying checkpoint = previous\_model\_id, and changing train\_samples\_per\_iteration, target\_ratio\_comm\_to\_comp, or other parameters. Many parameters can be changed between checkpoints, especially those that affect regularization or performance tuning.
 
 Checkpoint restart suggestions:
 
-1. For multi-node only: Leave train_samples_per_iteration = -2, increase target_ratio_comm_to_comp from 0.05 to 0.25 or 0.5 (more communication). This should lead to a better model when using multiple nodes. Note: No affect on single-node performance at all, since there is no actual communication needed.
+1. For multi-node only: Leave train\_samples\_per\_iteration = -2, increase target\_ratio\_comm\_to\_comp from 0.05 to 0.25 or 0.5 (more communication). This should lead to a better model when using multiple nodes. Note: No affect on single-node performance at all, since there is no actual communication needed.
 
-2. For both single and multi-node (bagging-like): Explicitly set train_samples_per_iteration = N, where N is the number of training samples for the whole cluster to train with for one iteration. Each of the n nodes will then train on N/n randomly chosen rows for each iteration. Obviously, a good choice for N depends on the dataset size and the model complexity. Refer to the logs to see what values of N are used in option 1 (when auto-tuning is enabled). Typically, option 1 is sufficient.
+2. For both single and multi-node (bagging-like): Explicitly set train\_samples\_per\_iteration = N, where N is the number of training samples for the whole cluster to train with for one iteration. Each of the n nodes will then train on N/n randomly chosen rows for each iteration. Obviously, a good choice for N depends on the dataset size and the model complexity. Refer to the logs to see what values of N are used in option 1 (when auto-tuning is enabled). Typically, option 1 is sufficient.
 
-3. For both single and multi-node: Change regularization parameters such as l1, l2, max_w2, input_dropout_ratio, hidden_dropout_ratios. For best results, build the first model with RectifierWithDropout and input_dropout_ratio = 0 and hidden_dropout_ratios of all zeros, just to be able to enable dropout regularization later. Hidden dropout is often used for initial models, since it often improves generalization. Input dropout is especially useful if there is some noise in the input.
+3. For both single and multi-node: Change regularization parameters such as l1, l2, max\_w2, input\_dropout\_ratio, hidden\_dropout\_ratios. For best results, build the first model with RectifierWithDropout and input\_dropout\_ratio = 0 and hidden\_dropout\_ratios of all zeros, just to be able to enable dropout regularization later. Hidden dropout is often used for initial models, since it often improves generalization. Input dropout is especially useful if there is some noise in the input.
 
 Options 1 and 3 should result in a good model. Of course, grid search can be used with checkpoint restarts to scan a broad range of good continuation models.
 
-In the R example below, model_grid@model_ids[[1]] represents the highest-performing model from the grid search used for additional training. For checkpoint restarts, the response column, training, and validation datasets must match. In addition, the model architecture, such as hidden = c(32, 32, 32) in the example below, must match.
+In the R example below, model\_grid\@model_ids[[1]] represents the highest-performing model from the grid search used for additional training. For checkpoint restarts, the response column, training, and validation datasets must match. In addition, the model architecture, such as hidden = c(32, 32, 32) in the example below, must match.
 
 To restart training in R using a checkpoint model, use the following:
 
-Example in R
+**Example in R**
 
+```
 # Re-start the training process on a saved DL model
 # using the ‘checkpoint‘ argument
 model_chkp <- h2o.deeplearning(
@@ -1015,11 +1069,13 @@ model_chkp <- h2o.deeplearning(
   sparse = TRUE,
   l1 = 1e-5,
   epochs = 20)
+```
 
 The Python example uses the “trial run” model as the checkpoint model.
 
-Example in Python
+**Example in Python**
 
+```
 # Re-start the training process on a saved DL model
 # using the ‘checkpoint‘ argument
 model_chkp = H2ODeepLearningEstimator(
@@ -1037,13 +1093,15 @@ model_chkp.train(
     y = y,
     training_frame = train,
     validation_frame = test)
+```
 
 Checkpointing can also be used to reload existing models that were saved to disk in a previous session. For example, we can save and reload a model by running the following commands.
 
 To save a model in R, use the following:
 
-Example in R
+**Example in R**
 
+```
 # Specify a model and the file path where it is to be
 # saved. If no path is specified, the model will be
 # saved to the current working directory
@@ -1054,11 +1112,13 @@ model_path <- h2o.saveModel(
 
 print(model_path)
 # /tmp/mymodel/DeepLearning_model_R_1441838096933
+```
 
 To save a model in Python, use the following:
 
-Example in Python
+**Example in Python**
 
+```
 # Specify a model and the file path where it is to be
 # saved. If no path is specified, the model will be
 # saved to the current working directory
@@ -1069,38 +1129,47 @@ model_path = h2o.save_model(
 
 print model_path
 # /tmp/mymodel/DeepLearning_model_python_1441838096933
+```
 
 After restarting H2O, load the saved model by specifying the host and saved model file path. Note: The saved model must be reloaded using a compatible H2O version (i.e., the same version used to save the model).
 
 To load a saved model in R, use the following:
 
-Example in R
+**Example in R**
 
+```
 # Load model from disk
 saved_model <- h2o.loadModel(model_path)
+```
 
 To load a saved model in Python, use the following:
 
-Example in Python
+**Example in Python**
 
+```
 # Load model from disk
 saved_model = h2o.load_model(model_path)
+```
 
 You can also use the following commands to retrieve a model from its H2O key. This is useful if you have created an H2O model using the web interface and want to continue the modeling process in R.
 
 To retrieve a model in R using its key, use the following:
 
-Example in R
+**Example in R**
 
+```
 # Retrieve model by H2O key
 model <- h2o.getModel(model_id = model_chkp@model_id)
+```
 
 To retrieve a model in Python using its key, use the following:
 
-Example in Python
+**Example in Python**
 
+```
 # Retrieve model by H2O key
 model = h2o.get_model(model_id = model_chkp._id)
+```
 
 ## 6.6 Achieving World-Record Performance
 
@@ -1108,8 +1177,9 @@ Without distortions, convolutions, or other advanced image processing techniques
 
 After training for 8,000 epochs (which took about ten hours) on ten nodes, we obtain a test set error of 0.83%, which is the current world-record, notably achieved using a distributed configuration and with a simple 1-liner from R:
 
-Example in R
+**Example in R**
 
+```
 # World Record run used epochs = 8000
 model <- h2o.deeplearning(
   x = x, 
@@ -1125,6 +1195,7 @@ model <- h2o.deeplearning(
   train_samples_per_iteration = -1,
   classification_stop = -1, 
   stopping_rounds = 0)
+```
 
 ## 6.7 Computational Performance
 
@@ -1154,8 +1225,9 @@ For the deep autoencoder model described above, if enough training data resembli
 
 This framework is used to develop an anomaly detection demonstration using a deep autoencoder. The dataset is an ECG time series of heartbeats and the goal is to determine which heartbeats are outliers. The training data (20 “good” heartbeats) and the test data (training data with 3 “bad” heartbeats appended for simplicity) can be downloaded directly into the H2O cluster, as shown below. Each row represents a single heartbeat.
 
-Example in R
+**Example in R**
 
+```
 # Import ECG train and test data into the H2O cluster
 train_ecg <- h2o.importFile(
   path = "http://h2o-public-test-data.s3.amazonaws.com/smalldata/anomaly/ecg_discord_train.csv",
@@ -1191,11 +1263,13 @@ plot.ts(recon_error)
 # Note: Testing = Reconstructing the test dataset
 test_recon <- h2o.predict(anomaly_model, test_ecg)
 head(test_recon)
+```
 
-To run the anomaly detection example in Python, use the following:
+To run the anomaly detection Example in Python, use the following:
 
-Example in Python
+**Example in Python**
 
+```
 # Import ECG train and test data into the H2O cluster
 from h2o.estimators.deeplearning import H2OAutoEncoderEstimator
 
@@ -1221,6 +1295,7 @@ recon_error = anomaly_model.anomaly(test_ecg)
 # Note: Testing = Reconstructing the test dataset
 test_recon = anomaly_model.predict(test_ecg)
 test_recon
+```
 
 ### 7.2.1 Stacked Autoencoder
 
@@ -1260,7 +1335,7 @@ Logical indicates the parameter requires a value of either TRUE or FALSE.
 
 - pretrained_autoencoder: (Optional) Pretrained autoencoder model (either an H2ODeepLearningModel or a key) to initialize the model state of a supervised DL model with.
 
-- use_all_factor_levels: Logical. Uses all factor levels of categorical variance. Otherwise, omits the first factor level without loss of accuracy. Useful for variable importances and auto-enabled for autoencoder. The default is true. Refer to the Deep Autoencoders section for more details.
+- use\_all\_factor\_levels: Logical. Uses all factor levels of categorical variance. Otherwise, omits the first factor level without loss of accuracy. Useful for variable importances and auto-enabled for autoencoder. The default is true. Refer to the Deep Autoencoders section for more details.
 
 - activation: Specifies the nonlinear, differentiable activation function used in the network. The options are Tanh, TanhWithDropout, Rectifier, RectifierWithDropout, Maxout, or MaxoutWithDropout. The default is Rectifier. Refer to the Activation and Loss Functions and Regularization sections for more details.
 
@@ -1268,7 +1343,7 @@ Logical indicates the parameter requires a value of either TRUE or FALSE.
 
 - epochs: Specifies the number of iterations or passes over the training dataset (can be fractional). For initial grid searches, we recommend starting with lower values. The value allows continuation of selected models and can be modified during checkpoint restarts. The default is 10.
 
-- train_samples_per_iteration: Specifies the number of training samples (globally) per MapReduce iteration. The following special values are also supported: 0 (one epoch); -1 (all available data including replicated training data; -2 (auto-tuning; default). Refer to Specifying the Number of Training Samples for more details.
+- train\_samples\_per\_iteration: Specifies the number of training samples (globally) per MapReduce iteration. The following special values are also supported: 0 (one epoch); -1 (all available data including replicated training data; -2 (auto-tuning; default). Refer to Specifying the Number of Training Samples for more details.
 
 - seed: Specifies the random seed controls sampling and initialization. Reproducible results are only expected with single-threaded operations (i.e. running on one node, turning off load balancing, and providing a small dataset that fits in one chunk). In general, the multi-threaded asynchronous updates to the model parameters will result in intentional race conditions and non-reproducible results. The default is a randomly generated number.
 
@@ -1280,9 +1355,9 @@ Logical indicates the parameter requires a value of either TRUE or FALSE.
 
 - rate: Specifies the learning rate, α. Higher values lead to less stable models, while lower values result in slower convergence. The default is 0.005.
 
-- rate_annealing: Reduces the learning rate to “freeze” into local minima in the optimization landscape. The annealing learning rate is calculated as rate/(1 + rate_annealing*N), where N is the number of training samples. It is the inverse of the number of training samples required to cut the learning rate in half. If adaptive learning is disabled, the default value is 1e-6. Refer to Rate Annealing for more details.
+- rate\_annealing: Reduces the learning rate to “freeze” into local minima in the optimization landscape. The annealing learning rate is calculated as rate/(1 + rate\_annealing*N), where N is the number of training samples. It is the inverse of the number of training samples required to cut the learning rate in half. If adaptive learning is disabled, the default value is 1e-6. Refer to Rate Annealing for more details.
 
-- rate_decay: Controls the change of learning rate across layers. The learning rate decay factor between layers is calculated as (L-th layer: rate*rate_decayˆ(L - 1)). If adaptive learning is disabled, the default is 1.0.
+- rate\_decay: Controls the change of learning rate across layers. The learning rate decay factor between layers is calculated as (L-th layer: rate*rate\_decayˆ(L - 1)). If adaptive learning is disabled, the default is 1.0.
 
 - momentum_start: Controls the amount of momentum at the beginning of training when adaptive learning is disabled. The default is 0. Refer to Momentum Training for more details.
 
@@ -1290,11 +1365,11 @@ Logical indicates the parameter requires a value of either TRUE or FALSE.
 
 - momentum_stable: Specifies the final momentum value after the num- ber of training samples specified for momentum ramp when adaptive learning is disabled. The training momentum is applied for any additional training. The default is 0. Refer to Momentum Training for more details.
 
-- nesterov_accelerated_gradient: Logical. Enables the Nesterov accelerated gradient descent method, which is a modification to the traditional gradient descent for convex functions. The method relies on gradient information at various points to build a polynomial approximation that minimizes the residuals in fewer iterations of the descent. This parameter is only active if the adaptive learning rate is disabled. When adaptive learning is disabled, the default is true. Refer to Momentum Training for more details.
+- nesterov\_accelerated\_gradient: Logical. Enables the Nesterov accelerated gradient descent method, which is a modification to the traditional gradient descent for convex functions. The method relies on gradient information at various points to build a polynomial approximation that minimizes the residuals in fewer iterations of the descent. This parameter is only active if the adaptive learning rate is disabled. When adaptive learning is disabled, the default is true. Refer to Momentum Training for more details.
 
-- input_dropout_ratio: Specifies the fraction of the features for each training row to omit from training to improve generalization. The default is 0, which always uses all features. Refer to Regularization for more details.
+- input\_dropout\_ratio: Specifies the fraction of the features for each training row to omit from training to improve generalization. The default is 0, which always uses all features. Refer to Regularization for more details.
 
-- hidden_dropout_ratios: Specifies the fraction of the inputs for each hidden layer to omit from training to improve generalization. The default is 0.5 for each hidden layer. Refer to Regularization for more details.
+- hidden\_dropout\_ratios: Specifies the fraction of the inputs for each hidden layer to omit from training to improve generalization. The default is 0.5 for each hidden layer. Refer to Regularization for more details.
 
 - l1: Specifies the l1 (L1) regularization, which constrains the absolute value of the weights (can add stability and improve generalization, causes many weights to become 0). The default is 0, for no L1 regularization. Refer to Regularization for more details.
 
@@ -1302,9 +1377,9 @@ Logical indicates the parameter requires a value of either TRUE or FALSE.
 
 - max_w2: Specifies the maximum for the sum of the squared incoming weights for a neuron. This tuning parameter is especially useful for unbound activation functions such as Maxout or Rectifier. The default, which is positive infinity, leaves this maximum unbounded.
 
-- initial_weight_distribution: Specifies the distribution from which to draw the initial weights. Select Uniform, UniformAdaptive or Normal. The default is UniformAdaptive. Refer to Initialization for more details.
+- initial\_weight\_distribution: Specifies the distribution from which to draw the initial weights. Select Uniform, UniformAdaptive or Normal. The default is UniformAdaptive. Refer to Initialization for more details.
 
-- initial_weight_scale: Specifies the scale of the distribution function for uniform or normal distributions. For uniform distributions, the values are drawn uniformly from initial weight scale, initial weight scale. For normal distributions, the values are drawn from a normal distribution with a standard deviation of initial weight scale. The default is 1. Refer to Initialization for more details.
+- initial\_weight\_scale: Specifies the scale of the distribution function for uniform or normal distributions. For uniform distributions, the values are drawn uniformly from initial weight scale, initial weight scale. For normal distributions, the values are drawn from a normal distribution with a standard deviation of initial weight scale. The default is 1. Refer to Initialization for more details.
 
 - loss: Specifies the loss option: Automatic, CrossEntropy (classification only), Quadratic, Absolute, or Huber. The default is Automatic. Refer to Activation and Loss Functions for more details.
 
@@ -1316,53 +1391,53 @@ Logical indicates the parameter requires a value of either TRUE or FALSE.
 
 - score_interval: Specifies the minimum time (in seconds) between model scoring. The actual interval is determined by the number of training samples per iteration and the scoring duty cycle. To use all training set samples, specify 0. The default is 5.
 
-- score_training_samples: Specifies the number of training samples to randomly sample for scoring. To select the entire training dataset, specify 0. The default is 10000.
+- score\_training\_samples: Specifies the number of training samples to randomly sample for scoring. To select the entire training dataset, specify 0. The default is 10000.
 
-- score_validation_samples: Specifies the number of validation dataset points for scoring. Can be randomly sampled or stratified if balance classes is enabled and score validation sampling is Stratified. To select the entire validation dataset, specify 0, which is the default.
+- score\_validation\_samples: Specifies the number of validation dataset points for scoring. Can be randomly sampled or stratified if balance classes is enabled and score validation sampling is Stratified. To select the entire validation dataset, specify 0, which is the default.
 
-- score_duty_cycle: Specifies the maximum duty cycle fraction for model scoring on both training and validation samples and diagnostics such as computation of feature importances. Lower values result in more training, while higher values produce more scoring. The default is 0.1.
+- score\_duty\_cycle: Specifies the maximum duty cycle fraction for model scoring on both training and validation samples and diagnostics such as computation of feature importances. Lower values result in more training, while higher values produce more scoring. The default is 0.1.
 
 - classification_stop: Specifies the stopping criterion for classification error (1 - accuracy) on the training data scoring dataset. When the error is at or below this threshold, training stops. The default is 0. To disable, specify -1.
 
 - regression_stop: Specifies the stopping criterion for regression error (MSE) on the training data scoring dataset. When the error is at or below this threshold, training stops. The default is 1e-6. To disable, specify -1.
 
-- stopping_rounds: Early stopping based on convergence of stopping_metric. Stop if simple moving average of length k of the stopping_metric does not improve for k := stopping_rounds scoring events. Can only trigger after at least 2k scoring events. To disable, specify 0.
+- stopping\_rounds: Early stopping based on convergence of stopping\_metric. Stop if simple moving average of length k of the stopping_\metric does not improve for k := stopping\_rounds scoring events. Can only trigger after at least 2k scoring events. To disable, specify 0.
 
 - stopping_metric: Metric to use for early stopping (AUTO: logloss for classification, deviance for regression). Can be any of AUTO, deviance, logloss, MSE, AUC, r2, misclassification.
 
 - stopping_tolerance: Relative tolerance for metric-based stopping criterion Relative tolerance for metric-based stopping criterion (stop if relative improvement is not at least this much).
 
-- max_runtime_secs: Maximum allowed runtime in seconds for model training. Use 0 to disable.
+- max\_runtime\_secs: Maximum allowed runtime in seconds for model training. Use 0 to disable.
 
 - missing_values handling: Handling of missing values. Either Skip or MeanImputation (default).
 
 - quiet_mode: Logical. Enables quiet mode for less output to standard output. The default is false.
 
-- max_confusion_matrix_size: For classification models, specifies the maximum size (in terms of classes) for displaying the confusion matrix. This option helps avoid printing extremely large confusion matrices. The default is 20.
+- max\_confusion\_matrix_size: For classification models, specifies the maximum size (in terms of classes) for displaying the confusion matrix. This option helps avoid printing extremely large confusion matrices. The default is 20.
 
-- max_hit_ratio_k: For multi-class only. Specifies the maximum number (top K) of predictions to use for hit ratio computation. To disable, specify 0. The default is 10.
+- max\_hit\_ratio_k: For multi-class only. Specifies the maximum number (top K) of predictions to use for hit ratio computation. To disable, specify 0. The default is 10.
 
-- balance_classes: Logical. For imbalanced data, the training data class counts can be artificially balanced by over-sampling the minority classes and under-sampling the majority classes so that each class contains the same number of observations. This can result in improved predictive accuracy. Over-sampling uses replacement, rather than simulating new observations. The max_after_balance_size parameter specifies the total number of observations after balancing. The default is false.
+- balance\_classes: Logical. For imbalanced data, the training data class counts can be artificially balanced by over-sampling the minority classes and under-sampling the majority classes so that each class contains the same number of observations. This can result in improved predictive accuracy. Over-sampling uses replacement, rather than simulating new observations. The max\_after\_balance\_size parameter specifies the total number of observations after balancing. The default is false.
 
-- class_sampling factors: Specifies the desired over/under-sampling ratios per class (in lexicographic order). Only applies to classification when balance_classes is enabled. If not specified, the ratios are automatically computed to obtain class balancing during training.
+- class\_sampling factors: Specifies the desired over/under-sampling ratios per class (in lexicographic order). Only applies to classification when balance\_classes is enabled. If not specified, the ratios are automatically computed to obtain class balancing during training.
 
-- max_after_balance size: When classes are balanced, limits the resulting dataset size to the specified multiple of the original dataset size. This is the maximum relative size of the training data after balancing class counts and can be less than 1.0. The default is 5.
+- max\_after\_balance size: When classes are balanced, limits the resulting dataset size to the specified multiple of the original dataset size. This is the maximum relative size of the training data after balancing class counts and can be less than 1.0. The default is 5.
 
-- score_validation_sampling: Specifies the method used to sample the validation dataset for scoring. The options are Uniform and Stratified. The default is Uniform.
+- score\_validation\_sampling: Specifies the method used to sample the validation dataset for scoring. The options are Uniform and Stratified. The default is Uniform.
 
-- variable_importances: Logical. Computes variable importances for input features using the Gedeon method. Uses the weights connecting the input features to the first two hidden layers. The default is false, since this can be slow for large networks.
+- variable\_importances: Logical. Computes variable importances for input features using the Gedeon method. Uses the weights connecting the input features to the first two hidden layers. The default is false, since this can be slow for large networks.
 
-- fast_mode: Logical. Enables fast mode, a minor approximation in back-propagation that should not significantly affect results. The default is true.
+- fast\_mode: Logical. Enables fast mode, a minor approximation in back-propagation that should not significantly affect results. The default is true.
 
-- ignore_const_cols: Logical. Ignores constant training columns, since no information can be gained anyway. The default is true.
+- ignore\_const\_cols: Logical. Ignores constant training columns, since no information can be gained anyway. The default is true.
 
-- force_load_balance: Logical. Forces extra load balancing to increase training speed for small datasets to keep all cores busy. The default is true.
+- force\_load_balance: Logical. Forces extra load balancing to increase training speed for small datasets to keep all cores busy. The default is true.
 
-- replicate_training_data: Logical. Replicates the entire training dataset on every node for faster training on small datasets. The default is true.
+- replicate\_training\_data: Logical. Replicates the entire training dataset on every node for faster training on small datasets. The default is true.
 
-- single_node_mode: Logical. Runs Deep Learning on a single node for fine-tuning model parameters. Can be useful for faster convergence during checkpoint restarts after training on a very large number of nodes (for fast initial convergence). The default is false.
+- single\_node\_mode: Logical. Runs Deep Learning on a single node for fine-tuning model parameters. Can be useful for faster convergence during checkpoint restarts after training on a very large number of nodes (for fast initial convergence). The default is false.
 
-- shuffle_training_data: Logical. Shuffles training data on each node. This option is recommended if training data is replicated on N nodes and the number of training samples per iteration is close to N times the dataset size, where all nodes train with almost all of the data. It is automatically enabled if the number of training samples per iteration is set to -1 (or to N times the dataset size or larger). The default is false.
+- shuffle\_training\_data: Logical. Shuffles training data on each node. This option is recommended if training data is replicated on N nodes and the number of training samples per iteration is close to N times the dataset size, where all nodes train with almost all of the data. It is automatically enabled if the number of training samples per iteration is set to -1 (or to N times the dataset size or larger). The default is false.
 
 - sparse: Logical. Enables sparse data handling (more efficient for data with lots of 0 values). The default is false.
 
@@ -1372,23 +1447,23 @@ Logical indicates the parameter requires a value of either TRUE or FALSE.
 
 - sparsity_beta: Specify the sparsity-based regularization optimization (Experimental). The default is 0.
 
-- max_categorical_features: Specifies the maximum number of categorical features in a column, enforced via hashing (Experimental). The default is 2^31 − 1 (Integer.MAX VALUE in Java).
+- max\_categorical\_features: Specifies the maximum number of categorical features in a column, enforced via hashing (Experimental). The default is 2^31 − 1 (Integer.MAX VALUE in Java).
 
 - reproducible: Logical. Forces reproducibility on small data; slow, since it only uses one thread. The default is false.
 
-- export_weights_and_biases: Logical. Exports the neural network weights and biases as an H2OFrame. The default is false.
+- export\_weights\_and\_biases: Logical. Exports the neural network weights and biases as an H2OFrame. The default is false.
 
 - offset_column: Specifies the offset column by column name. Regression only. Offsets are per-row “bias values” that are used during model training. For Gaussian distributions, they can be seen as simple corrections to the response (y) column. Instead of learning to predict the response value directly, the model learns to predict the (row) offset of the response column. For other distributions, the offset corrections are applied in the linearized space before applying the inverse link function to get the actual response values.
 
-- weights_column: Specifies the weights column by column name, which must be included in the specified training_frame. Python only: To use a weights column when passing an H2OFrame to x instead of a list of column names, the specified training_frame must contain the specified weights_column. Weights are per-row observation weights. This is typically the number of times a row is repeated, but non-integer values are supported as well. During training, rows with higher weights matter more, due to the larger loss function pre-factor.
+- weights\_column: Specifies the weights column by column name, which must be included in the specified training\_frame. Python only: To use a weights column when passing an H2OFrame to x instead of a list of column names, the specified training\_frame must contain the specified weights_column. Weights are per-row observation weights. This is typically the number of times a row is repeated, but non-integer values are supported as well. During training, rows with higher weights matter more, due to the larger loss function pre-factor.
 
 - nfolds: (Optional) Specifies the number of folds for cross-validation. The default is 0, which disables cross-validation.
 
 - fold_column: (Optional) Specifies the name of the column with the cross-validation fold index assignment per observation; the folds are supplied by the user.
 
-- fold_assignment: Specifies the cross-validation fold assignment scheme if nfolds is greater than zero and fold_column is not specified. The options are AUTO, Random, Stratified or Modulo.
+- fold\_assignment: Specifies the cross-validation fold assignment scheme if nfolds is greater than zero and fold\_column is not specified. The options are AUTO, Random, Stratified or Modulo.
 
-- keep_cross_validation_predictions: Logical. Specify whether to keep the predictions of the cross-validation models. The default is false.
+- keep\_cross\_validation_predictions: Logical. Specify whether to keep the predictions of the cross-validation models. The default is false.
 
 # 9 Common R Commands
 
@@ -1402,7 +1477,7 @@ Logical indicates the parameter requires a value of either TRUE or FALSE.
 
 - h2o.deeplearning(x, y, training_frame, hidden, epochs): Creates a Deep Learning model.
 
-- h2o.grid(algorithm, grid_id, ..., hyper_params = list()): Starts H2O grid support and gives results.
+- h2o.grid(algorithm, grid\_id, ..., hyper\_params = list()): Starts H2O grid support and gives results.
 
 - h2o.predict(model, newdata): Generate predictions from an H2O model on a test set.
 
@@ -1426,7 +1501,7 @@ Feng Niu, Benjamin Recht, Christopher R, and Stephen J. Wright. Hogwild: A Lock-
 
 G. E. Hinton, N. Srivastava, A. Krizhevsky, I. Sutskever, and R. R. Salakhutdinov. Improving neural networks by preventing co-adaptation of feature detectors. 2012. URL http://arxiv.org/pdf/1207.0580.pdf
 
-Ilya Sutskever, James Martens, George Dahl, and Geoffrey Hinton. On the importance of initialization and momentum in deep learning. 2014. URL http://www.cs.toronto.edu/ ̃fritz/absps/momentum.pdf
+Ilya Sutskever, James Martens, George Dahl, and Geoffrey Hinton. On the importance of initialization and momentum in deep learning. 2014. URL http://www.cs.toronto.edu/~fritz/absps/momentum.pdf
 
 Matthew D. Zeiler. ADADELTA: An Adaptive Learning Rate Method. 2012. URL http://arxiv.org/pdf/1212.5701v1.pdf
 
@@ -1440,34 +1515,34 @@ H2O.ai Team. H2O website, 2016. URL http://h2o.ai
 
 H2O.ai Team. H2O documentation, 2016. URL http://docs.h2o.ai
 
-H2O.ai Team. H2O GitHub Repository, 2016. URL https://github. com/h2oai
+H2O.ai Team. H2O GitHub Repository, 2016. URL https://github.com/h2oai
 
 H2O.ai Team. H2O Datasets, 2016. URL http://data.h2o.ai 
 
 H2O.ai Team. H2O JIRA, 2016. URL https://jira.h2o.ai
 
-H2O.ai Team. H2Ostream, 2016. URL https://groups.google.com/ d/forum/h2ostream
+H2O.ai Team. H2Ostream, 2016. URL https://groups.google.com/d/forum/h2ostream
 
 H2O.ai Team. H2O R Package Documentation, 2016. URL http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Rdoc.html
 
 # 12 Authors 
 
-Arno Candel
+**Arno Candel**
 
 Arno is the Chief Architect of H2O, a distributed and scalable open-source machine learning platform. He is also the main author of H2O Deep Learning. Arno holds a PhD and Masters summa cum laude in Physics from ETH Zurich, Switzerland. He has authored dozens of scientific papers and is a sought-after conference speaker. Arno was named 2014 Big Data All-Star by Fortune Magazine. Follow him on Twitter: @ArnoCandel.
 
-Erin LeDell
+**Erin LeDell**
 
 Erin is a Statistician and Machine Learning Scientist at H2O.ai. She is the main author of H2O Ensemble. Erin received her Ph.D. in Biostatistics with a Designated Emphasis in Computational Science and Engineering from University of California, Berkeley. Her research focuses on ensemble machine learning, learning from imbalanced binary-outcome data, influence curve based variance estimation and statistical computing. She also holds a B.S. and M.A. in Mathematics.
 
-Viraj Parmar
+**Viraj Parmar**
 
 Viraj is studying applied mathematics at Princeton. Prior to joining H2O.ai as a former data and math hacker intern, Viraj worked in a research group at the MIT Center for Technology and Design. His interests are in software engineering and large-scale machine learning. Apart from work, Viraj enjoys reading, sampling new cuisines, and traveling with his family.
 
-Anisha Arora
+**Anisha Arora**
 
 Anisha is a software intern who is a senior at Cupertino High School. She enjoys programming and is interested in machine learning. She likes to swim, play the piano and violin, and tutor in science and math subjects at her school.
 
-Jessica Lanford
+**Jessica Lanford**
 
 Jessica is a word hacker and seasoned technical communicator at H2O.ai. She brings our product to life by documenting the many features and functionality of H2O. Having worked for some of the top companies in technology including Dell, AT&T, and Lam Research, she is an expert at translating complex ideas to digestible articles.
