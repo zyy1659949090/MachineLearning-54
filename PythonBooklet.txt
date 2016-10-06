@@ -1,4 +1,4 @@
-Machine Learning with Python and H2O
+*Machine Learning with Python and H2O*
 
 by Spencer Aiello, Cliff Click, Hank Roark, and Ludi Rehak 
 
@@ -46,7 +46,7 @@ Contents
 
 6 References 39
 
-1 Introduction
+# 1 Introduction
 
 This documentation describes how to use H2O from Python. More information on H2O’s system and algorithms (as well as complete Python user documentation) is available at the H2O website at http://docs.h2o.ai.
 
@@ -68,7 +68,7 @@ This document describes the four steps of data analysis with H2O:
 
 4. scoring your models
 
-2 What is H2O?
+# 2 What is H2O?
 
 H2O is fast, scalable, open-source machine learning and deep learning for smarter applications. With H2O, enterprises like PayPal, Nielsen Catalina, Cisco, and others can use all their data without sampling to get accurate predictions faster. Advanced algorithms such as deep learning, boosting, and bagging ensembles are built-in to help application designers create smarter applications through elegant APIs. Some of our initial customers have built powerful domain-specific predictive engines for recommendations, customer churn, propensity to buy, dynamic pricing, and fraud detection for the insurance, healthcare, telecommunications, ad tech, retail, and payment systems industries.
 
@@ -95,19 +95,19 @@ Join the community
 
 - Join the chat at https://gitter.im/h2oai/h2o-3.
 
-2.1 Example Code
+## 2.1 Example Code
 
 Python code for the examples in this document is located here:
 
 https://github.com/h2oai/h2o-3/tree/master/h2o-docs/src/booklets/v2_2015/source/python
 
-2.2 Citation
+## 2.2 Citation
 
 To cite this booklet, use the following:
 
 Aiello, S., Cliff, C., Roark, H., Rehak, L., and Lanford, J. (Jul 2016). Machine Learning with Python and H2O. http://h2o.ai/resources/.
 
-3 Installation
+# 3 Installation
 
 H2O requires Java; if you do not already have Java installed, install it from https://java.com/en/download/ before installing H2O.
 
@@ -115,7 +115,7 @@ The easiest way to directly install H2O is via a Python package.
 
 (Note: The examples in this document were created with H2O version 3.8.3.2.)
 
-3.1 Installation in Python
+## 3.1 Installation in Python
 
 To load a recent H2O package from PyPI, run:
 
@@ -146,7 +146,7 @@ help(h2o.estimators.gbm.H2OGradientBoostingEstimator)
 h2o.demo("glm")
 h2o.demo("gbm")
 
-4 Data Preparation
+# 4 Data Preparation
 
 The next sections of the booklet demonstrate the Python interface using examples, which include short snippets of code and the resulting output.
 
@@ -196,7 +196,7 @@ To display the column types:
 
 df2.types
 
-4.1 Viewing Data
+## 4.1 Viewing Data
 
 To display the top and bottom of an H2OFrame:
 
@@ -216,7 +216,7 @@ To display compression information, distribution (in multi-machine clusters), an
 
 df.describe()
 
-4.2 Selection
+## 4.2 Selection
 
 To select a single column by name, resulting in an H2OFrame:
 
@@ -244,7 +244,7 @@ To select rows based on specific criteria, use Boolean masking:
 
 df2[ df2["B"] == "a", :]
 
-4.3 Missing Data
+## 4.3 Missing Data
 
 The H2O parser can handle many different representations of missing data types, including ‘’ (blank), ‘NA’, and None (Python). They are all displayed as NaN in Python.
 
@@ -273,7 +273,7 @@ To determine the locations of all missing data in an H2OFrame:
 
 df3.isna()
 
-4.4 Operations
+## 4.4 Operations
 
 When performing a descriptive statistic on an entire H2OFrame, missing data is generally excluded and the operation is only performed on the columns of the appropriate data type:
 
@@ -329,7 +329,7 @@ For global substitution, use gsub. Both sub and gsub support regular expressions
 
 df7.strsplit(’(l)+’)
 
-4.5 Merging
+## 4.5 Merging
 
 To combine two H2OFrames together by appending one as rows and return a new H2OFrame:
 
@@ -356,7 +356,7 @@ df11 = h2o.H2OFrame.from_python(
 
 df11.merge(df10)
 
-4.6 Grouping
+## 4.6 Grouping
 
 ”Grouping” refers to the following process:
 
@@ -387,7 +387,7 @@ To join the results into the original H2OFrame:
 
 df12.merge(df13)
 
-4.7 Using Date and Time Data
+## 4.7 Using Date and Time Data
 
 H2O has powerful features for ingesting and feature engineering using time data. Internally, H2O stores time information as an integer of the number of milliseconds since the epoch.
 
@@ -406,7 +406,7 @@ To display the day of the week:
 
 df14[’D’].dayOfWeek()
 
-4.8 Categorical Variables
+## 4.8 Categorical Variables
 
 H2O handles categorical (also known as enumerated or factor) values in an H2OFrame. This is significant because categorical columns have specific treatments in each of the machine learning algorithms.
 
@@ -438,7 +438,7 @@ These can then be added as a new column on the original dataframe:
 df15 = df12.cbind(bb_df)
 df15
 
-4.9 Loading and Saving Data
+## 4.9 Loading and Saving Data
 
 In addition to loading data from Python objects, H2O can load data directly from:
 
@@ -480,11 +480,11 @@ To save an H2OFrame on the machine running Python:
 
 h2o.download_csv(df,"/pathToFile/fileName")
 
-5 Machine Learning
+# 5 Machine Learning
 
 The following sections describe some common model types and features.
 
-5.1 Modeling
+## 5.1 Modeling
 
 The following section describes the features and functions of some common models available in H2O. For more information about running these models in Python using H2O, refer to the documentation on the H2O.ai website or to the booklets on specific models.
 
@@ -506,7 +506,7 @@ H2O supports the following models:
 
 The list is growing quickly, so check www.h2o.ai to see the latest additions.
 
-5.1.1 Supervised Learning
+### 5.1.1 Supervised Learning
 
 Generalized Linear Models (GLM): Provides flexible generalization of ordinary linear regression for response variables with error distribution models other than a Gaussian (normal) distribution. GLM unifies various other statistical models, including Poisson, linear, logistic, and others when using l1 and l2 regularization.
 
@@ -518,7 +518,7 @@ Deep Learning: Models high-level abstractions in data by using non-linear transf
 
 Naive Bayes: Generates a probabilistic classifier that assumes the value of a particular feature is unrelated to the presence or absence of any other feature, given the class variable. It is often used in text categorization.
 
-5.1.2 Unsupervised Learning
+### 5.1.2 Unsupervised Learning
 
 K-Means: Reveals groups or clusters of data points for segmentation. It clusters observations into k-number of points with the nearest mean.
 
@@ -526,7 +526,7 @@ Principal Component Analysis (PCA): The algorithm is carried out on a set of pos
 
 Anomaly Detection: Identifies the outliers in your data by invoking the deep learning autoencoder, a powerful pattern recognition model.
 
-5.2 Running Models
+## 5.2 Running Models
 
 This section describes how to run the following model types:
 
@@ -538,7 +538,7 @@ This section describes how to run the following model types:
 
 - Principal Components Analysis (PCA) as well as how to generate predictions.
 
-5.2.1 Gradient Boosting Models (GBM)
+### 5.2.1 Gradient Boosting Models (GBM)
 
 To generate gradient boosting models for creating forward-learning ensembles, use H2OGradientBoostingEstimator.
 
@@ -586,7 +586,7 @@ gbm_classifier.train(
 
 gbm_classifier
 
-5.2.2 Generalized Linear Models (GLM)
+### 5.2.2 Generalized Linear Models (GLM)
 
 Generalized linear models (GLM) are some of the most commonly-used models for many types of data analysis use cases. While some data can be analyzed using linear models, linear models may not be as accurate if the variables are more complex. For example, if the dependent variable has a non-continuous distribution or if the effect of the predictors is not linear, generalized linear models will produce more accurate results than linear models.
 
@@ -618,7 +618,7 @@ glm_classifier.train(
 
 glm_classifier
 
-5.2.3 K-means
+### 5.2.3 K-means
 
 To generate a K-means model for data characterization, use h2o.kmeans(). This algorithm does not require a dependent variable.
 
@@ -628,7 +628,7 @@ cluster_estimator = H2OKMeansEstimator(k = 3)
 
 cluster_estimator.train(x = [0, 1, 2, 3], training_frame = iris_df) 
 
-5.2.4 Principal Components Analysis (PCA)
+### 5.2.4 Principal Components Analysis (PCA)
 
 To map a set of variables onto a subspace using linear transformations, use h2o.transforms.decomposition.H2OPCA. This is the first step in Principal Components Regression.
 
@@ -644,7 +644,7 @@ pred = pca_decomp.predict(iris_df)
 
 pred.head() # Projection results
 
-5.3 Grid Search
+## 5.3 Grid Search
 
 H2O supports grid search across hyperparameters:
 
@@ -673,11 +673,11 @@ gs.train(
 
 print gs.sort_by(’logloss’, increasing = True)
 
-5.4 Integration with scikit-learn
+## 5.4 Integration with scikit-learn
 
 The H2O Python client can be used within scikit-learn pipelines and cross-validation searches. This extends the capabilities of both H2O and scikit-learn.
 
-5.4.1 Pipelines
+### 5.4.1 Pipelines
 
 To create a scikit-learn style pipeline using H2O transformers and estimators:
 
@@ -697,7 +697,7 @@ pipeline = Pipeline([
 
 pipeline.fit(iris_df[:4], iris_df[4])
 
-5.4.2 Randomized Grid Search
+### 5.4.2 Randomized Grid Search
 
 To create a scikit-learn style hyperparameter grid search using k-fold cross validation:
 
@@ -735,13 +735,13 @@ random_search.fit(iris_df[1:], iris_df[0])
 
 print random_search.best_estimator_
 
-6 References
+# 6 References
 
 H2O.ai Team. H2O website, 2016. URL http://h2o.ai
 
 H2O.ai Team. H2O documentation, 2016. URL http://docs.h2o.ai
 
-H2O.ai Team. H2O Python Documentation, 2015. URL http://h2o-release. s3.amazonaws.com/h2o/latest_stable_Pydoc.html
+H2O.ai Team. H2O Python Documentation, 2015. URL http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Pydoc.html
 
 H2O.ai Team. H2O GitHub Repository, 2016. URL https://github. com/h2oai
 
