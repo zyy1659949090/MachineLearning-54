@@ -1,0 +1,5 @@
+install.packages(c('repr', 'pbdZMQ', 'devtools'))
+library(devtools)
+devtools::install_github('IRkernel/IRdisplay')
+devtools::install_github('IRkernel/IRkernel')
+IRkernel::installspec()
