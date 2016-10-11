@@ -88,7 +88,7 @@ H2O is nurturing a grassroots movement of physicists, mathematicians, and comput
 - Download H2O directly at http://h2o.ai/download
 
 - Install H2O’s R package from CRAN at https://cran.r-project
-org/web/packages/h2o/.
+org/web/packages/h2o/
 
 - Install the Python package from PyPI at https://pypi.python.org/pypi/h2o/
 
