@@ -921,7 +921,7 @@ hc = H2OContext(sc).start()
 import h2o
 ```
 
-5. Follow this demo (https://github.com/h2oai/h2o-world-2015-trai blob/master/tutorials/pysparkling/Chicago_Crime_Demo.ipynb), which imports Chicago crime, census and weather data and predicts the probability of arrest.
+5. Follow this demo (https://github.com/h2oai/h2o-tutorials/blob/master/tutorials/pysparkling/Chicago_Crime_Demo.ipynb), which imports Chicago crime, census and weather data and predicts the probability of arrest.
 
 Alternatively, to launch on YARN:
 
@@ -1127,7 +1127,7 @@ println(predictionsFromModel.mkString("\n===> Model
    predictions: ", ", ", ", ...\n"))
 ```
 
-The full source for the application is here: http://bit.ly/1mo3XO2
+The full source for the application is here: http://bit.ly/1mo3XO2.
 
 # 9 FAQ
 
