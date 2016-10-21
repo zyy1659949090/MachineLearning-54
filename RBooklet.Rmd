@@ -168,7 +168,7 @@ To load a recent H2O package from CRAN, run:
 
 **Example in R**
 
-```
+```{r, eval=FALSE, comment=NA}
 install.packages("h2o")
 ```
 
@@ -188,20 +188,64 @@ After H2O is installed on your system, verify the installation completed success
 
 **Example in R**
 
-```
+```{r, comment=NA}
 library(h2o)
 
 # Start H2O on your local machine using all available cores
 # (By default, CRAN policies limit use to only 2 cores)
 h2o.init(nthreads = -1)
 
-#Get help
+# Get help
 ?h2o.glm
 ?h2o.gbm
 
 # Show a demo
-demo(h2o.glm)
-demo(h2o.gbm)
+# demo(h2o.glm)
+# This is a demo of H2O's GLM function
+# It imports a data set, parses it, and prints a summary
+# Then, it runs GLM with a binomial link function using 10-fold cross-validation
+# Note: This demo runs H2O on localhost:54321
+# library(h2o)
+
+#h2o.init()
+
+prostate.hex <- h2o.uploadFile(
+  path = system.file("extdata", "prostate.csv", package="h2o"), 
+  destination_frame = "prostate.hex")
+
+summary(prostate.hex)
+
+prostate.glm <- h2o.glm(
+  x = c("AGE", "RACE", "PSA", "DCAPS"), 
+  y = "CAPSULE", 
+  training_frame = prostate.hex, 
+  family = "binomial", 
+  alpha = 0.5)
+
+print(prostate.glm)
+
+myLabels <- c(prostate.glm@model$x, "Intercept")
+
+plot(prostate.glm@model$coefficients, xaxt = "n", xlab = "Coefficients", ylab = "Values")
+axis(1, at = 1:length(myLabels), labels = myLabels)
+abline(h = 0, col = 2, lty = 2)
+title("Coefficients from Logistic Regression\n of Prostate Cancer Data")
+
+barplot(prostate.glm@model$coefficients, 
+        main = "Coefficients from Logistic Regression\n of Prostate Cancer Data")
+
+#demo(h2o.gbm)
+
+# This is a demo of H2O's GBM use of default parameters on iris dataset (three classes)
+iris.hex <- h2o.uploadFile(
+  path = system.file("extdata", "iris.csv", package="h2o"), 
+  destination_frame = "iris.hex")
+
+summary(iris.hex)
+
+iris.gbm <- h2o.gbm(x = 1:4, y = 5, training_frame = iris.hex)
+
+print(iris.gbm)
 ```
 
 ## 3.3 Example Code
@@ -242,32 +286,19 @@ To launch H2O locally from R, run the following in R:
 
 **Example in R**
 
-```
-library(h2o)
-# Starts H2O using localhost IP, port 54321, all CPUs, and 4g of memory
-h2o.init(ip = ’localhost’, port = 54321, nthreads = -1, max_mem_size = ’4g’)
-```
-
 After successfully launching, R displays output similar to the following example:
 
-```
-Successfully connected to http://localhost:54321
-R is connected to H2O cluster:
-   H2O cluster uptime:         11 minutes 35 seconds
-   H2O cluster version:        2.7.0.1497
-   H2O cluster name:           H2O_started_from_R
-   H2O cluster total nodes:    1
-   H2O cluster total memory:   3.56 GB
-   H2O cluster total cores:    8
-   H2O cluster allowed cores:  8
-   H2O cluster healthy:        TRUE
+```{r, comment=NA}
+#library(h2o)
+# Starts H2O using localhost IP, port 54321, all CPUs, and 4g of memory
+h2o.init(ip = 'localhost', port = 54321, nthreads = -1, max_mem_size = '4g')
 ```
 
 To launch H2O locally with default initialization arguments, use the following:
 
 **Example in R**
 
-```
+```{r, comment=NA}
 h2o.init()
 ```
 
@@ -275,7 +306,7 @@ To connect to an established H2O cluster (in a multi-node Hadoop environment, fo
 
 **Example in R**
 
-```
+```{r, comment=NA, eval=FALSE}
 h2o.init(ip = "123.45.67.89", port = 54321)
 ```
 
@@ -315,25 +346,13 @@ To check the status and health of the H2O cluster, use h2o.clusterInfo().
 
 **Example in R**
 
-```
-library(h2o)
+```{r, comment=NA}
+#library(h2o)
 h2o.init()
 h2o.clusterInfo()
 ```
 
 An easy-to-read summary of information about the cluster displays.
-
-```
-R is connected to H2O cluster:
-  H2O cluster uptime:         43 minutes 43 seconds
-  H2O cluster version:        2.7.0.1497
-  H2O cluster name:           H2O_started_from_R
-  H2O cluster total nodes:    1
-  H2O cluster total memory:   3.56 GB
-  H2O cluster total cores:    8
-  H2O cluster allowed cores:  8
-  H2O cluster healthy:        TRUE
-```
 
 # 5 Data Preparation in R
 
@@ -416,9 +435,9 @@ The following demo demonstrates how to:
 
 **Example in R**
 
-```
+``````{r, comment=NA}
 # Import dataset and display summary
-library(h2o)
+#library(h2o)
 h2o.init()
 airlinesURL <- "https://s3.amazonaws.com/h2o-airlines-unpacked/allyears2k.csv"
 airlines.hex <- h2o.importFile(path = airlinesURL, destination_frame = "airlines.hex")
@@ -430,11 +449,19 @@ quantile(x = airlines.hex$ArrDelay, na.rm = TRUE)
 h2o.hist(airlines.hex$ArrDelay)
 
 # Find number of flights by airport
-originFlights <- h2o.group_by(data = airlines.hex, by = "Origin", nrow("Origin"), gb.control <- list(na.methods = "rm"))
+originFlights <- h2o.group_by(
+  data = airlines.hex, 
+  by = "Origin", 
+  nrow("Origin"), 
+  gb.control = list(na.methods = "rm"))
 originFlights.R <- as.data.frame(originFlights)
 
 # Find number of flights per month
-flightsByMonth <- h2o.group_by(data = airlines.hex, by = "Month", nrow("Month"), gb.control <- list(na.methods = "rm"))
+flightsByMonth <- h2o.group_by(
+  data = airlines.hex, 
+  by = "Month", 
+  nrow("Month"), 
+  gb.control = list(na.methods = "rm"))
 flightsByMonth.R <- as.data.frame(flightsByMonth)
 
 # Find months with the highest cancellation ratio
@@ -459,10 +486,16 @@ h2o.table(airlines.test$Cancelled)
 
 # Set predictor and response variables
 Y <- "IsDepDelayed"
-X <- c("Origin", "Dest", "DayofMonth", "Year", "UniqueCarrier", "DayOfWeek", "Month", "DepTime", "ArrTime", "Distance")
+X <- c("Origin", "Dest", "DayofMonth", "Year", "UniqueCarrier", 
+       "DayOfWeek", "Month", "DepTime", "ArrTime", "Distance")
 
 # Define the data for the model and display the results
-airlines.glm <- h2o.glm(training_frame = airlines.train, x = X, y = Y, family = "binomial", alpha = 0.5)
+airlines.glm <- h2o.glm(
+  training_frame = airlines.train, 
+  x = X, 
+  y = Y, 
+  family = "binomial", 
+  alpha = 0.5)
 
 # View model information: training statistics, performance, important variables
 summary(airlines.glm)
@@ -470,7 +503,9 @@ summary(airlines.glm)
 # Predict using GLM model
 pred <- h2o.predict(object = airlines.glm, newdata = airlines.test)
 # Look at summary of predictions: probability of TRUE class (p1)
-summary(pred$p1)
+pred <- as.data.frame(pred)
+#summary(pred$p1)
+summary(as.numeric(pred$predict) - 1)
 ```
 
 # 8 Data Manipulation in R
@@ -485,7 +520,7 @@ The H2O package consolidates all of the various supported import functions using
 
 **Example in R**
 
-```
+```{r, comment=NA}
 # To import small iris data file from H2O’s package:
 irisPath <- system.file("extdata", "iris.csv", package = "h2o")
 iris.hex <- h2o.importFile(path = irisPath, destination_frame = "iris.hex")
@@ -494,10 +529,11 @@ iris.hex <- h2o.importFile(path = irisPath, destination_frame = "iris.hex")
 #pathToFolder <- "/Users/data/airlines/"
 #airlines.hex <- h2o.importFile(path = pathToFolder, destination_frame = "airlines.hex")
 
-# To import from HDFS and connect to H2O in R using the IP and port of an H2O instance running on your Hadoop cluster:
+# To import from HDFS and connect to H2O in R using the IP and port of an H2O instance running 
+# on your Hadoop cluster:
 #h2o.init(ip = <IPAddress>, port = 54321, nthreads = -1)
 #pathToData <- "hdfs://mr-0xd6.h2oai.loc/datasets/airlines_all.csv"
-# airlines.hex <- h2o.importFile(path = pathToData, destination_frame = "airlines.hex")
+#airlines.hex <- h2o.importFile(path = pathToData, destination_frame = "airlines.hex")
 ```
 
 ## 8.2 Uploading Files
@@ -506,7 +542,7 @@ To upload a file in a directory local to your H2O instance, use h2o.importFile()
 
 **Example in R**
 
-```
+```{r, comment=NA}
 irisPath <- system.file("extdata", "iris.csv", package= "h2o")
 iris.hex <- h2o.uploadFile(path = irisPath, destination_frame = "iris.hex")
 ```
@@ -517,7 +553,7 @@ To determine if any column contains categorical data (also known as a factor), u
 
 **Example in R**
 
-```
+```{r, comment=NA}
 irisPath <- system.file("extdata", "iris_wheader.csv", package = "h2o")
 iris.hex <- h2o.importFile(path = irisPath)
 h2o.anyFactor(iris.hex)
@@ -529,13 +565,13 @@ To convert an integer into a non-ordered factor (also called an enum or categori
 
 **Example in R**
 
-```
+```{r, comment=NA}
 # Import prostate data
 prosPath <- system.file("extdata", "prostate.csv", package = "h2o")
 prostate.hex <- h2o.importFile(path = prosPath)
 
 # Converts column 4 (RACE) to an enum
-as.factor(prostate.hex[,4])
+as.factor(prostate.hex[, 4])
 
 prostate.hex[, 4] <- as.factor(prostate.hex[, 4])
 as.factor(prostate.hex[, 4])
@@ -550,7 +586,7 @@ To convert an H2O parsed data object into an R data frame that can be manipulate
 
 **Example in R**
 
-```
+```{r, comment=NA}
 # Creates object that defines path
 prosPath <- system.file("extdata", "prostate.csv", package = "h2o")
 # Imports data set
@@ -568,14 +604,13 @@ To transfer a data frame from the R environment to the H2O instance, use as.h2o(
 
 **Example in R**
 
-```
+```{r, comment=NA}
 # Import the iris data into H2O
 data(iris)
-iris
+head(iris)
 
 # Converts R object "iris" into H2O object "iris.hex"
 iris.hex <- as.h2o(iris, destination_frame = "iris.hex")
-
 head(iris.hex)
 ```
 
@@ -585,7 +620,7 @@ To rename a dataframe on the server running H2O for a dataset manipulated in R, 
 
 **Example in R**
 
-```
+```{r, comment=NA}
 prosPath <- system.file("extdata", "prostate.csv", package = "h2o")
 prostate.hex <- h2o.importFile(path = prosPath)
 
@@ -602,7 +637,7 @@ To view a list of the column names in the dataset, use colnames() or names() wit
 
 **Example in R**
 
-```
+```{r, comment=NA}
 # Displays the titles of the columns
 colnames(iris.hex)
 names(iris.hex)
@@ -614,7 +649,7 @@ To view the maximum values for the real-valued columns in a dataset, use max() w
 
 **Example in R**
 
-```
+```{r, comment=NA}
 min(prostate.hex$AGE)
 max(prostate.hex$AGE)
 ```
@@ -629,7 +664,7 @@ When you request quantiles for a full parsed dataset consisting of a single colu
 
 **Example in R**
 
-```
+```{r, comment=NA}
 prosPath <- system.file("extdata", "prostate.csv", package = "h2o")
 prostate.hex <- h2o.importFile(path = prosPath)
 # Returns the percentiles at 0, 10, 20, ..., 100%
@@ -654,7 +689,7 @@ For continuous real functions, this produces a summary that includes information
 
 **Example in R**
 
-```
+```{r, comment=NA}
 summary(prostate.hex)
 ```
 
@@ -664,9 +699,9 @@ To summarize data, use h2o.table(). Because H2O can handle larger datasets, it i
 
 **Example in R**
 
-```
+```{r, comment=NA}
 # Counts of the ages of all patients
-head(as.data.frame(h2o.table(prostate.hex[ ,"AGE"])))
+head(as.data.frame(h2o.table(prostate.hex[ , "AGE"])))
 
 # Two-way table of ages (rows) and race (cols) of all patients
 
@@ -680,7 +715,7 @@ To append a column of random numbers to an H2O data frame for testing/training d
 
 **Example in R**
 
-```
+```{r, comment=NA}
 prosPath <- system.file("extdata", "prostate.csv", package = "h2o")
 prostate.hex <- h2o.importFile(path = prosPath)
 
@@ -708,7 +743,7 @@ Note: h2o.splitFrame() does not give an exact split. H2O is designed to be effic
 
 **Example in R**
 
-```
+```{r, comment=NA}
 # Splits data in prostate data frame with a ratio of 0.75
 prostate.split <- h2o.splitFrame(data = prostate.hex, ratios = 0.75)
 # Creates training set from 1st data set in split
@@ -723,7 +758,7 @@ To create a reference object to the data frame in H2O, use h2o.getFrame(). This 
 
 **Example in R**
 
-```
+```{r, comment=NA}
 prostate.hex <- h2o.getFrame(id = "prostate.hex")
 ```
 
@@ -735,7 +770,7 @@ In the following example, it is assumed that a GBM with the ID GBM 8e4591a9b4134
 
 **Example in R**
 
-```
+```{r, comment=NA, eval=FALSE}
 gbm.model <- h2o.getModel(model_id = "GBM_8e4591a9b413407b983d73fbd9eb44cf")
 ```
 
@@ -745,7 +780,7 @@ To generate a list of all H2O objects generated during a session and each object
 
 **Example in R**
 
-```
+```{r, comment=NA}
 h2o.ls()
 ```
 
@@ -755,7 +790,7 @@ To remove an H2O object on the server associated with the object in the R enviro
 
 **Example in R**
 
-```
+```{r, comment=NA}
 h2o.rm(c("prostate.train","prostate.test"))
 h2o.ls()
 ```
@@ -766,7 +801,7 @@ User-defined functions no longer need to be added explicitly to the H2O instance
 
 **Example in R**
 
-```
+```{r, comment=NA}
 # Create an R functional expression
 simpleFun <- function(x) { 2*x + 5 }
 # Evaluate the expression across prostate’s AGE column
@@ -794,11 +829,11 @@ To generate gradient boosted models for developing forward-learning ensembles, u
 
 **Example in R**
 
-```
-library(h2o)
+```{r, comment=NA}
+#library(h2o)
 h2o.init(nthreads = -1)
 data(iris)
-iris.hex <- as.h2o(iris,destination_frame = "iris.hex")
+iris.hex <- as.h2o(iris, destination_frame = "iris.hex")
 iris.gbm <- h2o.gbm(
   y = 1, 
   x = 2:5, 
@@ -817,7 +852,7 @@ To generate a classification model that uses labels, use distribution = "multino
 
 **Example in R**
 
-```
+```{r, comment=NA}
 iris.gbm2 <- h2o.gbm(
   y = 5, 
   x = 1:4, 
@@ -843,7 +878,7 @@ To generate a generalized linear model for developing linear models for exponent
 
 **Example in R**
 
-```
+```{r, comment=NA}
 prostate.hex <- h2o.importFile(
   path = "https://raw.github.com/h2oai/h2o/master/smalldata/logreg/prostate.csv",
   destination_frame = "prostate.hex")
@@ -864,7 +899,7 @@ To generate a K-means model for data characterization, use h2o.kmeans(). This al
 
 **Example in R**
 
-```
+```{r, comment=NA}
 h2o.kmeans(training_frame = iris.hex, k = 3, x = 1:4)
 ```
 
@@ -874,7 +909,7 @@ To map a set of variables onto a subspace using linear transformations, use h2o.
 
 **Example in R**
 
-```
+```{r, comment=NA}
 ausPath <- system.file("extdata", "australia.csv", package = "h2o")
 australia.hex <- h2o.importFile(path = ausPath)
 australia.pca <- h2o.prcomp(
@@ -904,7 +939,7 @@ To apply an H2O model to a holdout set for predictions based on model results, u
 
 **Example in R**
 
-```
+```{r, comment=NA}
 prostate.fit <- h2o.predict(object = prostate.glm, newdata = prostate.hex)
 prostate.fit
 ```
@@ -957,7 +992,7 @@ h2o.insertMissingValues: Replaces a user-specified fraction of entries in a H2O 
 
 *Subscripting example to pull pieces from data object.*
 
-```
+```{r, comment=NA, eval=FALSE}
 x[j] ## note: chooses column J, not row J x[i, j]
 x[[i]]
 x$name
