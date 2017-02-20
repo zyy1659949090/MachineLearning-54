@@ -1,0 +1,14 @@
+---
+title: "ML_links"
+author: "Robert A. Stevens"
+date: "February 19, 2017"
+output: html_document
+---
+
+# Machine Learning Links
+
+http://prml.github.io
+
+PRMLT:  Pattern Recognition and Machine Learning Toolbox
+
+This package is a Matlab implementation of the algorithms described in the classical machine learning textbook: Pattern Recognition and Machine Learning by C. Bishop (PRML).
