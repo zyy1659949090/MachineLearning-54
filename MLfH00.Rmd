@@ -1,0 +1,195 @@
+---
+title: "MLfH00"
+author: "Robert A. Stevens"
+date: "February 28, 2017"
+output: html_document
+---
+
+*Machine Learning for Hackers* by Drew Conway and John Myles White
+
+# Table of Contents
+
+Preface
+
+1. Using R
+
+2. Data Exploration 
+
+3. Classification: Spam Filtering
+
+4. Ranking: Priority Inbox 
+
+5. Regression: Predicting Page Views 
+
+6. Regularization: Text Regression 
+
+7. Optimization: Breaking Codes 
+
+8. PCA: Building a Market Index 
+
+9. MDS: Visually Exploring US Senator Similarity 
+
+10. kNN: Recommendation Systems 
+
+11. Analyzing Social Graphs 
+
+12. Model Comparison 
+
+Works Cited 
+
+Index 
+
+# Preface
+
+## Machine Learning for Hackers
+
+To explain the perspective from which this book was written, it will be helpful to define the terms machine learning and hackers.
+
+What is machine learning? At the highest level of abstraction, we can think of machine learning as a set of tools and methods that attempt to infer patterns and extract insight from a record of the observable world. For example, if we are trying to teach a computer to recognize the zip codes written on the fronts of envelopes, our data may consist of photographs of the envelopes along with a record of the zip code that each envelope was addressed to. That is, within some context we can take a record of the actions of our subjects, learn from this record, and then create a model of these activities that will inform our understanding of this context going forward. In practice, this requires data, and in contemporary applications this often means a lot of data (perhaps several tera-bytes). Most machine learning techniques take the availability of such data as given, which means new opportunities for their application in light of the quantities of data that are produced as a product of running modern companies.
+
+What is a hacker? Far from the stylized depictions of nefarious teenagers or Gibsonian cyber-punks portrayed in pop culture, we believe a hacker is someone who likes to solve problems and experiment with new technologies. If you’ve ever sat down with the latest O’Reilly book on a new computer language and knuckled out code until you were well past “Hello, World,” then you’re a hacker. Or if you’ve dismantled a new gadget until you understood the entire machinery’s architecture, then we probably mean you, too. These pursuits are often undertaken for no other reason than to have gone through the process and gained some knowledge about the how and the why of an unknown technology.
+
+Along with an innate curiosity for how things work and a desire to build, a computer hacker (as opposed to a car hacker, life hacker, food hacker, etc.) has experience with software design and development. This is someone who has written programs before, likely in many different languages. To a hacker, Unix is not a four-letter word, and command-line navigation and bash operations may come as naturally as working with GUIs. Using regular expressions and tools such as sed, awk, and grep are a hacker’s first line of defense when dealing with text. In the chapters contained in this book, we will assume a relatively high level of this sort of knowledge.
+
+## How This Book Is Organized
+
+Machine learning blends concepts and techniques from many different traditional fields, such as mathematics, statistics, and computer science. As such, there are many ways to learn the discipline. Considering its theoretical foundations in mathematics and statistics, newcomers would do well to attain some degree of mastery of the formal specifications of basic machine learning techniques. There are many excellent books that focus on the fundamentals, the classic work being Hastie, Tibshirani, and Friedman’s The Elements of Statistical Learning ([HTF09]; full references can be found in the Works Cited) [1]. But another important part of the hacker mantra is to learn by doing. Many hackers may be more comfortable thinking of problems in terms of the process by which a solution is attained, rather than the theoretical foundation from which the solution is derived.
+
+From this perspective, an alternative approach to teaching machine learning would be to use “cookbook”-style examples. To understand how a recommendation system works, for example, we might provide sample training data and a version of the model, and show how the latter uses the former. There are many useful texts of this kind as well, and Segaran’s Programming Collective Intelligence is one recent example [Seg07]. Such a discussion would certainly address the how of a hacker’s method of learning, but perhaps less of the why. Along with understanding the mechanics of a method, we may also want to learn why it is used in a certain context or to address a specific problem.
+
+To provide a more complete reference on machine learning for hackers, therefore, we need to compromise between providing a deep review of the theoretical foundations of the discipline and a broad exploration of its applications. To accomplish this, we have decided to teach machine learning through selected case studies.
+
+We believe the best way to learn is by first having a problem in mind, then focusing on learning the tools used to solve that problem. This is effectively the mechanism through which case studies work. The difference being, rather than having some problem for which there may be no known solution, we can focus on well-understood and studied problems in machine learning and present specific examples of cases where some solutions excelled while others failed spectacularly.
+
+For that reason, each chapter of this book is a self-contained case study focusing on a specific problem in machine learning. The organization of the early cases moves from classification to regression (discussed further in Chapter 1). We then examine topics such as clustering, dimensionality reduction, and optimization. It is important to note that not all problems fit neatly into either the classification or regression categories, and some of the case studies reviewed in this book will include aspects of both (sometimes explicitly, but also in more subtle ways that we will review). Following are brief descriptions of all the case studies reviewed in this book in the order they appear:
+
+*Text classification: spam detection*
+
+In this chapter we introduce the idea of binary classification, which is motivated through the use of email text data. Here we tackle the classic problem in machine learning of classifying some input as one of two types, which in this case is either ham (legitimate email) or spam (unwanted email).
+
+*Ranking items: priority inbox*
+
+Using the same email text data as in the previous case study, here we move beyond a binary classification to a discrete set of types. Specifically, we need to identify the appropriate features to extract from the email that can best inform its “priority” rank among all emails.
+
+*Regression models: predicting page views*
+
+We now introduce the second primary tool in machine learning, linear regression. Here we explore data whose relationship roughly approximates a straight line. In this case study, we are interested in predicting the number of page views for the top 1,000 websites on the Internet as of 2011.
+
+*Regularization: text regression*
+
+Sometimes the relationships in our data are not well described by a straight line. To describe the relationship, we may need to fit a different function; however, we also must be cautious not to overfit. Here we introduce the concept of regularization to overcome this problem, and motivate it through a case study, focusing on understanding the relationship among words in the text from O’Reilly book descriptions.
+
+*Optimization: code breaking*
+
+Moving beyond regression models, almost every algorithm in machine learning can be viewed as an optimization problem in which we try to minimize some measure of prediction error. Here we introduce classic algorithms for performing this optimization and attempt to break a simple letter cipher with these techniques.
+
+*Unsupervised learned: building a stock market index*
+
+Up to this point we have discussed only supervised learning techniques. Here we introduce its methodological counterpart: unsupervised learning. The important difference is that in supervised learning, we wish to use the structure of our data to make predictions, whereas in unsupervised learning, we wish to discover structure in our data for structure’s sake. In this case we will use stock market data to create an index that describes how well the overall market is doing.
+
+*Spatial similarity: clustering US Senators by the voting records*
+
+Here we introduce the concept of spatial distances among observations. To do so, we define measures of distance and describe methods for clustering observations basing on their spatial distances. We use data from US Senator roll call voting to cluster those legislators based on their votes.
+
+*Recommendation system: suggesting R packages to users*
+
+To further the discussion of spatial similarities, we discuss how to build a recommendation system based on the closeness of observations in space. Here we introduce the k-nearest neighbors algorithm and use it to suggest R packages to programmers based on their currently installed packages.
+
+Social network analysis: who to follow on Twitter
+
+Here we attempt to combine many of the concepts previously discussed, as well as introduce a few new ones, to design and build a “who to follow” recommendation system from Twitter data. In this case we build a system for downloading Twitter network data, discover communities within the structure, and recommend new users to follow using basic social network analysis techniques.
+
+*Model comparison: finding the best algorithm for your problem*
+
+In the final chapter, we discuss techniques for choosing which machine learning algorithm to use to solve your problem. We introduce our final algorithm, the support vector machine, and compare its performance on the spam data from Chapter 3 with the performance of the other algorithms we introduce earlier in the book.
+
+The primary tool we use to explore these case studies is the R statistical programming language (http://www.r-project.org/). R is particularly well suited for machine learning case studies because it is a high-level, functional scripting language designed for data analysis. Much of the underlying algorithmic scaffolding required is already built into the language or has been implemented as one of the thousands of R packages available on the Comprehensive R Archive Network (CRAN) [2]. This will allow us to focus on the how and the why of these problems, rather than review and rewrite the foundational code for each case.
+
+## Conventions Used in This Book
+
+The following typographical conventions are used in this book:
+
+Italic
+
+Indicates new terms, URLs, email addresses, filenames, and file extensions.
+
+Constant width
+
+Used for program listings, as well as within paragraphs to refer to program elements such as variable or function names, databases, data types, environment variables, statements, and keywords.
+
+Constant width bold
+
+Shows commands or other text that should be typed literally by the user.
+
+Constant width italic
+
+Shows text that should be replaced with user-supplied values or by values determined by context.
+
+This icon signifies a tip, suggestion, or general note.
+
+This icon indicates a warning or caution.
+
+## Using Code Examples
+
+This book is here to help you get your job done. In general, you may use the code in this book in your programs and documentation. You do not need to contact us for permission unless you’re reproducing a significant portion of the code. For example, writing a program that uses several chunks of code from this book does not require permission. Selling or distributing a CD-ROM of examples from O’Reilly books does require permission. Answering a question by citing this book and quoting example code does not require permission. Incorporating a significant amount of example code from this book into your product’s documentation does require permission.
+
+We appreciate, but do not require, attribution. An attribution usually includes the title, author, publisher, and ISBN. For example: “Machine Learning for Hackers by Drew Conway and John Myles White (O’Reilly). Copyright 2012 Drew Conway and John Myles White, 978-1-449-30371-6.”
+
+If you feel your use of code examples falls outside fair use or the permission given above, feel free to contact us at permissions@oreilly.com.
+
+## Safari Books Online
+
+Safari Books Online is an on-demand digital library that lets you easily search over 7,500 technology and creative reference books and videos to find the answers you need quickly.
+
+With a subscription, you can read any page and watch any video from our library online. Read books on your cell phone and mobile devices. Access new titles before they are available for print, and get exclusive access to manuscripts in development and post feedback for the authors. Copy and paste code samples, organize your favorites, download chapters, bookmark key sections, create notes, print out pages, and benefit from tons of other time-saving features.
+
+O’Reilly Media has uploaded this book to the Safari Books Online service. To have full digital access to this book and others on similar topics from O’Reilly and other publishers, sign up for free at http://my.safaribooksonline.com.
+
+## How to Contact Us
+
+Please address comments and questions concerning this book to the publisher:
+
+O’Reilly Media, Inc.
+1005 Gravenstein Highway North
+Sebastopol, CA 95472
+800-998-9938 (in the United States or Canada) 707-829-0515 (international or local) 707-829-0104 (fax)
+
+We have a web page for this book, where we list errata, examples, and any additional information. You can access this page at:
+
+http://shop.oreilly.com/product/0636920018483.do
+
+To comment or ask technical questions about this book, send email to:
+
+bookquestions@oreilly.com
+
+For more information about our books, courses, conferences, and news, see our website at http://www.oreilly.com.
+
+Find us on Facebook: http://facebook.com/oreilly
+
+Follow us on Twitter: http://twitter.com/oreillymedia
+
+Watch us on YouTube: http://www.youtube.com/oreillymedia
+
+## Acknowledgements
+
+*From the Authors*
+
+First off, we’d like to thank our editor, Julie Steele, for helping us through the entire process of publishing our first book. We’d also like to thank Melanie Yarbrough and Genevieve d’Entremont for their remarkably thorough work in cleaning the book up for publication. We’d also like to thank the other people at O’Reilly who’ve helped to improve the book, but whose work was done in the background.
+
+In addition to the kind folks at O’Reilly, we’d like to thank our technical reviewers: Mike Dewar, Max Shron, Matt Canning, Paul Dix, and Maxim Khesin. Their comments improved the book greatly and as the saying goes, the errors that remain are entirely our own responsibility.
+
+We’d also like to thank the members of the NYC Data Brunch for originally inspiring us to write this book and for giving us a place to refine our ideas about teaching machine learning. In particular, thanks to Hilary Mason for originally introducing us to several people at O’Reilly.
+
+Finally, we’d like to thank the many friends of ours in the data science community who’ve been so supportive and encouraging while we’ve worked on this book. Knowing that people wanted to read our book helped us keep up pace during the long haul that writing a full-length book entails.
+
+*From Drew Conway*
+
+I would like to thank Julie Steele, our editor, for appreciating our motivation for this book and giving us the ability to produce it. I would like to thank all of those who provided feedback, both during and after writing; but especially Mike Dewar, Max Shron and Max Khesin. I would like to thank Kristen, my wife, who has always inspired me and was there throughout the entire process with me. Finally, I would like to thank my co-author, John, for having the idea to write a book like this and then the vision to see it to completion.
+
+*From John Myles White*
+
+First off, I'd like to thank my co-author, Drew, for writing this book with me. Having someone to collaborate with makes the enormous task of writing an entire book manageable and even fun. In addition, I'd like to thank my parents for having always encouraged me to explore any and every topic that interested me. I'd also like to thank Jennifer Mitchel and Jeffrey Achter for inspiring me to focus on mathematics as an undergraduate. My college years shaped my vision of the world and I'm very grateful for the role you two played in that. As well, I'd like to thank my friend Harek for continually inspiring me to push my limits and to work more. On a less personal note, thanks are due to the band La Dispute for providing the soundtrack to which I've done almost all of the writing of this book. And finally I want to thank the many people who've given me space to work in, whether it's the friends whose couches I've sat on or the owners of the Boutique Hotel Steinerwirt 1493 and the Linger Cafe where I finished the rough and final drafts of this book respectively.
+
+[1] The Elements of Statistical Learning can now be downloaded free of charge at http://www-stat.stanford.edu/~tibs/ElemStatLearn/
+
+[2] For more information on CRAN, see http://cran.r-project.org/
