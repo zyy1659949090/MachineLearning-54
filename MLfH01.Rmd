@@ -554,8 +554,8 @@ A great “Rosetta Stone”-style introduction for those with experience in othe
 
 In the next chapter, we review exploratory data analysis. Much of the case study in this chapter involved exploring data, but we moved through these steps rather quickly. In the next chapter we will consider the process of data exploration much more deliberately.
 
-[1] For a brief introduction to vectorized operations in R, see R help desk: How can I avoid this loop or make it faster? [LF08].
+[1] For a brief introduction to vectorized operations in R, see R help desk: "How can I avoid this loop or make it faster?" [LF08].
 
-[2] For a thorough introduction to lists, see Chapter 1 of Data Manipulation with R [Spe08].
+[2] For a thorough introduction to lists, see Chapter 1 of *Data Manipulation with R* [Spe08].
 
-[3] For more information on ggplot2 themes, see Chapter 8 of ggplot2: Elegant Graphics for Data Analysis [Wic09].
+[3] For more information on ggplot2 themes, see Chapter 8 of *ggplot2: Elegant Graphics for Data Analysis* [Wic09].
