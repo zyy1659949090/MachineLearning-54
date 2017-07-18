@@ -1,0 +1,112 @@
+---
+title: "Machine Learning Explained: Bagging"
+author: "Robert A. Stevens"
+date: "July 16, 2017"
+output: html_document
+---
+
+```{r, comment=NA}
+library(data.table)
+library(rpart)
+library(ggplot2)
+```
+
+http://enhancedatascience.com/2017/06/28/machine-learning-explained-bagging/
+
+28th June 2017
+
+Bagging is a powerful method to improve the performance of simple models and reduce overfitting of more complex models. The principle is very easy to understand, instead of fitting the model on one sample of the population, several models are fitted on different samples (with replacement) of the population. Then, these models are aggregated by using their average, weighted average or a voting system (mainly for classification).
+
+Though bagging reduces the explanatory ability of your model, it makes it much more robust and able to get the 'big picture' from your data.
+
+## Bagged trees (But not exactly a random forest)
+
+To build a bagged trees, the process is easy. Let's say you want 100 models that you will average, for each of the hundred iterations you will:
+
+1. Take a sample with replacement of your original dataset
+
+2. Train a regression tree on this sample (you can learn more on classification trees there, regression trees are similar)
+
+3. Save the model with your other models
+
+Once you trained all your models, to get a prediction from your bagged model on new data, you will need to:
+
+1. Get the estimate from each of the individual trees you saved.
+
+2. Average the estimates.
+
+## Bagged trees applied
+
+To illustrate the previous example, let's use bagged trees to perform regression. The regression will be univariate and we will use the air quality dataset from R. The goal is to estimate the relationship between the wind speed and the quantity of ozone in the air. Here is how the data look.
+
+```{r, comment=NA}
+set.seed(456)
+ 
+# Reading data
+bagging_data <- data.table(airquality)
+
+ggplot(bagging_data, aes(Wind, Ozone)) +
+  geom_point() + 
+  ggtitle("Ozone vs wind speed")
+```
+
+The relationship is not linear, hence using regression trees may be efficient. The dataset is split between a training set with 80% of the data and a testing set with 20% of the data.
+
+Then, a regression tree was trained on all the training data and 100 trees were trained on a bootstrapped sample of the data.
+
+```{r, comment=NA}
+data_test <- na.omit(bagging_data[ , .(Ozone,Wind)])
+
+# Training data
+train_index <- sample.int(nrow(data_test), size = round(nrow(data_test)*0.8), replace = FALSE)
+data_test[train_index, train := TRUE][-train_index, train := FALSE]
+ 
+# Model without bagging
+no_bag_model <- rpart(Ozone ~ Wind, data_test[train_index], control = rpart.control(minsplit = 6))
+result_no_bag <- predict(no_bag_model, bagging_data)
+ 
+# Training of the bagged model
+n_model <- 100
+bagged_models <- list()
+for(i in 1:n_model) {
+  new_sample <- sample(train_index, size = length(train_index), replace = TRUE)
+  bagged_models <- c(bagged_models, list(rpart(Ozone ~ Wind, data_test[new_sample], control = rpart.control(minsplit = 6))))
+}
+ 
+# Getting estimate from the bagged model
+bagged_result <- NULL
+i <- 0
+for(from_bag_model in bagged_models) {
+  if(is.null(bagged_result)) {
+    bagged_result <- predict(from_bag_model, bagging_data)
+  } else {
+    bagged_result <- (i*bagged_result + predict(from_bag_model, bagging_data))/(i + 1)
+  }
+  i <- i + 1
+}
+ 
+# Plot
+gg <- ggplot(data_test, aes(Wind, Ozone)) +
+  geom_point(aes(color = train))
+
+for(tree_model in bagged_models[1:100]) {
+ prediction <- predict(tree_model, bagging_data)
+ data_plot <- data.table(Wind = bagging_data$Wind, Ozone = prediction)
+ gg <- gg +
+   geom_line(data = data_plot[order(Wind)], aes(x = Wind, y = Ozone), alpha = 0.2)
+}
+
+data_bagged <- data.table(Wind = bagging_data$Wind, Ozone = bagged_result)
+
+gg <- gg +
+  geom_line(data = data_bagged[order(Wind)], aes(x = Wind, y = Ozone), color = 'green')
+ 
+data_no_bag <- data.table(Wind = bagging_data$Wind, Ozone = result_no_bag)
+
+gg <- gg +
+  geom_line(data = data_no_bag[order(Wind)], aes(x = Wind, y = Ozone), color = 'red')
+
+gg
+```
+
+The red line represents the estimate from the single tree. The green line represents the bagged model and each gray line a model fitted on a single sample. The bagged model seems to be a good compromise between the bias from the single tree and the variance (and overfitting) from the trees trained on a bootstrapped sample.
