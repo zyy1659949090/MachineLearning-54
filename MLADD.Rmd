@@ -1,15 +1,13 @@
 ---
-title: "MLADD"
+title: "Machine Learning Algorithmic Deep Dive"
 author: "Robert A. Stevens"
-date: "May 30, 2016"
+date: "July 24, 2017"
 output: html_document
 ---
 
 http://user2016.org/tutorials/10.html
 
-# Machine Learning Algorithmic Deep Dive
-
-Erin LeDell - H2O.ai
+by Erin LeDell, H2O.ai
 
 ## Tutorial Description
 
@@ -210,4 +208,3 @@ https://cran.r-project.org/web/packages/mlr/mlr.pdf
 ## Vignettes:	mlr
 
 https://cran.r-project.org/web/packages/mlr/vignettes/mlr.html
-

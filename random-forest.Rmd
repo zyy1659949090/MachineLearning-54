@@ -1,15 +1,24 @@
 ---
-title: "random-forest"
+title: "Random Forest"
 author: "Robert A. Stevens"
-date: "August 15, 2016"
+date: "July 25, 2017"
 output: html_document
 ---
 
-# Random Forest
+http://user2016.org/tutorials/10.html
 
-![Figure 1](./Forest3.jpg)
+by Erin LeDell, H2O.ai
 
-Drawing by Phil Cutler.
+```{r, comment=NA}
+library(randomForest)
+library(cvAUC)
+library(caret)
+#library(doParallel)
+library(e1071)
+library(h2o)
+```
+
+![Drawing by Phil Cutler.](./Forest3.jpg)
 
 ## Introduction
 
@@ -77,9 +86,7 @@ This is an example of a decision boundary in two dimensions of a (binary)
 classification Random Forest.  The black circle is the Bayes Optimal decision
 boundary and the blue square-ish boundary is learned by the classification tree.
 
-![Figure 2](./boundary_bagging.png)
-
-Source: Elements of Statistical Learning
+![Source: Elements of Statistical Learning](./boundary_bagging.png)
 
 ## Random Forest by Randomization (aka "Extra-Trees")
 
@@ -155,30 +162,30 @@ Here is a non-comprehensive list:
 - [Rborist](https://cran.r-project.org/web/packages/Rborist/index.html)
 
 - The [caret](https://topepo.github.io/caret/index.html) package wraps a number of different Random Forest packages in R ([full list here](https://topepo.github.io/caret/Random_Forest.html)):
-  - Conditional Inference Random Forest (`party::cForest`)
-  - Oblique Random Forest (`obliqueRF`)
-  - Parallel Random Forest (`randomForest` + `foreach`)
-  - Random Ferns (`rFerns`)
-  - Random Forest (`randomForest`)
-  - Random Forest (`ranger`)
-  - Quantile Random Forest (`quantregForest`)
-  - Random Forest by Randomization (`extraTrees`)
-  - Random Forest Rule-Based Model (`inTrees`)
-  - Random Forest with Additional Feature Selection (`Boruta`)
-  - Regularized Random Forest (`RRF`)
-  - Rotation Forest (`rotationForest`)
-  - Weighted Subspace Random Forest (`wsrf`)
+    + Conditional Inference Random Forest (`party::cForest`)
+    + Oblique Random Forest (`obliqueRF`)
+    + Parallel Random Forest (`randomForest` + `foreach`)
+    + Random Ferns (`rFerns`)
+    + Random Forest (`randomForest`)
+    + Random Forest (`ranger`)
+    + Quantile Random Forest (`quantregForest`)
+    + Random Forest by Randomization (`extraTrees`)
+    + Random Forest Rule-Based Model (`inTrees`)
+    + Random Forest with Additional Feature Selection (`Boruta`)
+    + Regularized Random Forest (`RRF`)
+    + Rotation Forest (`rotationForest`)
+    + Weighted Subspace Random Forest (`wsrf`)
 
 - The [mlr](https://github.com/mlr-org/mlr) package wraps a number of different Random Forest packages in R:
-  - Conditional Inference Random Forest (`party::cForest`)
-  - Rotation Forest (`rotationForest`)
-  - Parallel Forest (`ParallelForest`)
-  - Survival Forest (`randomForestSRC`)
-  - Random Ferns (`rFerns`)
-  - Random Forest (`randomForest`)
-  - Random Forest (`ranger`)
-  - Synthetic Random Forest (`randomForestSRC`)
-  - Random Uniform Forest (`randomUniformForest`)
+    + Conditional Inference Random Forest (`party::cForest`)
+    + Rotation Forest (`rotationForest`)
+    + Parallel Forest (`ParallelForest`)
+    + Survival Forest (`randomForestSRC`)
+    + Random Ferns (`rFerns`)
+    + Random Forest (`randomForest`)
+    + Random Forest (`ranger`)
+    + Synthetic Random Forest (`randomForestSRC`)
+    + Random Uniform Forest (`randomUniformForest`)
 
 Since there are so many different Random Forest implementations available, there have been several benchmarks to compare the performance of popular implementations, including implementations outside of R.  A few examples:
 
@@ -214,15 +221,13 @@ Features:
 
 - GPL-2/3 Licensed.
 
-```{r}
+```{r, comment=NA}
 # randomForest example
 #install.packages("randomForest")
 #install.packages("cvAUC")
-library(randomForest)
-library(cvAUC)
-```
+#library(randomForest)
+#library(cvAUC)
 
-```{r}
 # Load binary-response dataset
 setwd("~/GitHub/MachineLearning")
 train <- read.csv("higgs_train_10k.csv")
@@ -234,9 +239,7 @@ dim(test)
 
 # Columns
 names(train)
-```
 
-```{r}
 # Identity the response column
 ycol <- "response"
 
@@ -246,9 +249,7 @@ xcols <- setdiff(names(train), ycol)
 # Convert response to factor (required by randomForest)
 train[ , ycol] <- as.factor(train[ , ycol])
 test [ , ycol] <- as.factor(test [ , ycol])
-```
 
-```{r}
 # Train a default RF model with 500 trees
 set.seed(1)  # For reproducibility
 system.time(model <- randomForest(
@@ -257,9 +258,7 @@ system.time(model <- randomForest(
   xtest = test[ , xcols],
   ntree = 50))
 model
-```
 
-```{r}
 # Generate predictions on test dataset
 preds <- model$test$votes[ , 2]
 labels <- test[ , ycol]
@@ -276,16 +275,14 @@ Backend: Fortran (wraps the `randomForest` package)
 
 This is a wrapper for the `randomForest` package that parallelizes the tree building.
 
-```{r}
-library(caret)
-library(doParallel)
-library(e1071)
-```
+```{r, comment=NA, eval=FALSE}
+#library(caret)
+#library(doParallel)
+#library(e1071)
 
-```{r}
 # Train a "parRF" model using caret
 #registerDoParallel(cores = 8) # Mac Book Pro Intel Core i7 has 4 cores
-registerDoParallel(cores = 4)
+registerDoParallel(cores = 4) # runs to long (and risks burning up PC???)
 
 model <- caret::train(
   x = train[ , xcols], 
@@ -333,17 +330,16 @@ Features:
 
 Implementation details are presented in slidedecks by [Michal Mahalova](http://www.slideshare.net/0xdata/rf-brighttalk) and [Jan Vitek](http://www.slideshare.net/0xdata/jan-vitek-distributedrandomforest522013).
 
-```{r}
+```{r, comment=NA}
 #install.packages("h2o")
-library(h2o)
+#library(h2o)
 #h2o.shutdown(prompt = FALSE)
 h2o.init(nthreads = -1) # Start a local H2O cluster using nthreads = num available cores
-```
 
-```{r}
 # Load binary-response dataset
-train <- h2o.importFile("./data/higgs_train_10k.csv")
-test  <- h2o.importFile("./data/higgs_test_5k.csv")
+setwd("~/GitHub/MachineLearning")
+train <- h2o.importFile("higgs_train_10k.csv")
+test  <- h2o.importFile("higgs_test_5k.csv")
 
 # Dimensions
 dim(train)
@@ -351,9 +347,7 @@ dim(test)
 
 # Columns
 names(train)
-```
 
-```{r}
 # Identity the response column
 ycol <- "response"
 
@@ -363,9 +357,7 @@ xcols <- setdiff(names(train), ycol)
 # Convert response to factor (required by randomForest)
 train[ , ycol] <- as.factor(train[ , ycol])
 test [ , ycol] <- as.factor(test [ , ycol])
-```
 
-```{r}
 # Train a default RF model with 100 trees
 system.time(model <- h2o.randomForest(
   x = xcols,
@@ -373,9 +365,7 @@ system.time(model <- h2o.randomForest(
   training_frame = train,
   seed = 1, # for reproducibility
   ntrees = 50)) 
-```
 
-```{r}
 # Compute AUC on test dataset
 # H2O computes many model performance metrics automatically, including AUC
 
@@ -427,7 +417,7 @@ Features:
 
 - GPL-3 licensed.
 
-![Figure 3](./ranger_vs_arborist.png)
+![](./ranger_vs_arborist.png)
 
 Plot from the [ranger article](http://arxiv.org/pdf/1508.04409v1.pdf).
 
@@ -435,6 +425,6 @@ Plot from the [ranger article](http://arxiv.org/pdf/1508.04409v1.pdf).
 
 [1] http://www.stat.berkeley.edu/~breiman/randomforest2001.pdf
 
-[2] [P. Geurts, D. Ernst., and L. Wehenkel, “Extremely randomized trees”, Machine Learning, 63(1), 3-42, 2006.](http://link.springer.com/article/10.1007%2Fs10994-006-6226-1)
+[2] P. Geurts, D. Ernst., and L. Wehenkel, “Extremely randomized trees”, *Machine Learning*, 63(1), 3-42, 2006. http://link.springer.com/article/10.1007%2Fs10994-006-6226-1
 
 [3] http://www.cs.uvm.edu/~icdm/algorithms/10Algorithms-08.pdf

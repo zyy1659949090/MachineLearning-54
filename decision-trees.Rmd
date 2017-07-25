@@ -1,15 +1,15 @@
 ---
-title: "decision-trees"
+title: "Classification and Regression Trees"
 author: "Robert A. Stevens"
-date: "August 14, 2016"
+date: "July 24, 2017"
 output: html_document
 ---
 
-# Classification and Regression Trees
+http://user2016.org/tutorials/10.html
 
-![Figure 1](./dt.png)
+Erin LeDell, H2O.ai
 
-Decision Tree visualizaion by Tony Chu and Stephanie Yee.
+![Decision Tree visualizaion by Tony Chu and Stephanie Yee.](./dt.png)
 
 ## Introduction
 
@@ -119,9 +119,7 @@ In ID3, information gain can be calculated (instead of entropy) for each remaini
 
 This is an example of a decision boundary in two dimensions of a (binary) classification tree.  The black circle is the Bayes Optimal decision boundary and the blue square-ish boundary is learned by the classification tree.
 
-![Figure 2](./boundary_dt.png)
-
-Source: Elements of Statistical Learning
+![Source: Elements of Statistical Learning](./boundary_dt.png)
 
 ## Missing Data
 
@@ -129,7 +127,7 @@ CART is an algorithm that deals effectively with missing values through *surroga
 
 ## Visualizing Decision Trees
 
-![Figure 3](./r2d3_visual_ml.png)
+![](./r2d3_visual_ml.png)
 
 [Tony Chu](https://twitter.com/tonyhschu) and [Stephanie Yee](https://twitter.com/stephaniejyee) designed an award-winning visualization of how decision trees work called \"A Visual Introduction to Machine Learning.\"  Their interactive D3 visualization is available [here](http://www.r2d3.us/visual-intro-to-machine-learning-part-1/).
 
