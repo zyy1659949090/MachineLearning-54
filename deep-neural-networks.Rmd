@@ -1,15 +1,22 @@
 ---
-title: "deep-neural-networks"
+title: "Deep Neural Networks"
 author: "Robert A. Stevens"
-date: "August 15, 2016"
+date: "July 25, 2017"
 output: html_document
 ---
 
-# Deep Neural Networks
+http://user2016.org/tutorials/10.html
 
-![Figure 1](./jmsl-7.png)
+by Erin LeDell, H2O.ai
 
-Image Source: https://machprinciple.wordpress.com/2013/11/09/neural-network-controlled-spacecraft-control-logic-exists/
+```{r, comment=NA}
+library(mxnet)
+library(h2o)
+```
+
+![Image Source:](./jmsl-7.png)
+
+https://machprinciple.wordpress.com/2013/11/09/neural-network-controlled-spacecraft-control-logic-exists/
 
 ## Introduction
 
@@ -33,9 +40,7 @@ An interesting fact about neural networks is that the first artificial neural ne
 
 A [multilayer perceptron](https://en.wikipedia.org/wiki/Multilayer_perceptron) (MLP) is a [feed-forward](https://en.wikipedia.org/wiki/Feedforward_neural_network) artificial neural network model that maps sets of input data onto a set of appropriate outputs. This is also called a fully-connected fFeed-forward ANN.  An MLP consists of multiple layers of nodes in a directed graph, with each layer fully connected to the next one. Except for the input nodes, each node is a neuron (or processing element) with a nonlinear activation function. MLP utilizes a supervised learning technique called backpropagation for training the network. MLP is a modification of the standard linear perceptron and can distinguish data that are not linearly separable.
 
-![Figure 2](./mlp_network.png) 
-
-Image Souce: neuralnetworksanddeeplearning.com
+![Image Souce: neuralnetworksanddeeplearning.com](./mlp_network.png) 
 
 ### Recurrent
 
@@ -43,7 +48,7 @@ A [recurrent neural network](https://en.wikipedia.org/wiki/Recurrent_neural_netw
 
 There are a number of Twitter bots that are created using LSTMs.  Some fun examples are [@DeepDrumpf](https://twitter.com/DeepDrumpf) and [@DeepLearnBern](https://twitter.com/DeepLearnBern) by [Brad Hayes](https://twitter.com/hayesbh) from MIT.
 
-![Figure 3](./images/rnn.jpg")
+![](./rnn.jpg)
 
 ### Convolutional
 
@@ -51,11 +56,11 @@ A [convolutional neural network](https://en.wikipedia.org/wiki/Convolutional_neu
 
 Some creative application of CNNs are [DeepDream](https://github.com/ledell/grayarea-deepdream) images and [Neural Style Transfer](https://github.com/fzliu/style-transfer).
 
-![Figure 4](./cnn.png)
+![](./cnn.png)
 
 ## Visualizing Neural Nets
 
-![Figure 5](./tensorflow_playground.png)
+![](./tensorflow_playground.png)
 
 [http://playground.tensorflow.org](http://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=xor&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2&seed=0.21753&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=true&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false) is a website where you can tweak and visualize neural networks.
 
@@ -89,28 +94,22 @@ Features:
 
 - License: BSD
 
-MXNet Example code below modified from: http://www.r-bloggers.com/deep-learning-with-mxnetr/
+MXNet Example code below modified from: http://www.r-bloggers.com/deep-learning-with-mxnetr/. The example below contains the canonical 60k/10k MNIST train/test files as opposed to the Kaggle version in the blog post.
 
-The example below contains the canonical 60k/10k MNIST train/test files as opposed to the Kaggle version in the blog post.
-
-```{r}
+```{r, comment=NA}
 # Install pre-build CPU-based mxnet package (no GPU support)
 #install.packages("drat")
 #drat:::addRepo("dmlc")
 #install.packages("mxnet")
-```
+#library(mxnet)
 
-```{r}
-library(mxnet)
-```
-
-```{r}
 # Data load & preprocessing
+setwd("~/GitHub/MachineLearning")
+train <- read.csv("mnist_train.csv", header = TRUE)
+test  <- read.csv("mnist_test.csv" , header = TRUE)
 
-train <- read.csv("data/mnist_train.csv", header = TRUE)
-test  <- read.csv("data/mnist_test.csv" , header = TRUE)
-train <- data.matrix(train)
-test  <- data.matrix(test)
+#train <- data.matrix(train)
+#test  <- data.matrix(test)
 
 train <- data.matrix(train)
 test  <- data.matrix(test)
@@ -127,9 +126,7 @@ test_x <- t(test_x/255)
 
 # see that the number of each digit is fairly even
 table(train_y)
-```
 
-```{r}
 # Configure the structure of the network
 
 # in mxnet use its own data type symbol to configure the network
@@ -155,9 +152,7 @@ fc3 <- mx.symbol.FullyConnected(act2, name = "fc3", num_hidden = 10)
 
 # finally set the activation to softmax to get a probabilistic prediction
 softmax <- mx.symbol.SoftmaxOutput(fc3, name = "sm")
-```
 
-```{r}
 # set which device to use before we start the computation
 # assign cpu to mxnet
 devices <- mx.cpu()
@@ -178,13 +173,10 @@ model <- mx.model.FeedForward.create(
   eval.metric = mx.metric.accuracy,
   initializer = mx.init.uniform(0.07),
   epoch.end.callback = mx.callback.log.train.metric(100))
-```
 
-```{r}
 # make a prediction
 preds <- predict(model, test_x)
 dim(preds)
-# [1]    10 10000
 
 # matrix with 10000 rows and 10 columns containing the classification
 # probabilities from the output layer
@@ -233,16 +225,14 @@ Features:
 
 - GUI for training & model eval/viz (H2O Flow).
 
-```{r}
-library(h2o)
+```{r, comment=NA}
+#library(h2o)
 h2o.init(nthreads = -1)  # This means nthreads = num available cores
-```
 
-```{r}
 # Data load & preprocessing
-
-train <- h2o.importFile("data/mnist_train.csv")
-test  <- h2o.importFile("data/mnist_test.csv")
+setwd("~/GitHub/MachineLearning")
+train <- h2o.importFile("mnist_train.csv")
+test  <- h2o.importFile("mnist_test.csv")
 
 # Specify the response and predictor columns
 y <- "C785"
@@ -251,9 +241,7 @@ x <- setdiff(names(train), y)
 # We encode the response column as categorical for multinomial classification
 train[ , y] <- as.factor(train[ , y])
 test [ , y] <- as.factor(test [ , y])
-```
 
-```{r}
 # Train an H2O Deep Learning model
 
 model <- h2o.deeplearning(
@@ -265,9 +253,7 @@ model <- h2o.deeplearning(
   activation = "Rectifier", 
   hidden = c(128,64),
   epochs = 10)
-```
 
-```{r}
 # Get model performance on a test set
 perf <- h2o.performance(model, test)
 
