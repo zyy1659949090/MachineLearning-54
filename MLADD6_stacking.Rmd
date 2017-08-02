@@ -1,11 +1,22 @@
 ---
-title: "stacking"
+title: "Stacking"
 author: "Robert A. Stevens"
 date: "August 14, 2016"
 output: html_document
 ---
 
-# Stacking
+http://user2016.org/tutorials/10.html
+
+by Erin LeDell, H2O.ai
+
+```{r, comment=NA}
+# Install from GitHub
+#install.packages("devtools")
+#install.packages("h2o")
+#library(devtools)
+#install.packages("https://h2o-release.s3.amazonaws.com/h2o-ensemble/R/h2oEnsemble_0.2.0.tar.gz", repos = NULL)
+library(h2oEnsemble)
+```
 
 ![Figure 1](./h2oEnsemble.png)
 
@@ -147,13 +158,13 @@ Features:
 
 - Apache 2.0 Licensed.
 
-```
+```{r, comment=NA}
 # Install from GitHub
 #install.packages(\"devtools\")
 #install.packages(\"h2o\")
-library(devtools)
-install_github(\"h2oai/h2o-3/h2o-r/ensemble/h2oEnsemble-package\")
-library(h2oEnsemble)
+#library(devtools)
+#install_github(\"h2oai/h2o-3/h2o-r/ensemble/h2oEnsemble-package\")
+#library(h2oEnsemble)
 ```
 
 ### Higgs Demo
@@ -164,7 +175,7 @@ This demo uses a subset of the [HIGGS dataset](https://archive.ics.uci.edu/ml/da
 
 ##### Start H2O Cluster"
 
-```
+```{r, comment=NA}
 h2o.init(nthreads = -1)  # Start an H2O cluster with nthreads = num cores
 ```
 
@@ -172,19 +183,19 @@ h2o.init(nthreads = -1)  # Start an H2O cluster with nthreads = num cores
 
 First, import a sample binary outcome train and test set into the H2O cluster.
 
-```
+```{r, comment=NA}
 # Import a sample binary outcome train/test set into R
-train <- h2o.importFile("data/higgs_train_10k.csv")
-test <- h2o.importFile("data/higgs_test_5k.csv")
+train <- h2o.importFile('higgs_train_10k.csv')
+test <- h2o.importFile('higgs_test_5k.csv')
 
-y <- "response"
+y <- 'response'
 x <- setdiff(names(train), y)
-family <- "binomial"
+family <- 'binomial'
 ```
 
 For binary classification, the response should be encoded as factor (also known as the [enum](https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html) type in Java). The user can specify column types in the `h2o.importFile()` command, or you can convert the response column as follows:
 
-```
+```{r, comment=NA}
 # For binary classification, response should be a factor
 train[ , y] <- as.factor(train[ , y])
 test[ , y] <- as.factor(test[ , y])
@@ -194,18 +205,17 @@ test[ , y] <- as.factor(test[ , y])
 
 For this example, we will use the default base learner library for `h2o.ensemble`, which includes the default H2O GLM, Random Forest, GBM and Deep Neural Net (all using default model parameter values). We will also use the default metalearner, the H2O GLM.
 
-```
+```{r, comment=NA}
 # Specify the base learner library & the metalearner
-learner <- c("h2o.glm.wrapper", "h2o.randomForest.wrapper",
-             "h2o.gbm.wrapper", "h2o.deeplearning.wrapper")
-metalearner <- "h2o.deeplearning.wrapper"
+learner <- c('h2o.glm.wrapper', 'h2o.randomForest.wrapper', 'h2o.gbm.wrapper', 'h2o.deeplearning.wrapper')
+metalearner <- 'h2o.deeplearning.wrapper'
 ```
 
 ##### Train an Ensemble
 
 Train the ensemble (using 5-fold internal CV) to generate the level-one data. Note that more CV folds will take longer to train, but should increase performance.
     
-```
+```{r, comment=NA}
 # Train the ensemble using 5-fold CV to generate level-one data
 # More CV folds will take longer to train, 
 # but should increase performance
@@ -225,18 +235,14 @@ The `predict()` method for an `h2o.ensemble()` fit will return a list of two obj
 
 However, a more useful function is `h2o.ensemble_performance()` which will compute the performance metrics for the base learners and ensemble on a test set.
 
-```
+```{r, comment=NA}
 # Compute test set performance:
 perf <- h2o.ensemble_performance(fit, newdata = test)
 print(perf)
-```
 
-```
 # To print the results for a particular metric, like MSE, do the following:
-print(perf, metric = "MSE")
-```
+print(perf, metric = 'MSE')
 
-```
 # To access results directly in the ensemble performance object:
 perf$ensemble@metrics$AUC
 ```
@@ -245,7 +251,7 @@ perf$ensemble@metrics$AUC
 
 Here is an example of how to generate a custom learner wrappers:
 
-```
+```{r, comment=NA}
 # Here is an example of how to generate a base learner library using custom base learners:
 
 h2o.randomForest.1 <- function(..., 
@@ -260,7 +266,7 @@ h2o.randomForest.1 <- function(...,
 
 h2o.deeplearning.1 <- function(..., 
                                hidden = c(500,500), 
-                               activation = "Rectifier", 
+                               activation = 'Rectifier', 
                                seed = 1) {
   h2o.deeplearning.wrapper(..., 
                            hidden = hidden, 
@@ -270,56 +276,47 @@ h2o.deeplearning.1 <- function(...,
 
 h2o.deeplearning.2 <- function(..., 
                                hidden = c(200,200,200), 
-                               activation = "Tanh", seed = 1) {
+                               activation = 'Tanh', seed = 1) {
   h2o.deeplearning.wrapper(..., 
                            hidden = hidden, 
                            activation = activation, 
                            seed = seed)
 }
 
-learner <- c("h2o.randomForest.1", 
-             "h2o.deeplearning.1", 
-             "h2o.deeplearning.2")
+learner <- c('h2o.randomForest.1', 
+             'h2o.deeplearning.1', 
+             'h2o.deeplearning.2')
 ```
 
 ### Stacking with Random Grids
 
 This example uses the technique of generating a random grid of base learners for maximum diversity, along with the `h2o.stack()` function.  The `h2o.stack()` function produces the exact same output as the `h2o.ensemble()` function, however you can use `h2o.stack()` to combine (via metalearning) a set of exsiting H2O models (where cross-validation was used and the predictions were saved)."
 
-```
+```{r, comment=NA}
 #library(h2oEnsemble)
 #h2o.init(nthreads = -1)
 
 # Import a sample binary outcome train/test set into R
-train <- h2o.importFile("data/higgs_train_10k.csv")
-test <- h2o.importFile("data/higgs_test_5k.csv")
+train <- h2o.importFile('higgs_train_10k.csv')
+test <- h2o.importFile('higgs_test_5k.csv')
 
-y <- "response"
+y <- 'response'
 x <- setdiff(names(train), y)
-family <- "binomial"
+family <- 'binomial'
 
 # For binary classification, response should be a factor
 train[ , y] <- as.factor(train[ , y])
 test[ , y] <- as.factor(test[ , y])
-```
 
-##### Random Grid Search
-
-```
 # Random Grid Search (e.g. 120 second maximum)
 # This is set to run fairly quickly, increase max_runtime_secs
 # or max_models to cover more of the hyperparameter space.
 # Also, you can expand the hyperparameter space of each of the
 # algorithms by modifying the hyper param code below.
 
-search_criteria <- list(strategy = "RandomDiscrete",
-                        max_runtime_secs = 120)
+search_criteria <- list(strategy = 'RandomDiscrete', max_runtime_secs = 120)
 nfolds <- 5
-```
 
-##### GBM Hyperparameters
-
-```
 # GBM Hyperparamters
 learn_rate_opt <- c(0.01, 0.03)
 max_depth_opt <- c(3, 4, 5, 6, 9)
@@ -330,22 +327,17 @@ hyper_params <- list(learn_rate = learn_rate_opt,
                      sample_rate = sample_rate_opt,
                      col_sample_rate = col_sample_rate_opt)
 
-gbm_grid <- h2o.grid("gbm", x = x, y = y,
+gbm_grid <- h2o.grid('gbm', x = x, y = y,
                      training_frame = train,
                      ntrees = 100,
                      seed = 1,
                      nfolds = nfolds,
-                     fold_assignment = "Modulo",
+                     fold_assignment = 'Modulo',
                      keep_cross_validation_predictions = TRUE,
                      hyper_params = hyper_params,
                      search_criteria = search_criteria)
 gbm_models <- lapply(gbm_grid@model_ids, 
                      function(model_id) h2o.getModel(model_id))
-```
-
-##### RF Hyperparameters
-
-```
 # RF Hyperparamters
 mtries_opt <- 8:20
 max_depth_opt <- c(5, 10, 15, 20, 25)
@@ -356,26 +348,21 @@ hyper_params <- list(mtries = mtries_opt,
                      sample_rate = sample_rate_opt,
                      col_sample_rate_per_tree =  col_sample_rate_per_tree_opt)
 
-rf_grid <- h2o.grid("randomForest", x = x, y = y,
+rf_grid <- h2o.grid('randomForest', x = x, y = y,
                     training_frame = train,
                     ntrees = 200,
                     seed = 1,
                     nfolds = nfolds,
-                    fold_assignment = "Modulo",
+                    fold_assignment = 'Modulo',
                     keep_cross_validation_predictions = TRUE,
                     hyper_params = hyper_params,
                     search_criteria = search_criteria)
 rf_models <- lapply(rf_grid@model_ids, 
                     function(model_id) h2o.getModel(model_id))
-```
 
-##### Deeplearning Hyperparameters
-
-```
 # Deeplearning Hyperparamters
-activation_opt <- c("Rectifier", "RectifierWithDropout",
-                    "Maxout", "MaxoutWithDropout")
-hidden_opt <- list(c(10,10), c(20,15), c(50,50,50))
+activation_opt <- c('Rectifier', 'RectifierWithDropout', 'Maxout', 'MaxoutWithDropout')
+hidden_opt <- list(c(10, 10), c(20, 15), c(50, 50, 50))
 l1_opt <- c(0, 1e-3, 1e-5)
 l2_opt <- c(0, 1e-3, 1e-5)
 hyper_params <- list(activation = activation_opt,
@@ -383,83 +370,71 @@ hyper_params <- list(activation = activation_opt,
                      l1 = l1_opt,
                      l2 = l2_opt)
 
-dl_grid <- h2o.grid("deeplearning", x = x, y = y,
+dl_grid <- h2o.grid('deeplearning', x = x, y = y,
                     training_frame = train,
                     epochs = 15,
                     seed = 1,
                     nfolds = nfolds,
-                    fold_assignment = "Modulo",
+                    fold_assignment = 'Modulo',
                     keep_cross_validation_predictions = TRUE,              
                     hyper_params = hyper_params,
                     search_criteria = search_criteria)
+
 dl_models <- lapply(dl_grid@model_ids, 
                     function(model_id) h2o.getModel(model_id))
-```
 
-##### GLM Hyperparameters
-
-```
 # GLM Hyperparamters
-alpha_opt <- seq(0,1,0.1)
-lambda_opt <- c(0,1e-7,1e-5,1e-3,1e-1)
+alpha_opt <- seq(0, 1, 0.1)
+lambda_opt <- c(0, 1e-7, 1e-5, 1e-3, 1e-1)
 hyper_params <- list(alpha = alpha_opt,
                      lambda = lambda_opt)
 
-glm_grid <- h2o.grid("glm", x = x, y = y,
+glm_grid <- h2o.grid('glm', x = x, y = y,
                      training_frame = train,
-                     family = "binomial",
+                     family = 'binomial',
                      nfolds = nfolds,
-                     fold_assignment = "Modulo",
+                     fold_assignment = 'Modulo',
                      keep_cross_validation_predictions = TRUE,              
                      hyper_params = hyper_params,
                      search_criteria = search_criteria)
+
 glm_models <- lapply(glm_grid@model_ids, 
                      function(model_id) h2o.getModel(model_id))
-```
 
-##### Specify Base Learners & Metalearner"
+# Specify Base Learners & Metalearner
 
-```
 # Create a list of all the base models
 models <- c(gbm_models, rf_models, dl_models, glm_models)
 
 # Specify a defalt GLM as the metalearner
-metalearner <- "h2o.glm.wrapper"
-```
+metalearner <- 'h2o.glm.wrapper'
 
-##### Train
+# Train
 
-```
 # Let's stack!
 stack <- h2o.stack(models = models, 
                    response_frame = train[ , y],
                    metalearner = metalearner)
-```
 
-##### Compute the Performance
+# Compute the Performance
 
-```
 # Compute test set performance:
 perf <- h2o.ensemble_performance(stack, newdata = test)
 print(perf)
-```
 
-##### Refit the Metalearner
+# Refit the Metalearner
 
-```
 # Now let's refit the metalearner using a DL and GLM-NN
 # Note: DL is not usually the best metalearner
 
-stack2 <- h2o.metalearn(stack, metalearner = "h2o.deeplearning.wrapper")
+stack2 <- h2o.metalearn(stack, metalearner = 'h2o.deeplearning.wrapper')
 perf2 <- h2o.ensemble_performance(stack2, 
                                   newdata = test, 
                                   score_base_models = FALSE)
 print(perf2)
-```
 
-##### Restrict to Non-Negative Weights
+# Restrict to Non-Negative Weights
 
-```
 # It's always a good idea to try a GLM restricted to non-negative weights as
 # a metalearner.
 # There have been a lot of empircal studies that show that non-negative
@@ -467,7 +442,8 @@ print(perf2)
 
 h2o.glm_nn <- function(..., non_negative = TRUE) 
   h2o.glm.wrapper(..., non_negative = non_negative)
-stack3 <- h2o.metalearn(stack, metalearner = "h2o.glm_nn")
+
+stack3 <- h2o.metalearn(stack, metalearner = 'h2o.glm_nn')
 perf3 <- h2o.ensemble_performance(stack3, 
                                   newdata = test, 
                                   score_base_models = FALSE)
